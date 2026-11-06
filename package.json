@@ -1,0 +1,33 @@
+{
+  "name": "limarija-wd36",
+  "productName": "Limarija WD-36",
+  "version": "1.0.0",
+  "description": "Menadžer proizvodnje i prodaje – Limarija WD-36",
+  "main": "src/main.js",
+  "author": "Limarija WD-36",
+  "private": true,
+  "scripts": {
+    "prepare-app": "node tools/prepare.js",
+    "start": "node tools/prepare.js && electron .",
+    "test": "node tools/test-core.js",
+    "dist": "node tools/prepare.js && electron-builder --win --x64"
+  },
+  "devDependencies": {
+    "electron": "33.2.1",
+    "electron-builder": "25.1.8"
+  },
+  "build": {
+    "appId": "rs.limarija.wd36",
+    "productName": "Limarija WD-36",
+    "files": ["src/**/*", "app/**/*", "package.json"],
+    "win": { "target": "nsis", "icon": "build/icon.png", "signAndEditExecutable": false },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "deleteAppDataOnUninstall": false,
+      "createDesktopShortcut": true,
+      "shortcutName": "Limarija WD-36"
+    }
+  }
+}

@@ -1,0 +1,29 @@
+LIMARIJA WD-36 – PROGRAM ZA RAČUNAR (Windows)
+
+1) PRAVLJENJE INSTALACIJE
+   Varijanta A (na bilo kom Windows računaru):
+     - Instaliraj Node.js (LTS) sa https://nodejs.org
+     - Dvaput klikni NAPRAVI-INSTALACIJU.bat
+     - Gotova instalacija je u folderu dist ("Limarija WD-36 Setup x.y.z.exe")
+   Varijanta B (preko GitHub-a, bez instalacija na svom računaru):
+     - Otpremi ovaj folder u GitHub repozitorijum, otvori Actions > "Napravi instalaciju" > Run workflow
+     - Preuzmi .exe iz Artifacts
+
+2) PRVO POKRETANJE
+   Program traži da napraviš nalog vlasnika. Radnike i knjigovođu dodaješ u Podešavanja > Korisnici i uloge.
+
+3) GDE SU PODACI
+   Fajl podaci.json u folderu: %APPDATA%\Limarija WD-36\podaci
+   Automatske kopije (jednom dnevno, poslednjih 30): isti folder, podfolder "kopije".
+   Ažuriranje programa NE briše podatke. Brisanje programa takođe ne briše podatke.
+
+4) PRENOS PODATAKA SA claude.ai
+   Na claude.ai verziji: Podešavanja > Preuzmi sve podatke (JSON).
+   U ovoj verziji: Podešavanja > Vrati podatke iz fajla… (važi samo za kopije iste aplikacije).
+
+5) AŽURIRANJE
+   Nova verzija = novi Setup.exe. Pokreni ga preko stare; podaci ostaju. Pre ažuriranja napravi kopiju u Podešavanjima.
+
+6) ZABORAVLJENA LOZINKA VLASNIKA
+   Zatvori program, u folderu sa podacima napravi prazan fajl reset-lozinke.txt, pokreni program.
+   Podaci ostaju, ali se brišu SVI korisnici i traži se novi nalog vlasnika (radnike dodaješ ponovo).
