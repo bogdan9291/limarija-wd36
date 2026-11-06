@@ -1,6 +1,11 @@
-name: Napravi instalaciju (Windows)
+name: Napravi i objavi instalaciju
 on:
+  push:
+    branches: [main, master]
+    paths: ["html/**", "src/**", "tools/**", "build/**", "package.json"]
   workflow_dispatch:
+permissions:
+  contents: write
 jobs:
   build:
     runs-on: windows-latest
@@ -8,10 +13,12 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
+      - name: Broj verzije (1.0.<broj pokretanja>)
+        shell: bash
+        run: npm version 1.0.${{ github.run_number }} --no-git-tag-version
       - run: npm install
       - run: npm test
-      - run: npm run dist
-      - uses: actions/upload-artifact@v4
-        with:
-          name: Limarija-WD-36-instalacija
-          path: dist/*.exe
+      - name: Napravi i objavi u Releases
+        run: npm run release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
