@@ -200,7 +200,7 @@ input:focus,select:focus{outline:0;border-bottom-color:var(--ac);background:var(
   <div class="setrow" style="margin-top:14px;padding-top:14px;border-top:1px solid var(--bd)"><div><b>Visina PDV-a (%)</b><div style="color:var(--mu);font-size:13px;margin-top:4px">Koristi se u cenovniku (maloprodajna cena) i kao podrazumevana stopa na novim predračunima.</div></div>
    <input id="pdv" inputmode="decimal" style="width:80px;text-align:right" aria-label="Visina PDV-a"></div>
   <div class="stl" style="margin-top:22px">Boje</div>
-  <div style="color:var(--mu);font-size:13px;line-height:1.5">Boje koje se nude u nalozima i otpremnicama. Promena naziva menja ga i u svim postojećim nalozima, predračunima i otpremnicama. Uklanjanje samo skida boju iz ponude, a postojeći dokumenti je zadržavaju.</div>
+  <div style="color:var(--mu);font-size:13px;line-height:1.5">Boje koje se nude u nalozima i otpremnicama. U izboru uvek postoji i prazno polje: tada se boja ne dodaje na naziv robe. Promena naziva menja ga i u svim postojećim nalozima, predračunima i otpremnicama. Uklanjanje samo skida boju iz ponude, a postojeći dokumenti je zadržavaju.</div>
   <div id="bojeList" style="margin-top:10px"></div>
   <div class="row" style="margin-top:8px"><input id="bojeNew" placeholder="Nova boja" style="width:200px"><button class="p" id="bojeAdd">+ Dodaj boju</button></div>
   <div class="msg" id="bojeSt" style="padding:6px 0;text-align:left"></div>
@@ -382,7 +382,7 @@ const fmtDate=s=>{if(!s)return"";const[y,m,d]=s.split("-");return d+"."+m+"."+y+
 const m2=(v,d,k)=>(/tr\s*-?\s*18(?!\d)/i.test(String(v||""))?d*1.1*k:d*k)/1000;
 
 let db=null,orders=[],cur=null,dirty=false;
-function blank(l,tip){tip=tip||"trapez";const def="";return{tip,vrsta:(l&&l.tip===tip&&l.vrsta)||def,duzina:"",sirina:"",jm:"metar",boja:tip==="srafovska"?((l&&l.tip===tip&&l.boja)||""):((l&&l.boja)||defBoja()),kom:""}}
+function blank(l,tip){tip=tip||"trapez";const def="";return{tip,vrsta:(l&&l.tip===tip&&l.vrsta)||def,duzina:"",sirina:"",jm:"metar",boja:tip==="srafovska"?((l&&l.tip===tip&&l.boja)||""):((l&&l.tip===tip)?(l.boja||""):((l&&l.boja)||defBoja())),kom:""}}
 
 function newOrder(){
   const y=new Date().getFullYear();
@@ -449,7 +449,7 @@ function cells(it,tip){
   const L=vl("",tip),legacy=!!it.vrsta&&!L.some(x=>x.toLowerCase()===String(it.vrsta).trim().toLowerCase()),all=legacy?[it.vrsta,...L]:L;
   const v=`<td><select data-f="vrsta">${all.length?opts(all,it.vrsta):'<option value="">Nema stavki u cenovniku</option>'}</select>${legacy?'<div style="font-size:11px;color:#c0392b">nije u cenovniku</div>':""}</td>`;
   const d=`<td><input data-f="duzina" inputmode="${tip==="oluk"?"decimal":"numeric"}" value="${esc(it.duzina||"")}" style="width:100px"${lenOf(it)?"":" disabled"}></td>`;
-  const b=`<td><select data-f="boja">${bopts(BOJE,it.boja)}</select></td>`;
+  const b=`<td><select data-f="boja">${bopts(["",...BOJE],it.boja||"")}</select></td>`;
   const k=`<td><input data-f="kom" inputmode="decimal" value="${esc(it.kom)}" style="width:80px"></td>`;
   if(tip==="srafovska")return v+`<td><select data-f="boja">${bopts(["",...BOJE],it.boja||"")}</select></td>`+k;
   if(tip==="opsiv")return v+d+`<td><input data-f="sirina" inputmode="numeric" value="${esc(it.sirina||"")}" style="width:110px"></td>`+b+k;
@@ -465,7 +465,7 @@ function updSegBadges(){
 }
 function renderItems(){
   cur.segments.forEach(sg=>{if(!sg.sid)sg.sid=newSid();if(!sg.status)sg.status=cur.status==="u_radu"?"u_radu":"zavrsen"});
-  cur.segments.forEach(sg=>{sg.tip=sg.tip||"trapez";sg.items.forEach(i=>{i.tip=sg.tip;if(!i.vrsta){const L=vl("",sg.tip);if(L.length)i.vrsta=L[0]}if(!i.boja&&sg.tip!=="srafovska")i.boja=defBoja()})});
+  cur.segments.forEach(sg=>{sg.tip=sg.tip||"trapez";sg.items.forEach(i=>{i.tip=sg.tip;if(!i.vrsta){const L=vl("",sg.tip);if(L.length)i.vrsta=L[0]}if(i.boja===undefined&&sg.tip!=="srafovska")i.boja=defBoja()})});
   $("segs").innerHTML=cur.segments.map((sg,si)=>{const t=segTot(sg),tip=sg.tip;return `<div class="seg" data-s="${si}">
    <div class="row" style="margin-bottom:6px;align-items:flex-end"><span class="dh" data-drag="seg" title="Prevuci grupu za promenu redosleda" style="font-size:22px;padding-bottom:8px">⠿</span><div style="flex:1;min-width:160px"><label>Vrsta grupe</label><select data-st="1" style="font-weight:600">${Object.keys(TIPOVI).map(k=>`<option value="${k}"${k===tip?" selected":""}>${TIPOVI[k]}</option>`).join("")}</select></div><div style="width:150px"><label>Status grupe</label><select data-gst><option value="u_radu"${sg.status!=="zavrsen"?" selected":""}>U radu</option><option value="zavrsen"${sg.status==="zavrsen"?" selected":""}>Završena</option></select></div><span class="tag segbadge" data-sb="${sg.sid}"></span><button class="d" data-delseg${cur.segments.length<2?" disabled":""}>Ukloni grupu</button></div>
    <div class="sc"><table><thead><tr><th>#</th>${TH[tip].map(h=>`<th>${h}</th>`).join("")}<th class="n">Ukupno</th><th></th></tr></thead><tbody>`+
