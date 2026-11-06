@@ -21,8 +21,10 @@ LIMARIJA WD-36 – PROGRAM ZA RAČUNAR (Windows)
    Na claude.ai verziji: Podešavanja > Preuzmi sve podatke (JSON).
    U ovoj verziji: Podešavanja > Vrati podatke iz fajla… (važi samo za kopije iste aplikacije).
 
-5) AŽURIRANJE
-   Nova verzija = novi Setup.exe. Pokreni ga preko stare; podaci ostaju. Pre ažuriranja napravi kopiju u Podešavanjima.
+5) AŽURIRANJE (automatsko)
+   Kad se na GitHub-u promeni fajl u folderima html, src, tools ili build, GitHub sam napravi novu verziju (Releases).
+   Program pri pokretanju proveri ima li nove verzije, a u Podešavanjima postoji dugme "Proveri ažuriranja".
+   Kad je nova verzija preuzeta, program pita da li da se ažurira. Podaci ostaju netaknuti.
 
 6) ZABORAVLJENA LOZINKA VLASNIKA
    Zatvori program, u folderu sa podacima napravi prazan fajl reset-lozinke.txt, pokreni program.

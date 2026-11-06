@@ -10,7 +10,8 @@
     "prepare-app": "node tools/prepare.js",
     "start": "node tools/prepare.js && electron .",
     "test": "node tools/test-core.js",
-    "dist": "node tools/prepare.js && electron-builder --win --x64 --publish never"
+    "dist": "node tools/prepare.js && electron-builder --win --x64 --publish never",
+    "release": "node tools/prepare.js && electron-builder --win --x64 --publish always"
   },
   "devDependencies": {
     "electron": "33.2.1",
@@ -19,8 +20,16 @@
   "build": {
     "appId": "rs.limarija.wd36",
     "productName": "Limarija WD-36",
-    "files": ["src/**/*", "app/**/*", "package.json"],
-    "win": { "target": "nsis", "icon": "build/icon.png", "signAndEditExecutable": false },
+    "files": [
+      "src/**/*",
+      "app/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "build/icon.png",
+      "signAndEditExecutable": false
+    },
     "nsis": {
       "oneClick": false,
       "perMachine": false,
@@ -28,6 +37,17 @@
       "deleteAppDataOnUninstall": false,
       "createDesktopShortcut": true,
       "shortcutName": "Limarija WD-36"
-    }
+    },
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "bogdan9291",
+        "repo": "limarija-wd36",
+        "releaseType": "release"
+      }
+    ]
+  },
+  "dependencies": {
+    "electron-updater": "6.3.9"
   }
 }

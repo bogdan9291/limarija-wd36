@@ -92,7 +92,7 @@
       update: (a) => invoke("users.update", a),
       remove: (a) => invoke("users.remove", a),
     };
-    const appObj = { info: () => invoke("info"), openBackups: () => invoke("app.openBackups"), logout: () => invoke("app.logout") };
+    const appObj = { info: () => invoke("info"), openBackups: () => invoke("app.openBackups"), update: () => invoke("app.update"), logout: () => invoke("app.logout") };
 
     return {
       async use(name) {

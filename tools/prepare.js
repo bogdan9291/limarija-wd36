@@ -15,7 +15,7 @@ const usersHtml = `<div class="stl" style="margin-top:22px">Korisnici i uloge</d
   <div class="row" style="margin-top:8px"><input id="uIme" placeholder="Korisničko ime" style="width:170px" autocomplete="off"><input id="uPw" type="password" placeholder="Lozinka (min. 6)" style="width:170px" autocomplete="new-password"><select id="uRole" style="width:150px"><option value="radnik">Radnik</option><option value="pregled">Samo pregled</option><option value="vlasnik">Vlasnik</option></select><button class="p" id="uAdd">+ Dodaj korisnika</button></div>
   <div class="msg" id="uSt" style="padding:6px 0;text-align:left"></div>
   <div style="color:var(--mu);font-size:13px;line-height:1.5;margin-top:6px"><span id="appInfo"></span></div>
-  <div class="row" style="margin-top:8px"><button id="appBk">Otvori folder sa automatskim kopijama</button><button id="appOut">Odjavi se</button></div>
+  <div class="row" style="margin-top:8px"><button id="appBk">Otvori folder sa automatskim kopijama</button><button id="appUp">Proveri ažuriranja</button><button id="appOut">Odjavi se</button></div>
   `;
 h = h.slice(0, a) + usersHtml + h.slice(b);
 
@@ -55,6 +55,7 @@ const js = `
     }catch(x){msg(x.message,true)}
   });
   $("appBk").onclick=async()=>{try{await (await claude.use("app")).openBackups()}catch(e){msg(e.message,true)}};
+  $("appUp").onclick=async()=>{const b=$("appUp");b.disabled=true;msg("Proveravam…");try{msg(await (await claude.use("app")).update())}catch(e){msg(e.message,true)}b.disabled=false};
   $("appOut").onclick=async()=>{try{await (await claude.use("app")).logout()}catch(e){}};
   // „Sačuvaj na Drive“ postaje čuvanje JSON kopije u folder
   $("bkDrive").onclick=()=>$("bkJson").click();
