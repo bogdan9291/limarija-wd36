@@ -38,7 +38,7 @@ tr.cl{cursor:pointer}tr.cl:hover td{background:var(--bg)}
 .mh td{background:var(--bg);font-size:13px;padding-top:12px}
 .sh{cursor:pointer;user-select:none;-webkit-user-select:none}.sh:hover{color:var(--tx)}
 .kpi{background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:10px 12px}.kpi span{display:block;font-size:12px;color:var(--mu)}.kpi b{font-size:20px}.kpi small{display:block;font-size:11px;margin-top:2px}
-.bars{display:flex;gap:10px;height:120px}.bars>div{flex:1;display:flex;flex-direction:column;justify-content:flex-end;text-align:center;font-size:11px;color:var(--mu)}.bars i{display:block;background:var(--ac);border-radius:4px 4px 0 0;min-height:2px;margin:4px 0}
+.bars{display:flex;gap:10px;height:120px}.bars.y12{gap:4px}.bars.y12>div{min-width:0;font-size:10px}.bars.y12 span{font-size:9.5px;white-space:nowrap}.bars>div{flex:1;display:flex;flex-direction:column;justify-content:flex-end;text-align:center;font-size:11px;color:var(--mu)}.bars i{display:block;background:var(--ac);border-radius:4px 4px 0 0;min-height:2px;margin:4px 0}
 .hs{font-size:13px;font-weight:700;margin:14px 0 6px}.hs:first-child{margin-top:0}.more{font-size:12px;color:var(--mu);padding:4px 8px}.wr{color:#c0392b;font-size:13px;margin:4px 0}
 .dh{cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;color:var(--mu);padding:2px 6px;font-size:17px;line-height:1}.dh:active{cursor:grabbing}
 tr.dropb td{box-shadow:inset 0 3px 0 var(--ac)}tr.dropa td{box-shadow:inset 0 -3px 0 var(--ac)}.seg.dropb{box-shadow:0 -3px 0 var(--ac)}.seg.dropa{box-shadow:0 3px 0 var(--ac)}
@@ -1607,9 +1607,12 @@ function renderProd(){
 $("rYear").onchange=renderProd;$("rSt").onchange=renderProd;
 
 /* ---------- početna ---------- */
+$("hbody").addEventListener("change",e=>{const id=e.target.id;if(id!=="hMo"&&id!=="hYr")return;if(id==="hYr")homeY=+e.target.value;else{homeM=+e.target.value;homePer=homeM<0?"g":"m";try{localStorage.setItem("homePer",homePer)}catch(x){}}renderHome()});
 const homeUp=()=>{if(!$("home").classList.contains("hide"))renderHome()};
 function openOrderById(id){const o=orders.find(x=>oid(x)===id);if(!o)return;$("view").appendChild($("sheetbox"));openForm(o,false);show("o")}
 const ageTag=(d,t0)=>{const n=Math.max(0,Math.floor((t0-new Date(d))/864e5));return `<span class="age" style="font-size:12px;font-weight:600;color:${n>60?"#c0392b":n>30?"var(--wa)":"var(--mu)"}">· ${n} ${n===1?"dan":"dana"}</span>`};
+let homePer="m";try{homePer=localStorage.getItem("homePer")==="g"?"g":"m"}catch(e){}
+let homeY=new Date().getFullYear(),homeM=homePer==="g"?-1:new Date().getMonth();
 function renderHome(){
   const t0=new Date(),ym=t0.getFullYear()+"-"+String(t0.getMonth()+1).padStart(2,"0");
   const pd=new Date(t0.getFullYear(),t0.getMonth()-1,1),pym=pd.getFullYear()+"-"+String(pd.getMonth()+1).padStart(2,"0");
@@ -1631,16 +1634,22 @@ function renderHome(){
     return;
   }
   // proizvodnja
-  const data=prodData(false),cm=calcMonth(ym,data[ym]||{}),pm=calcMonth(pym,data[pym]||{});
+  const Y=homeY,G=homeM<0,M=G?0:homeM,yr=String(Y),pyr=String(Y-1),sm=Y+"-"+String(M+1).padStart(2,"0");
+  const spd=new Date(Y,M-1,1),spm=spd.getFullYear()+"-"+String(spd.getMonth()+1).padStart(2,"0");
+  const data=prodData(false),yRows=y=>mergeRows(Object.keys(data).filter(k=>k.startsWith(y+"-")).map(k=>calcMonth(k,data[k])));
+  const ys=new Set([Y,t0.getFullYear()]);Object.keys(data).forEach(k=>{const y=+k.slice(0,4);if(y>2000)ys.add(y)});orders.forEach(o=>{const y=+String(o.date||"").slice(0,4);if(y>2000)ys.add(y)});
+  const yOpts=[...ys].sort((a,b)=>b-a).map(y=>`<option value="${y}"${y===Y?" selected":""}>${y}.</option>`).join("");
+  const mOpts=`<option value="-1"${G?" selected":""}>Cela godina</option>`+MES.map((n,i)=>`<option value="${i}"${!G&&i===M?" selected":""}>${n}</option>`).join("");
+  const cm=G?yRows(yr):calcMonth(sm,data[sm]||{}),pm=G?yRows(pyr):calcMonth(spm,data[spm]||{});
   const sum=(rows,k)=>rows.reduce((t,r)=>t+r[k],0),m2c=sum(cm,"m2"),m2p=sum(pm,"m2");
-  const nOrd=orders.filter(o=>String(o.date||"").startsWith(ym)).length;
+  const nOrd=orders.filter(o=>String(o.date||"").startsWith(G?yr+"-":sm)).length;
   const delta=m2p>0?Math.round((m2c-m2p)/m2p*100):null;
   const bruto=r2(sum(cm,"bruto")),red=bruto<0?' style="color:#c0392b"':"";
-  const dTxt=delta==null?"":`<small style="color:${delta>=0?"var(--ok)":"#c0392b"}">${delta>=0?"+":""}${delta}% u odnosu na ${MES[pd.getMonth()].toLowerCase()}</small>`;
-  const months=[];for(let i=5;i>=0;i--){const d=new Date(t0.getFullYear(),t0.getMonth()-i,1),k=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0");months.push({k,lbl:MES[d.getMonth()].slice(0,3),v:sum(calcMonth(k,data[k]||{}),"m2")})}
+  const dTxt=delta==null?"":`<small style="color:${delta>=0?"var(--ok)":"#c0392b"}">${delta>=0?"+":""}${delta}% u odnosu na ${G?pyr+".":MES[spd.getMonth()].toLowerCase()}</small>`;
+  const months=[];for(let i=G?0:5;G?i<12:i>=0;G?i++:i--){const d=G?new Date(Y,i,1):new Date(Y,M-i,1),k=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0");months.push({k,lbl:MES[d.getMonth()].slice(0,3),v:sum(calcMonth(k,data[k]||{}),"m2")})}
   const mx=Math.max(1,...months.map(m=>m.v));
-  const bars=months.map(m=>`<div><span>${m.v?fmt(m.v).replace(",00",""):""}</span><i style="height:${Math.round(m.v/mx*70)}px"></i>${m.lbl}</div>`).join("");
-  const prow=cm.length?`<div class="sc" style="margin-top:12px"><table><thead><tr><th>Profil</th><th class="n">Kom.</th><th class="n">m²</th><th class="n">Bruto zarada</th></tr></thead><tbody>${cm.map(r=>`<tr><td>${esc(r.vrsta)}</td><td class="n">${fmt(r.kom).replace(",00","")}</td><td class="n">${fmt(r.m2)}</td><td class="n">${money(r.bruto)}</td></tr>`).join("")}</tbody></table></div>`:`<div class="msg">Ovog meseca još nema naloga sa trapeznim limom.</div>`;
+  const bars=months.map(m=>`<div><span>${m.v?(G?Math.round(m.v).toLocaleString("sr-RS"):fmt(m.v).replace(",00","")):""}</span><i style="height:${Math.round(m.v/mx*70)}px"></i>${m.lbl}</div>`).join("");
+  const prow=cm.length?`<div class="sc" style="margin-top:12px"><table><thead><tr><th>Profil</th><th class="n">Kom.</th><th class="n">m²</th><th class="n">Bruto zarada</th></tr></thead><tbody>${cm.map(r=>`<tr><td>${esc(r.vrsta)}</td><td class="n">${fmt(r.kom).replace(",00","")}</td><td class="n">${fmt(r.m2)}</td><td class="n">${money(r.bruto)}</td></tr>`).join("")}</tbody></table></div>`:`<div class="msg">${G?"Ove godine":"Ovog meseca"} još nema naloga sa trapeznim limom.</div>`;
   // upozorenja
   const W=[];
   const miss=new Set();orders.filter(o=>{const k=String(o.date||"").slice(0,7);return k===ym||k===pym}).forEach(o=>(o.items||[]).forEach(i=>{if(priceFor(i.vrsta)==null)miss.add(i.vrsta)}));
@@ -1653,10 +1662,10 @@ function renderHome(){
   const warn=W.length?`<div class="card"><div class="hs">Upozorenja</div>${W.map(w=>`<div class="wr">⚠ ${w}</div>`).join("")}</div>`:"";
   $("hbody").innerHTML=`
   <div class="card">
-   <div class="row" style="justify-content:space-between;margin-bottom:10px"><b>Proizvodnja – ${MES[t0.getMonth()]} ${t0.getFullYear()}</b><button data-go="r">Detalji →</button></div>
+   <div class="row" style="justify-content:space-between;margin-bottom:10px"><b>Proizvodnja – ${G?yr+". godina":MES[M]+" "+Y}</b><div class="row"><select id="hMo" aria-label="Mesec" style="width:auto;flex:none">${mOpts}</select><select id="hYr" aria-label="Godina" style="width:auto;flex:none">${yOpts}</select><button data-go="r">Detalji →</button></div></div>
    <div class="grid"><div class="kpi"><span>Proizvedeno</span><b>${fmt(m2c)} m²</b>${dTxt}</div><div class="kpi"><span>Radnih naloga</span><b>${nOrd}</b></div><div class="kpi"><span>Prodaja (bez PDV)</span><b>${money(sum(cm,"prodaja"))}</b></div><div class="kpi"><span>Bruto zarada</span><b${red}>${money(bruto)}</b></div></div>
    ${prow}
-   <div class="hs" style="margin-top:16px">Proizvedeno po mesecima (m²)</div><div class="bars">${bars}</div>
+   <div class="hs" style="margin-top:16px">Proizvedeno po mesecima (m²)</div><div class="bars${G?" y12":""}">${bars}</div>
   </div>
   <div class="card">
    <div class="row" style="justify-content:space-between;margin-bottom:6px"><b>Nalozi u radu (${inWork.length})</b><span style="color:var(--mu);font-size:13px">${fmt(inWork.reduce((t,o)=>t+num(o.totalM2),0))} m²</span></div>
