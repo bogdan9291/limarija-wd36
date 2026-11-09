@@ -311,11 +311,13 @@ input:focus,select:focus{outline:0;border-bottom-color:var(--ac);background:var(
      <div><label>Godina</label><input id="oYr" inputmode="numeric"></div>
      <div><label>Datum</label><input id="oDate" type="date"></div>
      <div><label>Napomena (opciono)</label><input id="oNote"></div>
+     <div id="oCeneBox"><label>Cene na otpremnici</label><select id="oCene"><option value="0">Bez cena</option><option value="1">Sa cenama</option></select></div>
+     <div id="oPdvBox" class="hide"><label>PDV na otpremnici</label><select id="oPdv"></select></div>
     </div></div>
    <div id="oDeliv" class="lockmsg hide" style="margin-top:12px"></div>
-   <div class="sc" style="margin-top:12px"><table><thead><tr><th>Vrsta robe</th><th>Boja</th><th>Jed.</th><th>Količina</th><th></th></tr></thead><tbody id="olines"></tbody></table></div>
+   <div class="sc" style="margin-top:12px"><table><thead id="ohead"></thead><tbody id="olines"></tbody></table></div>
    <div class="row" style="margin-top:8px"><button id="oAdd">+ Dodaj stavku</button><button id="oPickBtn">+ Dodaj grupe iz naloga</button></div><div id="oPick" class="hide"></div>
-   <div style="font-size:12px;color:var(--mu);margin-top:8px">Stavke su preuzete iz izvora. Izmeni količinu isporučene robe ili ukloni stavke koje nisu isporučene. Cene se ne prikazuju.</div></div>
+   <div id="oHint" style="font-size:12px;color:var(--mu);margin-top:8px"></div></div>
   <div class="row bar"><button class="p" id="oSave">Sačuvaj</button><button id="oPdf">Preuzmi PDF za štampu</button><button id="oMail">Pošalji mejlom</button><button id="oSrc">← Izvor</button><button id="oBack">Lista otpremnica</button><button class="d" id="oDel">Obriši</button><span id="ostatus" style="color:var(--mu);font-size:13px"></span></div>
  </div>
 
@@ -372,7 +374,7 @@ function ask(m){return new Promise(r=>{$("ovm").textContent=m;$("ov").classList.
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const fmt=n=>(Math.round(n*100)/100).toFixed(2).replace(".",",");
 const custLine=(a,t,p)=>{const x=[];if(a&&String(a).trim())x.push(esc(String(a).trim()));if(t&&String(t).trim())x.push("Tel: "+esc(String(t).trim()));if(p&&String(p).trim())x.push("PIB: "+esc(String(p).trim()));return x.map(l=>`<small style="display:block;font-size:12.5px;font-weight:400;color:#444a52;margin-top:2px">${l}</small>`).join("")};
-const FOOT=`<div class="sfoot"><hr><div><span class="f1">Kovačka radionica WD-36 Miloš Spasić PR</span> · PIB: 110029026 · Lole Ribara 40, 25250 Odžaci · Tel: 069/4567-999 · Tekući račun: 325-9500600059441-13</div></div>`;
+const FOOT=`<div class="sfoot"><hr><div><span class="f1">Miloš Spasić PR Kovačka radionica WD-36</span> · PIB: 110029026 · Lole Ribara 40, 25250 Odžaci · Tel: 069/4567-999 · Tekući račun: 325-9500600059441-13</div></div>`;
 const wf=h=>h+FOOT;
 const BHEX={"antracit":"#3b3f44","crna":"#111","bordo":"#6d1a2a","braon":"#6b4226","plava":"#1f4e9c","bela":"#fff","zelena":"#2e6b3a","silver":"#b8bcc2","drvo dekor":"#9a6a3a","pocink.":"#d3d6da"};
 const bj=b=>{const t=String(b||"").trim();if(!t)return"–";const h=BHEX[t.toLowerCase()];return esc(t)};
@@ -488,7 +490,7 @@ function renderSheet(){
       return `<tr><td>${i+1}.</td><td>${esc(it.vrsta)}</td><td>${dv}</td>${ex}<td>${bj(it.boja)}</td><td>${esc(it.kom)}</td><td>${qtyTxt(it)}</td></tr>`}).join("");
     const cg=tip==="trapez"?CG:tip==="srafovska"?CG4:CG7;
     return `<div class="sg"><div class="st">${TIPOVI[tip]}</div><table>${cg}<thead><tr><th>#</th>${TH[tip].map(h=>`<th>${h}</th>`).join("")}<th>Ukupno</th></tr></thead><tbody>${rows}</tbody><tfoot><tr><td colspan="${n-2}" style="text-align:right">${multi?"Zbir:":"UKUPNO:"}</td><td>${st.k}</td><td>${st.m?fmt(st.m)+" m²":"–"}</td></tr></tfoot></table></div>`}).join("");
-  $("sheet").innerHTML=wf(`<div class="bn"><div><h2>Limarija WD-36</h2><div class="ad">Lole Ribara 40, 25250 Odžaci<br>PIB: 110029026<br>Tekući račun: 325-9500600059441-13</div></div></div><div class="bd">
+  $("sheet").innerHTML=wf(`<div class="bn"><div><h2>Limarija WD-36</h2><div class="ad"><b>Miloš Spasić PR Kovačka radionica WD-36</b><br>Lole Ribara 40, 25250 Odžaci<br>PIB: 110029026 · MB: 64594940<br>Tekući račun: 325-9500600059441-13</div></div></div><div class="bd">
   <div class="hd"><div style="flex:3"><span>Kupac</span><b>${esc(cur.customer)}</b>${custLine(cur.addr,cur.phone,cur.pib)}</div><div style="flex:2"><span>Radni nalog</span><b class="no">${esc(cur.no)}/${esc(cur.year)}</b><span style="margin-top:10px">Datum</span><b>${fmtDate(cur.date)}</b></div></div>
   ${parts}
   ${multi?`<table class="sg gt ns">${CG}<tbody><tr><td colspan="4" style="text-align:right;font-weight:700">UKUPNO (sve grupe):</td><td style="font-weight:700">${t.k}</td><td style="font-weight:700">${t.m?fmt(t.m)+" m²":"–"}</td></tr></tbody></table>`:""}
@@ -701,7 +703,7 @@ function priceSheet(){
     const rows=prices.filter(p=>(p.grupa||"trapez")===g&&String(p.naziv).trim()).sort((x,y)=>String(x.naziv).localeCompare(String(y.naziv),"sr-Latn")).map((p,i)=>`<tr><td>${i+1}.</td><td>${esc(p.naziv)}</td><td>${esc(p.jm)}</td><td>${money(p.vele)}</td><td>${money(r2(p.vele*(1+pdvRate/100)))}</td></tr>`).join("");
     if(!rows)return"";
     return `<div class="sg"><div class="st">${TIPOVI[g]}</div><table>${CG5}<thead><tr><th>#</th><th>Naziv</th><th>Jed. mere</th><th>Veleprodajna cena (RSD)</th><th>Maloprodajna cena (RSD)</th></tr></thead><tbody>${rows}</tbody></table></div>`}).join("");
-  $("sheet").innerHTML=wf(`<div class="bn"><div><h2>Limarija WD-36</h2><div class="ad">Lole Ribara 40, 25250 Odžaci<br>PIB: 110029026<br>Tekući račun: 325-9500600059441-13</div></div></div><div class="bd">
+  $("sheet").innerHTML=wf(`<div class="bn"><div><h2>Limarija WD-36</h2><div class="ad"><b>Miloš Spasić PR Kovačka radionica WD-36</b><br>Lole Ribara 40, 25250 Odžaci<br>PIB: 110029026 · MB: 64594940<br>Tekući račun: 325-9500600059441-13</div></div></div><div class="bd">
   <div class="hd"><div style="flex:2"><span>Dokument</span><b class="no">Cenovnik</b></div><div><span>Datum</span><b>${fmtDate(new Date().toISOString().slice(0,10))}</b></div><div><span>PDV</span><b>${esc(pdvRate)}%</b></div></div>
   ${parts}</div>`);
 }
@@ -1054,7 +1056,7 @@ function proSheet(){
   const rows=[...grp.values()].map((l,i)=>`<tr><td>${i+1}.</td><td>${esc(goodsName(l))}</td><td>${esc(l.jm||"m²")}</td><td>${fmt(r2(l.m2))}</td><td>${money(fz?priceVat(l,t.rate):cn(l))}</td><td>${money(lineAmt(l,t.rate,fz?"fizicko":"pravno"))}</td></tr>`).join("");
   const ntx=[pcur.orderNo?"Po radnom nalogu br. "+esc(pcur.orderNo):"",pcur.note?esc(pcur.note):""].filter(Boolean).join(" · ");
   const R='style="text-align:right"';
-  $("sheet").innerHTML=wf(`<div class="bn"><div><h2>Limarija WD-36</h2><div class="ad">Lole Ribara 40, 25250 Odžaci<br>PIB: 110029026<br>Tekući račun: 325-9500600059441-13</div></div></div><div class="bd">
+  $("sheet").innerHTML=wf(`<div class="bn"><div><h2>Limarija WD-36</h2><div class="ad"><b>Miloš Spasić PR Kovačka radionica WD-36</b><br>Lole Ribara 40, 25250 Odžaci<br>PIB: 110029026 · MB: 64594940<br>Tekući račun: 325-9500600059441-13</div></div></div><div class="bd">
   <div class="hd"><div style="flex:3"><span>Kupac</span><b>${esc(pcur.customer)}</b>${custLine(pcur.addr,pcur.phone,pcur.pib)}</div><div style="flex:2"><span>Predračun</span><b class="no">${esc(pcur.no)}/${esc(pcur.year)}</b><span style="margin-top:10px">Datum</span><b>${fmtDate(pcur.date)}</b></div></div>
   <div class="sg"><table>${CG8}<thead><tr><th>#</th><th>Vrsta robe</th><th>Jed.</th><th>Količina</th><th>${fz?"Cena sa PDV":"Cena bez PDV"}</th><th>Iznos</th></tr></thead><tbody>${rows}</tbody></table></div>
   <table class="sg ns" style="width:60%;margin-left:auto"><colgroup><col style="width:50%"><col style="width:50%"></colgroup><tbody>
@@ -1265,10 +1267,10 @@ const today=()=>new Date().toISOString().slice(0,10);
 function nextOtp(y){const n=otpr.filter(p=>p.year===y).map(p=>p.no);return(n.length?Math.max(...n):0)+1}
 const dzTxt=(d,jm)=>{const n=num(d);if(!n)return"";return n+(jm==="metar"?" m":jm==="m²"?" mm":"")};
 const qf=(q,jm)=>((jm==="komad"||jm==="set")&&Number.isInteger(q)?String(q):fmt(q))+" "+(jm||"m²");
-function aggLines(raw){
+function aggLines(raw,wp){
   const m=new Map();
-  raw.forEach(l=>{const k=[String(l.vrsta).trim().toLowerCase(),String(l.boja||"").toLowerCase(),l.jm].join("|");if(m.has(k))m.get(k).push(l);else m.set(k,[l])});
-  return [...m.values()].map(a=>{if(a.length===1)return a[0];const f=a[0];return{vrsta:f.vrsta,duzina:"",boja:f.boja,kom:a.reduce((t,l)=>t+num(l.kom),0),kolicina:r2(a.reduce((t,l)=>t+num(l.kolicina),0)),jm:f.jm}});
+  raw.forEach(l=>{const k=[String(l.vrsta).trim().toLowerCase(),String(l.boja||"").toLowerCase(),l.jm,wp?cn(l):""].join("|");if(m.has(k))m.get(k).push(l);else m.set(k,[l])});
+  return [...m.values()].map(a=>{if(a.length===1)return a[0];const f=a[0];return{vrsta:f.vrsta,duzina:"",boja:f.boja,kom:a.reduce((t,l)=>t+num(l.kom),0),kolicina:r2(a.reduce((t,l)=>t+num(l.kolicina),0)),jm:f.jm,cena:f.cena}});
 }
 const delKey=l=>[nrm(l.vrsta),nrm(l.boja),l.jm||"m²"].join("|");
 const orderItems=o=>(o.items&&o.items.length)?o.items:(o.segments||[]).flatMap(sg=>(sg.items||[]).map(i=>({...i,tip:i.tip||sg.tip})));
@@ -1332,6 +1334,7 @@ function openOtp(o){
   ocur.lines.forEach(l=>{if(!l.oid&&ocur.orderId)l.oid=ocur.orderId});
   $("oview").appendChild($("sheetbox"));
   $("oNo").value=ocur.no;$("oYr").value=ocur.year;$("oCust").value=ocur.customer;$("oAddr").value=ocur.addr||"";$("oPhone").value=ocur.phone||"";$("oPib").value=ocur.pib||"";$("oDate").value=ocur.date;$("oNote").value=ocur.note||"";
+  $("oCene").value=ocur.cene?"1":"0";$("oCeneBox").classList.toggle("hide",ROLE!=="vlasnik");
   $("oNo").disabled=$("oYr").disabled=!ocur._new;$("oDel").classList.toggle("hide",!!ocur._new);$("ostatus").textContent="";
   show("ov");renderOtp();
   if(ocur._pick){pickAll=ocur._pick==="*";renderPick(ocur._pick==="*"?"":ocur._pick)}else $("oPick").classList.add("hide");
@@ -1368,31 +1371,57 @@ function renderPick(focus){
    '<button class="p" id="oPickAdd"'+(c.length?"":" disabled")+'>Dodaj</button><button id="oPickAll">'+(pickAll?"Samo isti kupac":"Svi kupci")+'</button><button id="oPickClose">Zatvori</button></div>';
   pickGroups();
 }
+/* cene na otpremnici: vidi ih samo vlasnik; cena se uzima iz povezanog predračuna, pa iz cenovnika */
+const otpC=()=>!!(ocur&&ocur.cene)&&ROLE==="vlasnik";
+const otpRate=()=>{const r=parseFloat(String(ocur.pdv??pdvRate).replace(",","."));return isFinite(r)?r:0};
+function otpPrice(l){
+  const v=nrm(l.vrsta),bj=nrm(l.boja),qs=[];
+  if(ocur.izvorTip==="predracun")qs.push(proformas.find(x=>x.year+"_"+x.no===ocur.izvorId));
+  if(l.oid)qs.push(...proformas.filter(x=>x.orderId===l.oid));
+  for(const q of qs.filter(Boolean)){const ls=q.lines||[],h=ls.find(z=>nrm(z.vrsta)===v&&nrm(z.boja)===bj&&cn(z))||ls.find(z=>nrm(z.vrsta)===v&&cn(z));if(h)return cn(h)}
+  return priceFor(l.vrsta);
+}
+function otpFillPrices(){ocur.lines.forEach(l=>{if(l.cena==null&&String(l.vrsta).trim()){const c=otpPrice(l);l.cena=c==null?"":c}})}
 function renderOtp(){
-  $("olines").innerHTML=ocur.lines.map((l,i)=>`<tr data-i="${i}"><td><input data-of="vrsta" value="${esc(l.vrsta)}" style="min-width:190px">${l.oid?`<div class="osrc">${esc(srcLbl(l))}</div>`:""}</td><td><select data-of="boja">${bopts(["",...BOJE],l.boja||"")}</select></td><td><select data-of="jm">${opts(UNITS.includes(l.jm)?UNITS:[...UNITS,l.jm],l.jm||"m²")}</select></td><td><input data-of="kolicina" inputmode="decimal" value="${esc(l.kolicina)}" style="width:90px"></td><td><button class="d" data-odel title="Ukloni stavku">✕</button></td></tr>`).join("");
+  const C=otpC();if(C)otpFillPrices();
+  const pr=otpRate(),on=pr>0?pr:pdvRate;$("oPdvBox").classList.toggle("hide",!C);
+  $("oPdv").innerHTML='<option value="'+esc(on)+'">PDV '+esc(on)+'%</option><option value="0">Bez PDV</option>';$("oPdv").value=pr>0?String(on):"0";
+  $("ohead").innerHTML="<tr><th>Vrsta robe</th><th>Boja</th><th>Jed.</th><th>Količina</th>"+(C?"<th>Cena (bez PDV)</th>":"")+"<th></th></tr>";
+  $("oHint").textContent="Stavke su preuzete iz izvora. Izmeni količinu isporučene robe ili ukloni stavke koje nisu isporučene. "+(C?"Cene su preuzete iz predračuna ili cenovnika. Crveno polje znači da cene nema – upiši je ručno.":"Cene se ne prikazuju.");
+  $("olines").innerHTML=ocur.lines.map((l,i)=>`<tr data-i="${i}"><td><input data-of="vrsta" value="${esc(l.vrsta)}" style="min-width:190px">${l.oid?`<div class="osrc">${esc(srcLbl(l))}</div>`:""}</td><td><select data-of="boja">${bopts(["",...BOJE],l.boja||"")}</select></td><td><select data-of="jm">${opts(UNITS.includes(l.jm)?UNITS:[...UNITS,l.jm],l.jm||"m²")}</select></td><td><input data-of="kolicina" inputmode="decimal" value="${esc(l.kolicina)}" style="width:90px"></td>${C?`<td><input data-of="cena" inputmode="decimal" value="${esc(l.cena??"")}" style="width:100px${cn(l)||!String(l.vrsta).trim()?"":";border-color:#c0392b"}"></td>`:""}<td><button class="d" data-odel title="Ukloni stavku">✕</button></td></tr>`).join("");
   oSheet();
 }
 function oSheet(){
   try{refreshIzvor();updateDeliv()}catch(e){}
-  const CG='<colgroup><col style="width:8%"><col style="width:58%"><col style="width:14%"><col style="width:20%"></colgroup>';
-  const vis=aggLines(ocur.lines.filter(l=>String(l.vrsta).trim()||num(l.kolicina)).map(l=>({...l,vrsta:String(l.vrsta).trim(),jm:l.jm||"m²"})));
-  const rows=vis.map((l,i)=>`<tr><td>${i+1}.</td><td>${esc(goodsName(l))}</td><td>${esc(l.jm||"m²")}</td><td>${fmt(num(l.kolicina))}</td></tr>`).join("");
+  const C=otpC(),rate=otpRate(),fz=false,kup="pravno",R='style="text-align:right"'; /* cene na otpremnici su uvek bez PDV */
+  const CG=C?'<colgroup><col style="width:5%"><col style="width:41%"><col style="width:9%"><col style="width:13%"><col style="width:16%"><col style="width:16%"></colgroup>':'<colgroup><col style="width:8%"><col style="width:58%"><col style="width:14%"><col style="width:20%"></colgroup>';
+  const vis=aggLines(ocur.lines.filter(l=>String(l.vrsta).trim()||num(l.kolicina)).map(l=>({...l,vrsta:String(l.vrsta).trim(),jm:l.jm||"m²"})),C);
+  const pl=l=>({cena:l.cena,m2:l.kolicina});
+  const rows=vis.map((l,i)=>`<tr><td>${i+1}.</td><td>${esc(goodsName(l))}</td><td>${esc(l.jm||"m²")}</td><td>${fmt(num(l.kolicina))}</td>${C?`<td>${money(fz?priceVat(l,rate):cn(l))}</td><td>${money(lineAmt(pl(l),rate,kup))}</td>`:""}</tr>`).join("");
   const tq=r2(vis.reduce((t,l)=>t+num(l.kolicina),0));
-  const tot=vis.length?`<tr><td colspan="3" style="text-align:right"><b>Ukupno:</b></td><td style="text-align:center"><b>${fmt(tq)}</b></td></tr>`:"";
+  const k=C?calcPro(vis.map(pl),rate,kup):null;
+  const tot=vis.length?`<tr><td colspan="3" style="text-align:right"><b>Ukupno:</b></td><td style="text-align:center"><b>${fmt(tq)}</b></td>${C?`<td></td><td style="text-align:center"><b>${money(k.b)}</b></td>`:""}</tr>`:"";
+  const sums=C&&vis.length?`<table class="sg ns" style="width:60%;margin-left:auto"><colgroup><col style="width:50%"><col style="width:50%"></colgroup><tbody>
+  ${rate>0?`<tr><td ${R}>Osnovica (bez PDV):</td><td ${R}>${money(k.b)} RSD</td></tr><tr><td ${R}>PDV (${esc(rate)}%):</td><td ${R}>${money(k.p)} RSD</td></tr>`:""}
+  <tr><td style="background:#e8a317;color:#1d2330;font-weight:700;text-align:right">${rate>0?"UKUPNO SA PDV:":"UKUPNO (bez PDV):"}</td><td style="background:#e8a317;color:#1d2330;font-weight:700;text-align:right">${money(k.t)} RSD</td></tr></tbody></table>`:"";
   const ntx=[ocur.izvor?esc(ocur.izvor):"",ocur.note?esc(ocur.note):""].filter(Boolean).join(" · ");
   const sg='style="width:42%;border-top:1px solid #444;padding-top:4px;text-align:center;font-size:13px"';
-  $("sheet").innerHTML=wf(`<div class="bn"><div><h2>Limarija WD-36</h2><div class="ad">Lole Ribara 40, 25250 Odžaci<br>PIB: 110029026<br>Tekući račun: 325-9500600059441-13</div></div></div><div class="bd">
+  $("sheet").innerHTML=wf(`<div class="bn"><div><h2>Limarija WD-36</h2><div class="ad"><b>Miloš Spasić PR Kovačka radionica WD-36</b><br>Lole Ribara 40, 25250 Odžaci<br>PIB: 110029026 · MB: 64594940<br>Tekući račun: 325-9500600059441-13</div></div></div><div class="bd">
   <div class="hd"><div style="flex:3"><span>Kupac</span><b>${esc(ocur.customer)}</b>${custLine(ocur.addr,ocur.phone,ocur.pib)}</div><div style="flex:2"><span>Otpremnica</span><b class="no">${esc(ocur.no)}/${esc(ocur.year)}</b><span style="margin-top:10px">Datum</span><b>${fmtDate(ocur.date)}</b></div></div>
-  <div class="sg"><table>${CG}<thead><tr><th>#</th><th>Vrsta robe</th><th>Jed.</th><th>Količina</th></tr></thead><tbody>${rows}${tot}</tbody></table></div>
+  <div class="sg"><table>${CG}<thead><tr><th>#</th><th>Vrsta robe</th><th>Jed.</th><th>Količina</th>${C?`<th>${rate>0?"Cena bez PDV":"Cena"}</th><th>Iznos</th>`:""}</tr></thead><tbody>${rows}${tot}</tbody></table></div>
+  ${sums}
   ${ntx?`<div class="nt">${ntx}</div>`:""}
   <div class="sigblock" style="display:flex;justify-content:space-between;margin-top:56px"><div ${sg}>Robu izdao</div><div ${sg}>Robu primio</div></div></div>`);
 }
+$("oPdv").onchange=()=>{ocur.pdv=num($("oPdv").value);odirty=true;oSheet()};
+$("oCene").onchange=()=>{ocur.cene=$("oCene").value==="1";if(ocur.cene){if(ocur.pdv==null)ocur.pdv=pdvRate}odirty=true;renderOtp();
+  if(ocur.cene&&ocur.lines.some(l=>String(l.vrsta).trim()&&!cn(l)))$("ostatus").textContent="Neke stavke nemaju cenu – upiši je ručno.";else $("ostatus").textContent=""};
 ["oNo","oYr","oCust","oAddr","oPhone","oPib","oDate","oNote"].forEach(id=>$(id).addEventListener("input",()=>{
   ocur.no=parseInt($("oNo").value)||0;ocur.year=parseInt($("oYr").value)||ocur.year;ocur.customer=$("oCust").value;ocur.addr=$("oAddr").value;ocur.phone=$("oPhone").value;ocur.pib=$("oPib").value;ocur.date=$("oDate").value;ocur.note=$("oNote").value;odirty=true;oSheet();
 }));
 $("olines").addEventListener("input",e=>{
   const tr=e.target.closest("tr"),f=e.target.dataset.of;if(!tr||!f)return;
-  ocur.lines[+tr.dataset.i][f]=e.target.value;odirty=true;oSheet();
+  ocur.lines[+tr.dataset.i][f]=e.target.value;odirty=true;if(f==="cena")e.target.style.borderColor=num(e.target.value)>0?"":"#c0392b";oSheet();
 });
 $("olines").addEventListener("click",e=>{
   if(e.target.dataset.odel===undefined)return;
@@ -1406,8 +1435,8 @@ $("oSave").onclick=async()=>{
   const lines=ocur.lines.filter(l=>String(l.vrsta).trim()&&num(l.kolicina)>0);
   if(!lines.length){S.textContent="Dodaj bar jednu stavku sa vrstom robe i količinom.";return}
   const now=new Date().toISOString(),old=otpr.find(x=>x.year===ocur.year&&x.no===ocur.no);
-  const doc={no:ocur.no,year:ocur.year,izvorTip:ocur.izvorTip||"",izvorId:ocur.izvorId||"",izvor:ocur.izvor||"",orderId:ocur.orderId||"",customer:ocur.customer.trim(),addr:(ocur.addr||"").trim(),phone:(ocur.phone||"").trim(),pib:(ocur.pib||"").trim(),date:ocur.date,note:ocur.note||"",
-   lines:lines.map(l=>({vrsta:String(l.vrsta).trim(),duzina:l.duzina||"",boja:l.boja||"",kom:l.kom===""||l.kom==null?"":num(l.kom),kolicina:num(l.kolicina),jm:l.jm||"m²",oid:l.oid||"",sid:l.sid||"",seg:l.seg||"",onum:l.oid?onumOf(l):""})),createdAt:old?old.createdAt:now,updatedAt:now};
+  const doc={no:ocur.no,year:ocur.year,izvorTip:ocur.izvorTip||"",izvorId:ocur.izvorId||"",izvor:ocur.izvor||"",orderId:ocur.orderId||"",customer:ocur.customer.trim(),addr:(ocur.addr||"").trim(),phone:(ocur.phone||"").trim(),pib:(ocur.pib||"").trim(),date:ocur.date,note:ocur.note||"",cene:!!ocur.cene,pdv:ocur.pdv??pdvRate,
+   lines:lines.map(l=>({vrsta:String(l.vrsta).trim(),duzina:l.duzina||"",boja:l.boja||"",kom:l.kom===""||l.kom==null?"":num(l.kom),kolicina:num(l.kolicina),jm:l.jm||"m²",oid:l.oid||"",sid:l.sid||"",seg:l.seg||"",onum:l.oid?onumOf(l):"",...(l.cena!=null&&l.cena!==""?{cena:cn(l)}:{})})),createdAt:old?old.createdAt:now,updatedAt:now};
   try{const wasNew=ocur._new;await db.collection("otpremnice").doc(ocur.year+"_"+ocur.no).set(doc);custSync(doc);
     const key=ocur.year+"_"+ocur.no,ids=[...new Set([...doc.lines.map(l=>l.oid),...((old&&old.lines)||[]).map(l=>lineOid(old,l))].filter(Boolean))];
     for(const id of ids){const oo=orders.find(x=>oid(x)===id);if(!oo)continue;
