@@ -129,8 +129,9 @@ input:focus,select:focus{outline:0;border-bottom-color:var(--ac);background:var(
 .setrow{display:flex;gap:18px;align-items:center;justify-content:space-between;padding:6px 0}
 .side nav button span{overflow:hidden;text-overflow:ellipsis;max-width:100%}
 .role-badge{margin:auto 8px 0;padding:8px 10px;background:#3a3f46;color:#cfd3d8;font-size:12px;line-height:1.4}.role-badge b{color:#e8a317}
-.role-radnik #btnPro,.role-radnik #btnCopy,.role-radnik #btnDel,.role-radnik #btnSeg,.role-radnik #btnNew,.role-radnik #btnNewH,.role-radnik [data-delo],.role-radnik [data-copyo]{display:none!important}
-.role-pregled .bar .p,.role-pregled .bar .d,.role-pregled #btnNew,.role-pregled #btnNewH,.role-pregled #btnCopy,.role-pregled #pCopy,.role-pregled #kNew,.role-pregled [data-copyo],.role-pregled [data-copyp],.role-pregled [data-delo],.role-pregled [data-delp],.role-pregled #btnNab,.role-pregled #btnZal,.role-pregled #btnSeg,.role-pregled #pPayAdd,.role-pregled #oAdd{display:none!important}
+#view.promode #fStW,#view.promode .gstw,#view.promode .segbadge,#view.promode #sheetbox,#view.promode #btnPdf,#view.promode #btnPro,#view.promode #btnOtp,#view.promode #btnCopy,#view.promode #btnDel{display:none!important}
+.role-radnik #btnNewPH,.role-radnik #btnPro,.role-radnik #btnCopy,.role-radnik #btnDel,.role-radnik #btnSeg,.role-radnik #btnNew,.role-radnik #btnNewH,.role-radnik [data-delo],.role-radnik [data-copyo]{display:none!important}
+.role-pregled #pNew,.role-pregled #btnNewPH,.role-pregled #pEdit,.role-pregled #pMkOrd,.role-pregled .bar .p,.role-pregled .bar .d,.role-pregled #btnNew,.role-pregled #btnNewH,.role-pregled #btnCopy,.role-pregled #pCopy,.role-pregled #kNew,.role-pregled [data-copyo],.role-pregled [data-copyp],.role-pregled [data-delo],.role-pregled [data-delp],.role-pregled #btnNab,.role-pregled #btnZal,.role-pregled #btnSeg,.role-pregled #pPayAdd,.role-pregled #oAdd{display:none!important}
 .role-pregled #ptb,.role-pregled #ntb,.role-pregled #ztb,.role-pregled #oview .card,.role-pregled #kDet > .card:first-child,.role-pregled #skartBox .row,.role-pregled #stockCard .row,.role-pregled #plUn{pointer-events:none}
 @media (max-width:560px){.side nav button span{display:none}.side nav button{padding:11px 2px}}
 /* printable sheet: always light, A4 */
@@ -168,7 +169,7 @@ input:focus,select:focus{outline:0;border-bottom-color:var(--ac);background:var(
  <h2 class="ptitle" id="ptitle">Početna</h2>
  <div id="bkBanner" class="lockmsg hide" style="margin-bottom:14px"><span id="bkBanTx"></span> <span class="row" style="display:inline-flex;margin-top:8px"><button class="p" id="bkbDrive">Sačuvaj na Google Drive</button><button id="bkbJson">Preuzmi kopiju</button><button id="bkbLater">Podseti me sutra</button></span></div>
  <datalist id="custl"></datalist>
- <div id="home"><div class="row" style="justify-content:space-between;margin-bottom:12px"><div><div id="hdate" style="color:var(--mu);font-size:13px"></div></div><button class="p" id="btnNewH">+ Novi radni nalog</button></div><div class="card" style="padding:10px 14px"><input id="gs" placeholder="Pretraga: kupac, broj dokumenta (npr. 12/2026), telefon, PIB…" style="width:100%"><div id="gsr" class="sc hide" style="margin-top:8px"></div></div><div id="hbody"></div></div>
+ <div id="home"><div class="row" style="justify-content:space-between;margin-bottom:12px"><div><div id="hdate" style="color:var(--mu);font-size:13px"></div></div><div class="row"><button id="btnNewPH">+ Novi predračun</button><button class="p" id="btnNewH">+ Novi radni nalog</button></div></div><div class="card" style="padding:10px 14px"><input id="gs" placeholder="Pretraga: kupac, broj dokumenta (npr. 12/2026), telefon, PIB…" style="width:100%"><div id="gsr" class="sc hide" style="margin-top:8px"></div></div><div id="hbody"></div></div>
 
  <div id="list" class="hide">
   <div class="card">
@@ -185,7 +186,7 @@ input:focus,select:focus{outline:0;border-bottom-color:var(--ac);background:var(
   </div>
  </div>
 
- <div id="plist" class="hide"><div class="card"><div class="sc"><table><thead><tr><th>Broj</th><th>Datum</th><th>Kupac</th><th>Radni nalog</th><th class="n">Ukupno (RSD)</th><th></th></tr></thead><tbody id="pltb"></tbody></table></div><div class="msg" id="plempty"></div></div></div>
+ <div id="plist" class="hide"><div class="card"><div class="row" style="margin-bottom:10px"><button class="p" id="pNew">+ Novi predračun</button></div><div class="sc"><table><thead><tr><th>Broj</th><th>Datum</th><th>Kupac</th><th>Radni nalog</th><th class="n">Ukupno (RSD)</th><th></th></tr></thead><tbody id="pltb"></tbody></table></div><div class="msg" id="plempty"></div></div></div>
 
  <div id="cen" class="hide"><div class="card">
     <div id="ptb"></div>
@@ -291,7 +292,7 @@ input:focus,select:focus{outline:0;border-bottom-color:var(--ac);background:var(
     </div></div>
    <div class="sc" style="margin-top:12px"><table><thead id="plh"><tr><th>Vrsta robe</th><th>Boja</th><th>Dužina</th><th>Kom.</th><th class="n">Količina</th><th>Cena</th><th class="n">Iznos</th></tr></thead><tbody id="plines"></tbody></table></div>
    <div id="phint" style="font-size:12px;color:var(--mu);margin-top:8px"></div></div>
-  <div class="row bar"><button class="p" id="pSave">Sačuvaj</button><button id="pPdf">Preuzmi PDF za štampu</button><button id="pMail">Pošalji mejlom</button><button id="pOtp">Otpremnica</button><button id="pCopy">Kopiraj</button><button id="pOrd">← Radni nalog</button><button id="pBack">Lista predračuna</button><button class="d" id="pDel">Obriši</button><span id="pstatus" style="color:var(--mu);font-size:13px"></span></div>
+  <div class="row bar"><button class="p" id="pSave">Sačuvaj</button><button class="p hide" id="pMkOrd">Napravi radni nalog</button><button class="hide" id="pEdit">Izmeni stavke</button><button id="pPdf">Preuzmi PDF za štampu</button><button id="pMail">Pošalji mejlom</button><button id="pOtp">Otpremnica</button><button id="pCopy">Kopiraj</button><button id="pOrd">← Radni nalog</button><button id="pBack">Lista predračuna</button><button class="d" id="pDel">Obriši</button><span id="pstatus" style="color:var(--mu);font-size:13px"></span></div>
  </div>
 
 <div id="olist" class="hide"><div class="card"><div class="row" style="margin-bottom:10px"><button class="p" id="oNew">+ Nova otpremnica</button></div><div class="sc"><table><thead><tr><th>Broj</th><th>Datum</th><th>Kupac</th><th>Izvor</th><th></th></tr></thead><tbody id="oltb"></tbody></table></div><div class="msg" id="olempty"></div></div></div>
@@ -333,11 +334,11 @@ input:focus,select:focus{outline:0;border-bottom-color:var(--ac);background:var(
      <div><label>PIB (pravna lica)</label><input id="fPib" inputmode="numeric"></div>
     </div>
     <div>
-     <div class="stl">Radni nalog</div>
-     <div><label>Broj naloga</label><input id="fNo" inputmode="numeric"></div>
+     <div class="stl" id="fStl">Radni nalog</div>
+     <div><label id="fNoL">Broj naloga</label><input id="fNo" inputmode="numeric"></div>
      <div><label>Godina</label><input id="fYr" inputmode="numeric"></div>
      <div><label>Datum</label><input id="fDate" type="date"></div>
-     <div><label>Status</label><select id="fSt"><option value="u_radu">U radu</option><option value="zavrsen">Završen</option><option value="isporucen">Isporučen</option></select></div>
+     <div id="fStW"><label>Status</label><select id="fSt"><option value="u_radu">U radu</option><option value="zavrsen">Završen</option><option value="isporucen">Isporučen</option></select></div>
     </div>
    </div>
    <div class="stl" style="margin-top:18px;margin-bottom:8px">Stavke</div>
@@ -460,7 +461,7 @@ function cells(it,tip){
 }
 const newSid=()=>"g"+Date.now().toString(36)+Math.random().toString(36).slice(2,5);
 function updSegBadges(){
-  try{if(!cur||cur._new)return;const o=orders.find(x=>oid(x)===oid(cur));
+  try{if(!cur||cur._new||cur._pro)return;const o=orders.find(x=>oid(x)===oid(cur));
   document.querySelectorAll("#segs [data-sb]").forEach(el=>{let t="Nije otpremljeno",c="u_radu";
     if(o){const d=orderDeliv(o,null).find(z=>z.sid===el.dataset.sb);if(d){if(!d.lines.length&&d.tot>0){t="Otpremljeno ✓";c="isporucen"}else if(d.del>0.005){t="Delimično otpremljeno";c="zavrsen"}}}
     el.textContent=t;el.className="tag segbadge "+c})}catch(e){}
@@ -469,7 +470,7 @@ function renderItems(){
   cur.segments.forEach(sg=>{if(!sg.sid)sg.sid=newSid();if(!sg.status)sg.status=cur.status==="u_radu"?"u_radu":"zavrsen"});
   cur.segments.forEach(sg=>{sg.tip=sg.tip||"trapez";sg.items.forEach(i=>{i.tip=sg.tip;if(!i.vrsta){const L=vl("",sg.tip);if(L.length)i.vrsta=L[0]}if(i.boja===undefined&&sg.tip!=="srafovska")i.boja=defBoja()})});
   $("segs").innerHTML=cur.segments.map((sg,si)=>{const t=segTot(sg),tip=sg.tip;return `<div class="seg" data-s="${si}">
-   <div class="row" style="margin-bottom:6px;align-items:flex-end"><span class="dh" data-drag="seg" title="Prevuci grupu za promenu redosleda" style="font-size:22px;padding-bottom:8px">⠿</span><div style="flex:1;min-width:160px"><label>Vrsta grupe</label><select data-st="1" style="font-weight:600">${Object.keys(TIPOVI).map(k=>`<option value="${k}"${k===tip?" selected":""}>${TIPOVI[k]}</option>`).join("")}</select></div><div style="width:150px"><label>Status grupe</label><select data-gst><option value="u_radu"${sg.status!=="zavrsen"?" selected":""}>U radu</option><option value="zavrsen"${sg.status==="zavrsen"?" selected":""}>Završena</option></select></div><span class="tag segbadge" data-sb="${sg.sid}"></span><button class="d" data-delseg${cur.segments.length<2?" disabled":""}>Ukloni grupu</button></div>
+   <div class="row" style="margin-bottom:6px;align-items:flex-end"><span class="dh" data-drag="seg" title="Prevuci grupu za promenu redosleda" style="font-size:22px;padding-bottom:8px">⠿</span><div style="flex:1;min-width:160px"><label>Vrsta grupe</label><select data-st="1" style="font-weight:600">${Object.keys(TIPOVI).map(k=>`<option value="${k}"${k===tip?" selected":""}>${TIPOVI[k]}</option>`).join("")}</select></div><div class="gstw" style="width:150px"><label>Status grupe</label><select data-gst><option value="u_radu"${sg.status!=="zavrsen"?" selected":""}>U radu</option><option value="zavrsen"${sg.status==="zavrsen"?" selected":""}>Završena</option></select></div><span class="tag segbadge" data-sb="${sg.sid}"></span><button class="d" data-delseg${cur.segments.length<2?" disabled":""}>Ukloni grupu</button></div>
    <div class="sc"><table><thead><tr><th>#</th>${TH[tip].map(h=>`<th>${h}</th>`).join("")}<th class="n">Ukupno</th><th></th></tr></thead><tbody>`+
    sg.items.map((it,i)=>`<tr data-i="${i}"><td style="white-space:nowrap"><span class="dh" data-drag="row" title="Prevuci za promenu redosleda">⠿</span>${i+1}.</td>${cells(it,tip)}<td class="n" data-m2>${qtyTxt(it)}</td><td><button class="d" data-del title="Ukloni stavku">✕</button></td></tr>`).join("")+
    `</tbody><tfoot><tr><td colspan="${TH[tip].length}" class="n"><b>Zbir grupe:</b></td><td data-sk><b>${t.k}</b></td><td class="n" data-sm><b>${t.m?fmt(t.m)+" m²":"–"}</b></td><td></td></tr></tfoot></table></div>
@@ -509,6 +510,7 @@ function openForm(o,isNew){
   renderItems();applyOrderLock();window.scrollTo(0,0);
 }
 async function closeForm(){
+  if(cur&&cur._pro){if(dirty&&!(await ask("Ima nesačuvanih izmena. Napustiti predračun?")))return;cur=null;dirty=false;$("view").appendChild($("sheetbox"));show("pl");return}
   if(dirty&&!(await ask("Ima nesačuvanih izmena. Napustiti nalog?")))return;
   cur=null;$("view").classList.add("hide");$("list").classList.remove("hide");$("btnNew").classList.remove("hide");renderList();
 }
@@ -585,15 +587,16 @@ $("segs").addEventListener("click",async e=>{
   else if(d.delseg!==undefined&&cur.segments.length>1&&await ask("Ukloniti celu grupu?")){cur.segments.splice(si,1);dirty=true;renderItems()}
 });
 
+function mkSegments(){return cur.segments.map(sg=>{
+    const items=sg.items.filter(it=>it.vrsta&&(num(it.kom)>0)&&(lenOf(it)?num(it.duzina)>0:true)&&(sg.tip!=="opsiv"||num(it.sirina)>0)).map(it=>({vrsta:it.vrsta,tip:sg.tip,duzina:num(it.duzina),sirina:num(it.sirina),boja:it.boja||"",kom:num(it.kom),jm:rowUnit(it),m2:r2(rowM2(it))}));
+    return{tip:sg.tip,title:TIPOVI[sg.tip],sid:sg.sid||newSid(),status:sg.status||"u_radu",items,totalKom:cntK(items),totalM2:sumM(items)};
+  }).filter(sg=>sg.items.length)}
 async function save(){
+  if(cur&&cur._pro)return saveProDraft();
   if(!db){$("status").textContent="Baza nije dostupna.";return false}
   syncHead();
   if(!cur.no||!cur.customer.trim()){$("status").textContent="Unesi broj naloga i kupca.";return false}
-  const r2=n=>Math.round(n*100)/100;
-  const segments=cur.segments.map(sg=>{
-    const items=sg.items.filter(it=>it.vrsta&&(num(it.kom)>0)&&(lenOf(it)?num(it.duzina)>0:true)&&(sg.tip!=="opsiv"||num(it.sirina)>0)).map(it=>({vrsta:it.vrsta,tip:sg.tip,duzina:num(it.duzina),sirina:num(it.sirina),boja:it.boja||"",kom:num(it.kom),jm:rowUnit(it),m2:r2(rowM2(it))}));
-    return{tip:sg.tip,title:TIPOVI[sg.tip],sid:sg.sid||newSid(),status:sg.status||"u_radu",items,totalKom:cntK(items),totalM2:sumM(items)};
-  }).filter(sg=>sg.items.length);
+  const segments=mkSegments();
   if(!segments.length){$("status").textContent="Dodaj bar jednu stavku sa dužinom i brojem komada.";return false}
   const id=oid(cur);
   if(cur._new&&orders.some(o=>oid(o)===id)){$("status").textContent="Nalog "+cur.no+"/"+cur.year+" već postoji – promeni broj.";return false}
@@ -603,6 +606,30 @@ async function save(){
     totalKom:cntK(flat),totalM2:sumM(flat),updatedAt:now,createdAt:cur._new?now:((orders.find(o=>oid(o)===id)||{}).createdAt||now)};
   try{await db.collection("orders").doc(id).set(doc);custSync(doc);cur._new=false;dirty=false;cur.segments=segments.map(sg=>({tip:sg.tip,sid:sg.sid,status:sg.status,items:sg.items.map(i=>({vrsta:i.vrsta,tip:sg.tip,duzina:i.duzina||"",sirina:i.sirina||"",boja:i.boja,kom:i.kom,jm:i.jm}))}));renderItems();$("btnDel").classList.remove("hide");$("status").textContent="Sačuvano ✓";lastDoc=doc;try{const d=await syncProformas(doc);if(d.length)$("status").textContent="Sačuvano ✓ – ažuriran i predračun "+d.join(", ")}catch(e){}return true}
   catch(e){$("status").textContent="Greška pri čuvanju: "+(e.message||e.code||"nepoznata");return false}
+}
+
+/* ---------- predračun bez radnog naloga ---------- */
+function newProDraft(){const y=new Date().getFullYear();return{id:null,no:nextPro(y),year:y,customer:"",addr:"",phone:"",pib:"",date:new Date().toISOString().slice(0,10),status:"u_radu",note:"",segments:[{tip:"trapez",items:[blank(null,"trapez")]}],_pro:true,pdv:pdvRate,uplate:[],lines:[]}}
+function openProDraft(d,isNew){d._pro=true;$("view").appendChild($("sheetbox"));openForm(d,isNew);show("o");if(isNew)$("status").textContent=""}
+const editSegs=a=>(a||[]).map(g=>({tip:g.tip||"trapez",sid:g.sid||newSid(),status:"u_radu",items:(g.items||[]).map(i=>({vrsta:i.vrsta,tip:g.tip||"trapez",duzina:i.duzina||"",sirina:i.sirina||"",boja:i.boja||"",kom:i.kom,jm:i.jm}))}));
+async function saveProDraft(){
+  const S=$("status");if(!db){S.textContent="Baza nije dostupna.";return false}
+  syncHead();
+  if(!cur.no||!cur.customer.trim()){S.textContent="Unesi broj predračuna i kupca.";return false}
+  const segments=mkSegments();
+  if(!segments.length){S.textContent="Dodaj bar jednu stavku sa dužinom i brojem komada.";return false}
+  if(cur._origId&&cur._origId!==cur.year+"_"+cur.no){S.textContent="Broj predračuna ne može da se menja ("+cur._origId.replace("_","/")+").";return false}
+  if(cur._new&&proformas.some(p=>p.year===cur.year&&p.no===cur.no)){S.textContent="Predračun "+cur.no+"/"+cur.year+" već postoji – promeni broj.";return false}
+  const flat=segments.flatMap(sg=>sg.items),old=cur.lines||[],used=new Set();
+  const take=(v,b)=>{let k=old.findIndex((l,i)=>!used.has(i)&&l.vrsta===v&&(l.boja||"")===(b||""));if(k<0)k=old.findIndex((l,i)=>!used.has(i)&&l.vrsta===v);if(k>=0)used.add(k);return k>=0?old[k]:null};
+  const lines=flat.map(i=>{const o=take(i.vrsta,i.boja),pr=o&&cn(o)>0?o.cena:priceFor(i.vrsta),cena=pr==null?"":pr;return{vrsta:i.vrsta,boja:i.boja||"",duzina:i.duzina,kom:i.kom,m2:i.m2,jm:i.jm||"m²",cena:cn({cena}),iznos:0}});
+  const rate=cur.pdv==null||cur.pdv===""?pdvRate:(parseFloat(String(cur.pdv).replace(",","."))||0),kup=kupacOf({kupac:cur.kupac,pib:cur.pib});
+  lines.forEach(l=>{l.iznos=lineAmt(l,rate,kup)});
+  const kc=calcPro(lines,rate,kup),uplate=cur.uplate||[],paid=payTotal({uplate}),now=new Date().toISOString(),ex=proformas.find(p=>p.year===cur.year&&p.no===cur.no);
+  const doc={no:cur.no,year:cur.year,orderId:"",orderNo:"",customer:cur.customer.trim(),addr:(cur.addr||"").trim(),phone:(cur.phone||"").trim(),pib:(cur.pib||"").trim(),kupac:kup,date:cur.date,note:cur.note||"",pdv:rate,placeno:paid,ostalo:r2(kc.t-paid),uplate,lines,osnovica:kc.b,pdvIznos:kc.p,ukupno:kc.t,segments,samostalan:true,createdAt:ex?ex.createdAt:now,updatedAt:now};
+  try{await db.collection("proformas").doc(doc.year+"_"+doc.no).set(doc);custSync(doc)}
+  catch(e){S.textContent="Greška pri čuvanju: "+(e.message||e.code||"nepoznata");return false}
+  cur=null;dirty=false;openPro(doc);$("pstatus").textContent="Stavke sačuvane ✓ – proveri cene.";return true;
 }
 async function syncProformas(doc){
   const id=oid(doc),done=[];
@@ -635,7 +662,7 @@ function isOrderLocked(o){return !!o&&lockedOrderIds().has(oid(o))}
 function isProLocked(p){if(!lockOn||!p)return false;return otpr.some(x=>x.izvorTip==="predracun"&&x.izvorId===p.year+"_"+p.no)||!!(p.orderId&&lockedOrderIds().has(p.orderId))}
 function lockNums(o){const id=oid(o);return otpr.filter(x=>otpOrderIds(x).has(id)).map(x=>x.no+"/"+x.year).join(", ")}
 function applyOrderLock(){
-  const lk=!!cur&&!cur._new&&isOrderLocked(cur),rl=ROLE==="radnik",ro=ROLE==="pregled";
+  const lk=!!cur&&!cur._new&&!cur._pro&&isOrderLocked(cur),rl=ROLE==="radnik",ro=ROLE==="pregled";
   document.querySelectorAll("#view > .card input,#view > .card select,#view > .card textarea,#view > .card button").forEach(el=>{el.disabled=ro||(rl?!(el.id==="fSt"||el.dataset.gst!==undefined):(lk&&el.id!=="fSt"&&el.dataset.gst===undefined))});
   $("btnDel").disabled=lk||rl||ro;$("btnSave").disabled=ro;
   const m=$("lockMsg");m.classList.toggle("hide",!(lk||rl||ro));if(rl)m.textContent="Radnik: možeš da menjaš samo status.";else if(ro)m.textContent="Samo pregled – izmene nisu dozvoljene.";else if(lk)m.textContent="🔒 Nalog je zaključan jer je izdata otpremnica "+lockNums(cur)+". Menjati možeš samo status. Podešavanje možeš da promeniš u tabu Podešavanja.";
@@ -653,11 +680,11 @@ const r2=n=>Math.round(n*100)/100,cn=l=>parseFloat(String(l.cena).replace(",",".
 const VIEWS={h:"home",n:"list",o:"view",pl:"plist",pv:"pview",c:"cen",ol:"olist",ov:"oview",r:"prod",s:"sett",k:"kup"};
 let curView="h";
 function show(t){
-  curView=t;
+  curView=t;const pm=!!(cur&&cur._pro&&t==="o");$("view").classList.toggle("promode",pm);$("fStl").textContent=pm?"Predračun":"Radni nalog";$("fNoL").textContent=pm?"Broj predračuna":"Broj naloga";$("btnSave").textContent=pm?"Sačuvaj i nastavi na cene →":"Sačuvaj";
   Object.values(VIEWS).forEach(id=>$(id).classList.add("hide"));$(VIEWS[t]).classList.remove("hide");
   $("btnNew").classList.toggle("hide",t!=="n");
-  $("ptitle").textContent={h:"Početna",n:"Nalozi",o:"Nalozi",pl:"Predračuni",pv:"Predračuni",c:"Cenovnik",ol:"Otpremnice",ov:"Otpremnice",r:"Proizvodnja",s:"Podešavanja",k:"Kupci"}[t]||"";
-  const tab={h:"tabH",n:"tabN",o:"tabN",pl:"tabP",pv:"tabP",c:"tabC",ol:"tabO",ov:"tabO",r:"tabR",s:"tabS",k:"tabK"}[t];["tabH","tabN","tabP","tabC","tabO","tabR","tabS","tabK"].forEach(id=>$(id).classList.toggle("on",id===tab));
+  $("ptitle").textContent=pm?"Predračuni":{h:"Početna",n:"Nalozi",o:"Nalozi",pl:"Predračuni",pv:"Predračuni",c:"Cenovnik",ol:"Otpremnice",ov:"Otpremnice",r:"Proizvodnja",s:"Podešavanja",k:"Kupci"}[t]||"";
+  const tab=pm?"tabP":{h:"tabH",n:"tabN",o:"tabN",pl:"tabP",pv:"tabP",c:"tabC",ol:"tabO",ov:"tabO",r:"tabR",s:"tabS",k:"tabK"}[t];["tabH","tabN","tabP","tabC","tabO","tabR","tabS","tabK"].forEach(id=>$(id).classList.toggle("on",id===tab));
   if(t==="n")renderList();if(t==="pl")renderPL();if(t==="h")renderHome();if(t==="ol")renderOL();if(t==="r"){renderNab();renderProd()}if(t==="c")renderPrices();if(t==="k")showKupci();if(t==="s"){$("setLock").checked=lockOn;bkInfo()}
 }
 async function goTab(t){
@@ -723,6 +750,7 @@ function copyOrder(src){
 function copyPro(src){
   const y=new Date().getFullYear(),c=JSON.parse(JSON.stringify(src));
   const d={_new:true,no:nextPro(y),year:y,orderId:"",orderNo:"",customer:c.customer,addr:c.addr||"",phone:c.phone||"",pib:c.pib||"",kupac:c.kupac||kupacOf(c),date:new Date().toISOString().slice(0,10),note:c.note||"",uplate:[],pdv:c.pdv,lines:c.lines.map(l=>({vrsta:l.vrsta,boja:l.boja,duzina:l.duzina,kom:l.kom,m2:l.m2,jm:l.jm||"m²",cena:l.cena}))};
+  {const so=orders.find(x=>oid(x)===c.orderId),sg=(c.segments&&c.segments.length)?c.segments:(so&&so.segments)||null;if(sg){d.segments=editSegs(sg).map(g=>({...g,items:g.items.map(i=>({...i,m2:Math.round(rowM2(i)*100)/100,jm:rowUnit(i)}))}));d.samostalan=true}}
   openPro(d);pdirty=true;$("pstatus").textContent="Kopija predračuna "+(src.no?src.no+"/"+src.year:"")+" – nije povezana sa radnim nalogom. Proveri i sačuvaj.";
 }
 $("btnCopy").onclick=()=>{syncHead();copyOrder(cur)};
@@ -1041,7 +1069,7 @@ function openPro(p){
   pcur=JSON.parse(JSON.stringify(p));pdirty=false;cur=null;dirty=false;if(pcur.pdv==null)pcur.pdv=pdvRate;
   $("pview").appendChild($("sheetbox"));
   $("pNo").value=pcur.no;$("pYr").value=pcur.year;$("pCust").value=pcur.customer;$("pAddr").value=pcur.addr||"";$("pPhone").value=pcur.phone||"";$("pPib").value=pcur.pib||"";$("pDate").value=pcur.date;$("pNote").value=pcur.note||"";$("pPdv").value=pcur.pdv;pcur.kupac=kupacOf(pcur);$("pKup").value=pcur.kupac;if(!pcur.uplate)pcur.uplate=num(pcur.placeno)>0?[{date:pcur.date,iznos:pcur.placeno,nap:"Avans"}]:[];renderPays();
-  $("pNo").disabled=$("pYr").disabled=!pcur._new;$("pDel").classList.toggle("hide",!!pcur._new);$("pCopy").classList.toggle("hide",!!pcur._new);$("pOrd").classList.toggle("hide",!pcur.orderId);
+  $("pNo").disabled=$("pYr").disabled=!pcur._new;$("pDel").classList.toggle("hide",!!pcur._new);$("pCopy").classList.toggle("hide",!!pcur._new);$("pOrd").classList.toggle("hide",!pcur.orderId);{const sg=!!(pcur.segments&&pcur.segments.length&&!pcur.orderId);$("pEdit").classList.toggle("hide",!sg);$("pMkOrd").classList.toggle("hide",!sg)}
   $("pstatus").textContent=pcur.lines.some(l=>!cn(l))?"Neke stavke nemaju cenu u cenovniku – upiši je ručno.":"";
   show("pv");renderPro();applyProLock();window.scrollTo(0,0);
 }
@@ -1082,18 +1110,42 @@ $("plines").addEventListener("input",e=>{
   const l=pcur.lines[+tr.dataset.i];l.cena=e.target.value;pdirty=true;e.target.style.borderColor=cn(l)?"":"#c0392b";
   tr.querySelector("[data-am]").textContent=money(lineAmt(l,proTot().rate,kupacOf(pcur)));proSheet();
 });
-$("pSave").onclick=async()=>{
-  const S=$("pstatus");if(!db)return;
-  if(!pcur.no||!pcur.customer.trim()){S.textContent="Unesi broj i kupca.";return}
-  if(pcur._new&&proformas.some(p=>p.year===pcur.year&&p.no===pcur.no)){S.textContent="Predračun "+pcur.no+"/"+pcur.year+" već postoji – promeni broj.";return}
+async function savePro(){
+  const S=$("pstatus");if(!db)return false;
+  if(!pcur.no||!pcur.customer.trim()){S.textContent="Unesi broj i kupca.";return false}
+  if(pcur._new&&proformas.some(p=>p.year===pcur.year&&p.no===pcur.no)){S.textContent="Predračun "+pcur.no+"/"+pcur.year+" već postoji – promeni broj.";return false}
   const lines=pcur.lines.filter(l=>String(l.vrsta).trim()&&num(l.m2)>0);
-  if(!lines.length){S.textContent="Dodaj bar jednu stavku sa nazivom i količinom.";return}
+  if(!lines.length){S.textContent="Dodaj bar jednu stavku sa nazivom i količinom.";return false}
   const t=proTot(),now=new Date().toISOString(),old=proformas.find(p=>p.year===pcur.year&&p.no===pcur.no);
   const doc={no:pcur.no,year:pcur.year,orderId:pcur.orderId||"",orderNo:pcur.orderNo||"",customer:pcur.customer.trim(),addr:(pcur.addr||"").trim(),phone:(pcur.phone||"").trim(),pib:(pcur.pib||"").trim(),kupac:kupacOf(pcur),date:pcur.date,note:pcur.note||"",pdv:t.rate,placeno:t.paid,ostalo:t.left,uplate:(pcur.uplate||[]).filter(u=>num(u.iznos)>0).map(u=>({date:u.date||"",iznos:r2(num(u.iznos)),nap:u.nap||""})),
    lines:lines.map(l=>({vrsta:String(l.vrsta).trim(),boja:l.boja||"",duzina:l.duzina,kom:l.kom,m2:num(l.m2),jm:l.jm||"m²",cena:cn(l),iznos:lineAmt(l,t.rate,kupacOf(pcur))})),osnovica:t.b,pdvIznos:t.p,ukupno:t.t,createdAt:old?old.createdAt:now,updatedAt:now};
-  try{await db.collection("proformas").doc(pcur.year+"_"+pcur.no).set(doc);custSync(doc);pcur._new=false;pdirty=false;$("pNo").disabled=$("pYr").disabled=true;$("pDel").classList.remove("hide");S.textContent="Sačuvano ✓"}
-  catch(e){S.textContent="Greška pri čuvanju: "+(e.message||e.code||"nepoznata")}
+  if(!pcur.orderId&&pcur.segments&&pcur.segments.length){doc.segments=pcur.segments;doc.samostalan=true}
+  try{await db.collection("proformas").doc(pcur.year+"_"+pcur.no).set(doc);custSync(doc);pcur._new=false;pdirty=false;$("pNo").disabled=$("pYr").disabled=true;$("pDel").classList.remove("hide");S.textContent="Sačuvano ✓";return true}
+  catch(e){S.textContent="Greška pri čuvanju: "+(e.message||e.code||"nepoznata");return false}
+}
+$("pSave").onclick=savePro;
+$("pEdit").onclick=async()=>{
+  const S=$("pstatus");if(!pcur||!pcur.segments)return;
+  if(isProLocked(pcur)){S.textContent="Predračun je zaključan (izdata otpremnica) – stavke se ne menjaju.";return}
+  if((pcur._new||pdirty)&&!(await savePro()))return;
+  const d={id:null,no:pcur.no,year:pcur.year,customer:pcur.customer,addr:pcur.addr||"",phone:pcur.phone||"",pib:pcur.pib||"",date:pcur.date,status:"u_radu",note:pcur.note||"",segments:editSegs(pcur.segments),kupac:pcur.kupac,pdv:pcur.pdv,uplate:pcur.uplate||[],lines:pcur.lines||[],createdAt:pcur.createdAt,_origId:pcur.year+"_"+pcur.no};
+  pcur=null;pdirty=false;openProDraft(d,false);
 };
+$("pMkOrd").onclick=async()=>{
+  const S=$("pstatus");if(!db||!pcur||!pcur.segments||pcur.orderId)return;
+  if((pcur._new||pdirty)&&!(await savePro()))return;
+  const y=new Date().getFullYear(),nums=orders.filter(o=>o.year===y).map(o=>o.no),no=(nums.length?Math.max(...nums):0)+1,id=y+"_"+no;
+  if(!(await ask("Kupac je prihvatio predračun? Napraviti radni nalog "+no+"/"+y+" od predračuna "+pcur.no+"/"+pcur.year+"?")))return;
+  if(orders.some(o=>oid(o)===id)){S.textContent="Nalog "+no+"/"+y+" već postoji.";return}
+  const segments=pcur.segments.map(sg=>{const items=sg.items.map(i=>({...i}));return{tip:sg.tip,title:TIPOVI[sg.tip]||sg.title||"",sid:newSid(),status:"u_radu",items,totalKom:cntK(items),totalM2:sumM(items)}});
+  const flat=segments.flatMap(sg=>sg.items.map(i=>({...i,segment:sg.title}))),now=new Date().toISOString();
+  const od={no,year:y,customer:pcur.customer,addr:pcur.addr||"",phone:pcur.phone||"",pib:pcur.pib||"",date:now.slice(0,10),status:"u_radu",note:pcur.note||"",segments,items:flat,totalKom:cntK(flat),totalM2:sumM(flat),createdAt:now,updatedAt:now,izPredracuna:pcur.year+"_"+pcur.no};
+  try{await db.collection("orders").doc(id).set(od)}catch(e){S.textContent="Greška pri pravljenju naloga: "+(e.message||e.code||"nepoznata");return}
+  pcur.orderId=id;pcur.orderNo=no+"/"+y;delete pcur.segments;delete pcur.samostalan;
+  if(!(await savePro())){S.textContent="Nalog je napravljen, ali veza sa predračunom nije sačuvana.";return}
+  const o=od;pcur=null;pdirty=false;$("view").appendChild($("sheetbox"));openForm(o,false);show("o");$("status").textContent="Radni nalog "+no+"/"+y+" napravljen iz predračuna – proveri i po potrebi dopuni.";
+};
+
 $("pDel").onclick=async()=>{
   if(!(await ask("Trajno obrisati predračun "+pcur.no+"/"+pcur.year+"?")))return;
   try{await db.collection("proformas").doc(pcur.year+"_"+pcur.no).delete();pdirty=false;goTab("pl")}catch(e){$("pstatus").textContent="Brisanje nije uspelo."}
@@ -1113,8 +1165,8 @@ $("btnPro").onclick=async()=>{
 };
 function renderPL(){
   const r=proformas.slice().sort((a,b)=>b.year-a.year||b.no-a.no);
-  $("pltb").innerHTML=r.map(p=>`<tr class="cl" data-id="${p.year}_${p.no}"><td>${p.no}/${p.year}${isProLocked(p)?" 🔒":""}</td><td>${fmtDate(p.date)}</td><td>${esc(p.customer)}</td><td>${p.orderNo?esc(p.orderNo):"–"}</td><td class="n">${money(p.ukupno)}</td><td><button data-copyp title="Kopiraj predračun">⧉</button> <button class="d" data-delp title="${isProLocked(p)?"Zaključano – izdata otpremnica":"Obriši predračun"}"${isProLocked(p)?" disabled":""}>✕</button></td></tr>`).join("");
-  $("plempty").textContent=r.length?"":"Nema predračuna. Napravi ga iz radnog naloga dugmetom „Predračun“.";
+  $("pltb").innerHTML=r.map(p=>`<tr class="cl" data-id="${p.year}_${p.no}"><td>${p.no}/${p.year}${isProLocked(p)?" 🔒":""}</td><td>${fmtDate(p.date)}</td><td>${esc(p.customer)}</td><td>${p.orderNo?esc(p.orderNo):(p.segments&&p.segments.length?'<span class="tag u_radu">Čeka nalog</span>':"–")}</td><td class="n">${money(p.ukupno)}</td><td><button data-copyp title="Kopiraj predračun">⧉</button> <button class="d" data-delp title="${isProLocked(p)?"Zaključano – izdata otpremnica":"Obriši predračun"}"${isProLocked(p)?" disabled":""}>✕</button></td></tr>`).join("");
+  $("plempty").textContent=r.length?"":"Nema predračuna. Napravi ga dugmetom „Novi predračun“ ili iz radnog naloga.";
 }
 $("pltb").onclick=async e=>{
   const tr=e.target.closest("tr[data-id]");const p=tr&&proformas.find(x=>x.year+"_"+x.no===tr.dataset.id);if(!p)return;
@@ -1686,6 +1738,8 @@ $("home").addEventListener("click",e=>{
   if(tr.dataset.oid)openOrderById(tr.dataset.oid);
   else{const q=proformas.find(x=>x.year+"_"+x.no===tr.dataset.pid);if(q)openPro(q)}
 });
+$("btnNewPH").onclick=()=>openProDraft(newProDraft(),true);
+$("pNew").onclick=()=>openProDraft(newProDraft(),true);
 $("btnNewH").onclick=()=>{$("view").appendChild($("sheetbox"));openForm(newOrder(),true);show("o")};
 try{document.querySelectorAll(".side nav button").forEach(b=>{b.title=b.textContent.trim()})}catch(e){}
 show("h");
