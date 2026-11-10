@@ -129,7 +129,7 @@ input:focus,select:focus{outline:0;border-bottom-color:var(--ac);background:var(
 .setrow{display:flex;gap:18px;align-items:center;justify-content:space-between;padding:6px 0}
 .side nav button span{overflow:hidden;text-overflow:ellipsis;max-width:100%}
 .role-badge{margin:auto 8px 0;padding:8px 10px;background:#3a3f46;color:#cfd3d8;font-size:12px;line-height:1.4}.role-badge b{color:#e8a317}
-#view.promode #fStW,#view.promode .gstw,#view.promode .segbadge,#view.promode #sheetbox,#view.promode #btnPdf,#view.promode #btnPro,#view.promode #btnOtp,#view.promode #btnCopy,#view.promode #btnDel{display:none!important}
+#view.promode #fStW,#view.promode .gstw,#view.promode .segbadge,#view.promode #sheetbox,#view.promode #btnPdf,#view.promode #btnPrint,#view.promode #btnPro,#view.promode #btnOtp,#view.promode #btnCopy,#view.promode #btnDel{display:none!important}
 .role-radnik #btnNewPH,.role-radnik #btnPro,.role-radnik #btnCopy,.role-radnik #btnDel,.role-radnik #btnSeg,.role-radnik #btnNew,.role-radnik #btnNewH,.role-radnik [data-delo],.role-radnik [data-copyo]{display:none!important}
 .role-pregled #pNew,.role-pregled #btnNewPH,.role-pregled #pEdit,.role-pregled #pMkOrd,.role-pregled .bar .p,.role-pregled .bar .d,.role-pregled #btnNew,.role-pregled #btnNewH,.role-pregled #btnCopy,.role-pregled #pCopy,.role-pregled #kNew,.role-pregled [data-copyo],.role-pregled [data-copyp],.role-pregled [data-delo],.role-pregled [data-delp],.role-pregled #btnNab,.role-pregled #btnZal,.role-pregled #btnSeg,.role-pregled #pPayAdd,.role-pregled #oAdd{display:none!important}
 .role-pregled #ptb,.role-pregled #ntb,.role-pregled #ztb,.role-pregled #oview .card,.role-pregled #kDet > .card:first-child,.role-pregled #skartBox .row,.role-pregled #stockCard .row,.role-pregled #plUn{pointer-events:none}
@@ -154,8 +154,9 @@ input:focus,select:focus{outline:0;border-bottom-color:var(--ac);background:var(
 #sheet .nt{margin-top:16px;font-size:14px;white-space:pre-wrap}
 @media print{
  @page{size:A4;margin:12mm}
- body{background:#fff}.side,.mhead{display:none!important}.wrap>*:not(#view){display:none!important}.app{display:block}
- #view>*:not(#sheetbox){display:none!important}
+ body{background:#fff}.side,.mhead{display:none!important}.app{display:block}
+ body.prt .wrap>*:not(.prt-host){display:none!important}
+ body.prt .prt-host>*:not(#sheetbox){display:none!important}
  #sheetbox,#sheet{border:0;padding:0;margin:0;max-width:none}
 }
 </style>
@@ -191,7 +192,7 @@ input:focus,select:focus{outline:0;border-bottom-color:var(--ac);background:var(
  <div id="cen" class="hide"><div class="card">
     <div id="ptb"></div>
   <div class="msg" id="pempty"></div>
-  <div class="row"><button id="btnCenPdf">Preuzmi PDF</button><span id="cstatus" style="color:var(--mu);font-size:13px"></span></div>
+  <div class="row"><button id="btnCenPdf">Preuzmi PDF</button><button id="btnCenPrint">Štampaj</button><span id="cstatus" style="color:var(--mu);font-size:13px"></span></div>
   <p style="font-size:12px;color:var(--mu);margin:10px 0 0">Možeš da upišeš veleprodajnu ili maloprodajnu cenu, a druga se izračuna sama (maloprodajna = veleprodajna + PDV). Predračun uzima veleprodajnu cenu stavke čiji se naziv poklapa sa vrstom robe u radnom nalogu (npr. „TR 18 FILC“) i na nju obračunava PDV. Promene se čuvaju čim izađeš iz polja.</p><datalist id="jml"><option>m²</option><option>m</option><option>kom</option><option>kg</option><option>set</option></datalist><p hidden></p>
  </div></div>
 
@@ -292,7 +293,7 @@ input:focus,select:focus{outline:0;border-bottom-color:var(--ac);background:var(
     </div></div>
    <div class="sc" style="margin-top:12px"><table><thead id="plh"><tr><th>Vrsta robe</th><th>Boja</th><th>Dužina</th><th>Kom.</th><th class="n">Količina</th><th>Cena</th><th class="n">Iznos</th></tr></thead><tbody id="plines"></tbody></table></div>
    <div id="phint" style="font-size:12px;color:var(--mu);margin-top:8px"></div></div>
-  <div class="row bar"><button class="p" id="pSave">Sačuvaj</button><button class="p hide" id="pMkOrd">Napravi radni nalog</button><button class="hide" id="pEdit">Izmeni stavke</button><button id="pPdf">Preuzmi PDF za štampu</button><button id="pMail">Pošalji mejlom</button><button id="pOtp">Otpremnica</button><button id="pCopy">Kopiraj</button><button id="pOrd">← Radni nalog</button><button id="pBack">Lista predračuna</button><button class="d" id="pDel">Obriši</button><span id="pstatus" style="color:var(--mu);font-size:13px"></span></div>
+  <div class="row bar"><button class="p" id="pSave">Sačuvaj</button><button class="p hide" id="pMkOrd">Napravi radni nalog</button><button class="hide" id="pEdit">Izmeni stavke</button><button id="pPdf">Preuzmi PDF za štampu</button><button id="pPrint">Štampaj</button><button id="pMail">Pošalji mejlom</button><button id="pOtp">Otpremnica</button><button id="pCopy">Kopiraj</button><button id="pOrd">← Radni nalog</button><button id="pBack">Lista predračuna</button><button class="d" id="pDel">Obriši</button><span id="pstatus" style="color:var(--mu);font-size:13px"></span></div>
  </div>
 
 <div id="olist" class="hide"><div class="card"><div class="row" style="margin-bottom:10px"><button class="p" id="oNew">+ Nova otpremnica</button></div><div class="sc"><table><thead><tr><th>Broj</th><th>Datum</th><th>Kupac</th><th>Izvor</th><th></th></tr></thead><tbody id="oltb"></tbody></table></div><div class="msg" id="olempty"></div></div></div>
@@ -319,7 +320,7 @@ input:focus,select:focus{outline:0;border-bottom-color:var(--ac);background:var(
    <div class="sc" style="margin-top:12px"><table><thead id="ohead"></thead><tbody id="olines"></tbody></table></div>
    <div class="row" style="margin-top:8px"><button id="oAdd">+ Dodaj stavku</button><button id="oPickBtn">+ Dodaj grupe iz naloga</button></div><div id="oPick" class="hide"></div>
    <div id="oHint" style="font-size:12px;color:var(--mu);margin-top:8px"></div></div>
-  <div class="row bar"><button class="p" id="oSave">Sačuvaj</button><button id="oPdf">Preuzmi PDF za štampu</button><button id="oMail">Pošalji mejlom</button><button id="oSrc">← Izvor</button><button id="oBack">Lista otpremnica</button><button class="d" id="oDel">Obriši</button><span id="ostatus" style="color:var(--mu);font-size:13px"></span></div>
+  <div class="row bar"><button class="p" id="oSave">Sačuvaj</button><button id="oPdf">Preuzmi PDF za štampu</button><button id="oPrint">Štampaj</button><button id="oMail">Pošalji mejlom</button><button id="oSrc">← Izvor</button><button id="oBack">Lista otpremnica</button><button class="d" id="oDel">Obriši</button><span id="ostatus" style="color:var(--mu);font-size:13px"></span></div>
  </div>
 
  <div id="view" class="hide">
@@ -348,7 +349,7 @@ input:focus,select:focus{outline:0;border-bottom-color:var(--ac);background:var(
   </div>
   <div class="row bar">
    <button class="p" id="btnSave">Sačuvaj</button>
-   <button id="btnPdf">Preuzmi PDF za štampu</button>
+   <button id="btnPdf">Preuzmi PDF za štampu</button><button id="btnPrint">Štampaj</button>
    <button id="btnPro">Predračun</button>
    <button id="btnOtp">Otpremnica</button>
    <button id="btnCopy">Kopiraj</button>
@@ -650,6 +651,15 @@ $("btnDel").onclick=async()=>{
   if(!(await ask("Trajno obrisati nalog "+cur.no+"/"+cur.year+"?")))return;
   try{await db.collection("orders").doc(oid(cur)).delete();dirty=false;closeForm()}catch(e){$("status").textContent="Brisanje nije uspelo."}
 };
+function printSheet(prep,S){
+  try{if(prep)prep()}catch(e){}
+  const sb=$("sheetbox"),h=sb&&sb.parentElement;if(!h||!$("sheet").innerHTML.trim()){if(S)S.textContent="Nema dokumenta za štampu.";return}
+  h.classList.add("prt-host");document.body.classList.add("prt");
+  const done=()=>{document.body.classList.remove("prt");h.classList.remove("prt-host");window.removeEventListener("afterprint",done)};
+  window.addEventListener("afterprint",done);
+  setTimeout(()=>{try{window.print()}catch(e){done();if(S)S.textContent="Štampa nije dostupna u ovom prikazu – koristi „Preuzmi PDF“."}},60);
+}
+$("btnPrint").onclick=()=>printSheet(()=>{syncHead();renderSheet()},$("status"));
 $("btnPdf").onclick=()=>{syncHead();renderSheet();pdfOf("Radni_nalog_"+cur.no+"-"+cur.year+"_"+cur.customer.trim().replace(/\s+/g,"_")+".pdf",$("status"))};
 
 /* ---------- cenovnik i predračuni ---------- */
@@ -1040,6 +1050,7 @@ $("bkFile").onchange=async()=>{
     S.textContent="Vraćeno "+n+" dokumenata ✓"}
   catch(e){S.textContent="Greška: "+(e.message||e.code||"nepoznata")}
 };
+$("btnCenPrint").onclick=()=>printSheet(priceSheet,$("cstatus"));
 $("btnCenPdf").onclick=()=>{priceSheet();pdfOf("Cenovnik_"+new Date().toISOString().slice(0,10)+".pdf",$("cstatus"))};
 $("pdv").onchange=async()=>{const v=parseFloat(String($("pdv").value).replace(",","."));try{await saveSet({pdv:isNaN(v)?20:v});$("setStatus").textContent="Sačuvano ✓"}catch(e){$("setStatus").textContent="Greška pri čuvanju"}};
 
@@ -1311,6 +1322,7 @@ async function pdfOf(fname,S){
   }catch(e){S.textContent=(e&&e.code==="declined")?"":"PDF nije uspeo: "+((e&&(e.message||e.code))||"nepoznata greška")}
   finally{if(wrap)wrap.remove()}
 }
+$("pPrint").onclick=()=>printSheet(proSheet,$("pstatus"));
 $("pPdf").onclick=()=>pdfOf("Predracun_"+pcur.no+"-"+pcur.year+"_"+pcur.customer.trim().replace(/\s+/g,"_")+".pdf",$("pstatus"));
 $("pdv").value=20;
 
@@ -1545,6 +1557,7 @@ async function mailDoc(naziv,d,fname,S,extra){
 }
 $("pMail").onclick=()=>{const t=proTot();mailDoc("Predračun",pcur,"Predracun_"+pcur.no+"-"+pcur.year+"_"+pcur.customer.trim().replace(/\s+/g,"_")+".pdf",$("pstatus"),"Ukupno za uplatu: "+money(t.t)+" RSD"+(t.paid?" (preostalo: "+money(t.left)+" RSD)":"")+".")};
 $("oMail").onclick=()=>mailDoc("Otpremnica",ocur,"Otpremnica_"+ocur.no+"-"+ocur.year+"_"+ocur.customer.trim().replace(/\s+/g,"_")+".pdf",$("ostatus"));
+$("oPrint").onclick=()=>printSheet(null,$("ostatus"));
 $("oPdf").onclick=()=>pdfOf("Otpremnica_"+ocur.no+"-"+ocur.year+"_"+ocur.customer.trim().replace(/\s+/g,"_")+".pdf",$("ostatus"));
 $("btnOtp").onclick=async()=>{
   const was=cur._new||dirty;if(was&&!(await save()))return;
