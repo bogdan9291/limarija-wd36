@@ -153,15 +153,19 @@ input:focus,select:focus{outline:0;border-bottom-color:var(--ac);background:var(
 #sheet .sfoot{padding:0 14px;margin-top:26px;text-align:center;font-size:10.5px;color:#000;line-height:1.5;white-space:nowrap}#sheet .sfoot hr{border:0;border-top:1px solid #9aa0a8;margin:0 0 8px}#sheet .sfoot .f1{font-weight:700;color:#000}
 #sheet .nt{margin-top:16px;font-size:14px;white-space:pre-wrap}
 @media print{
- @page{size:A4;margin:4mm}
- body{background:#fff}.side,.mhead{display:none!important}.app{display:block}
- body.prt .wrap>*:not(.prt-host){display:none!important}
- body.prt .prt-host>*:not(#sheetbox){display:none!important}
- .pgt{display:table;width:100%}.pgb{display:table-row-group}.pgf{display:table-footer-group}.pgr{display:table-row}.pgc,.pgs{display:table-cell}.pgs{height:20mm}
- body.prt #sheet .bn{margin:0 13px;padding-top:11px}body.prt #sheet .bd{padding:0 13px}body.prt #sheet{padding-bottom:0}
- body.prt #sheet .sfoot{position:fixed;left:0;right:0;bottom:0;margin:0;padding:0 4px;background:#fff;white-space:normal}
- #sheetbox,#sheet{border:0;padding:0;margin:0;max-width:none}
+ @page{size:A4;margin:0}
+ body{background:#fff}
+ body.prt2>*:not(#prtRoot){display:none!important}
+ #prtRoot{display:block!important}
 }
+#prtRoot{display:none}
+#prtRoot .pbox{position:relative;width:210mm;height:1120px;overflow:hidden;background:#fff;break-after:page;page-break-after:always;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+#prtRoot .pbox:last-child{break-after:auto;page-break-after:auto}
+#prtRoot .pwin{position:absolute;left:0;width:794px;overflow:hidden}
+#prtRoot .pwin *{break-inside:auto!important;break-before:auto!important;break-after:auto!important;page-break-inside:auto!important}
+#prtRoot .pnum{position:absolute;right:13px;font:11px Arial,Helvetica,sans-serif;color:#000}
+#sheet.prt13 .bn,.prt13 .bn{margin:0 13px!important;padding-top:12px!important}.prt13 .bd{padding:0 13px!important}
+#sheet.dense th,#sheet.dense td{padding:4px 8px;font-size:12px}#sheet.dense th{font-size:11.5px}#sheet.dense .st{font-size:13px;padding-bottom:4px;margin-bottom:4px}#sheet.dense .sg{margin-bottom:14px}#sheet.dense .gt td{font-size:14px}
 </style>
 </head>
 <body>
@@ -193,6 +197,7 @@ input:focus,select:focus{outline:0;border-bottom-color:var(--ac);background:var(
  <div id="plist" class="hide"><div class="card"><div class="row" style="margin-bottom:10px"><button class="p" id="pNew">+ Novi predračun</button></div><div class="sc"><table><thead><tr><th>Broj</th><th>Datum</th><th>Kupac</th><th>Radni nalog</th><th class="n">Ukupno (RSD)</th><th></th></tr></thead><tbody id="pltb"></tbody></table></div><div class="msg" id="plempty"></div></div></div>
 
  <div id="cen" class="hide"><div class="card">
+    <div class="row" style="margin-bottom:12px"><input id="gNewName" placeholder="Naziv nove grupe (npr. Ravni lim)" style="max-width:300px" aria-label="Naziv nove grupe"><button class="p" id="gAdd">+ Nova grupa</button></div>
     <div id="ptb"></div>
   <div class="msg" id="pempty"></div>
   <div class="row"><button id="btnCenPdf">Preuzmi PDF</button><button id="btnCenPrint">Štampaj</button><span id="cstatus" style="color:var(--mu);font-size:13px"></span></div>
@@ -383,7 +388,7 @@ const FOOT=`<div class="sfoot"><hr><div><span class="f1">Miloš Spasić PR Kova�
 const wf=h=>h+FOOT;
 const BHEX={"antracit":"#3b3f44","crna":"#111","bordo":"#6d1a2a","braon":"#6b4226","plava":"#1f4e9c","bela":"#fff","zelena":"#2e6b3a","silver":"#b8bcc2","drvo dekor":"#9a6a3a","pocink.":"#d3d6da"};
 const bj=b=>{const t=String(b||"").trim();if(!t)return"–";const h=BHEX[t.toLowerCase()];return esc(t)};
-const goodsName=l=>{const v=String(l.vrsta||"").trim(),b=String(l.boja||"").trim(),tz=l.tip==="trapez"||l.seg==="Trapezni lim"||(!l.tip&&/^tr\s*-?\s*\d+/i.test(v));return(tz&&!/^trapezni/i.test(v)?"Trapezni lim ":"")+v+(b?" - "+b:"")};
+const goodsName=l=>{const v=String(l.vrsta||"").trim(),b=String(l.boja||"").trim(),tz=l.tip==="trapez"||l.seg===TIPOVI.trapez||l.seg==="Trapezni lim"||(!l.tip&&/^tr\s*-?\s*\d+/i.test(v));return(tz&&!/^trapezni/i.test(v)?"Trapezni lim ":"")+v+(b?" - "+b:"")};
 const fmtDate=s=>{if(!s)return"";const[y,m,d]=s.split("-");return d+"."+m+"."+y+"."};
 // ista formula kao u .ods: TR 18 i TR 18 FILC računaju se sa širinom 1,1 m
 const m2=(v,d,k)=>(/tr\s*-?\s*18(?!\d)/i.test(String(v||""))?d*1.1*k:d*k)/1000;
@@ -440,7 +445,14 @@ const UNITS=["m²","komad","sat","km","metar","set"];
 function unitOf(v,d){const k=String(v).trim().toLowerCase();const p=prices.find(x=>String(x.naziv).trim().toLowerCase()===k);return p?p.jm:(d||"m²")}
 const usesLen=v=>{const u=unitOf(v);return u==="m²"||u==="metar"};
 const num=x=>parseFloat(String(x).replace(",","."))||0;
-const TIPOVI={trapez:"Trapezni lim",opsiv:"Opšiv",oluk:"Oluk",srafovska:"Šrafovska roba"};
+const BASE_T={trapez:"Trapezni lim",opsiv:"Opšiv",oluk:"Oluk",srafovska:"Šrafovska roba"};
+const TIPOVI={...BASE_T};
+function applyGrupe(){
+  const n=(SET&&SET.gNames)||{},cu=(SET&&Array.isArray(SET.gCustom))?SET.gCustom:[];
+  Object.keys(TIPOVI).forEach(k=>delete TIPOVI[k]);
+  Object.keys(BASE_T).forEach(k=>{TIPOVI[k]=String(n[k]||"").trim()||BASE_T[k]});
+  cu.forEach(id=>{TIPOVI[id]=String(n[id]||"").trim()||"Nova grupa";if(!DEFU[id])DEFU[id]="komad"});
+}
 const DEFU={trapez:"m²",opsiv:"m²",oluk:"metar",srafovska:"komad"};
 const TH={trapez:["Vrsta robe","Dužina (mm)","Boja","Kom."],opsiv:["Vrsta robe","Dužina (mm)","RŠ (mm)","Boja","Kom."],oluk:["Vrsta robe","Dužina (m)","Jedinica","Boja","Kom."],srafovska:["Vrsta robe","Boja","Kom."]};
 function rowUnit(it){const t=it.tip||"trapez";return t==="opsiv"?"m²":t==="oluk"?(it.jm==="komad"?"komad":"metar"):t==="srafovska"?unitOf(it.vrsta,"komad"):unitOf(it.vrsta)}
@@ -475,9 +487,9 @@ function renderItems(){
   cur.segments.forEach(sg=>{sg.tip=sg.tip||"trapez";sg.items.forEach(i=>{i.tip=sg.tip;if(!i.vrsta){const L=vl("",sg.tip);if(L.length)i.vrsta=L[0]}if(i.boja===undefined&&sg.tip!=="srafovska")i.boja=defBoja()})});
   $("segs").innerHTML=cur.segments.map((sg,si)=>{const t=segTot(sg),tip=sg.tip;return `<div class="seg" data-s="${si}">
    <div class="row" style="margin-bottom:6px;align-items:flex-end"><span class="dh" data-drag="seg" title="Prevuci grupu za promenu redosleda" style="font-size:22px;padding-bottom:8px">⠿</span><div style="flex:1;min-width:160px"><label>Vrsta grupe</label><select data-st="1" style="font-weight:600">${Object.keys(TIPOVI).map(k=>`<option value="${k}"${k===tip?" selected":""}>${TIPOVI[k]}</option>`).join("")}</select></div><div class="gstw" style="width:150px"><label>Status grupe</label><select data-gst><option value="u_radu"${sg.status!=="zavrsen"?" selected":""}>U radu</option><option value="zavrsen"${sg.status==="zavrsen"?" selected":""}>Završena</option></select></div><span class="tag segbadge" data-sb="${sg.sid}"></span><button class="d" data-delseg${cur.segments.length<2?" disabled":""}>Ukloni grupu</button></div>
-   <div class="sc"><table><thead><tr><th>#</th>${TH[tip].map(h=>`<th>${h}</th>`).join("")}<th class="n">Ukupno</th><th></th></tr></thead><tbody>`+
+   <div class="sc"><table><thead><tr><th>#</th>${(TH[tip]||TH.trapez).map(h=>`<th>${h}</th>`).join("")}<th class="n">Ukupno</th><th></th></tr></thead><tbody>`+
    sg.items.map((it,i)=>`<tr data-i="${i}"><td style="white-space:nowrap"><span class="dh" data-drag="row" title="Prevuci za promenu redosleda">⠿</span>${i+1}.</td>${cells(it,tip)}<td class="n" data-m2>${qtyTxt(it)}</td><td><button class="d" data-del title="Ukloni stavku">✕</button></td></tr>`).join("")+
-   `</tbody><tfoot><tr><td colspan="${TH[tip].length}" class="n"><b>Zbir grupe:</b></td><td data-sk><b>${t.k}</b></td><td class="n" data-sm><b>${t.m?fmt(t.m)+" m²":"–"}</b></td><td></td></tr></tfoot></table></div>
+   `</tbody><tfoot><tr><td colspan="${(TH[tip]||TH.trapez).length}" class="n"><b>Zbir grupe:</b></td><td data-sk><b>${t.k}</b></td><td class="n" data-sm><b>${t.m?fmt(t.m)+" m²":"–"}</b></td><td></td></tr></tfoot></table></div>
    <div class="row" style="margin-top:8px"><button data-add>+ Dodaj stavku</button></div></div>`}).join("");
   renderSheet();applyOrderLock();updSegBadges();
 }
@@ -487,14 +499,14 @@ function renderSheet(){
   const CG4='<colgroup><col style="width:8%"><col style="width:38%"><col style="width:20%"><col style="width:12%"><col style="width:22%"></colgroup>';
   const parts=cur.segments.map(sg=>{
     const tip=sg.tip||"trapez",its=sg.items.filter(it=>it.duzina||it.kom||it.sirina);if(!its.length)return"";
-    const st=segTot(sg),n=TH[tip].length+2;
+    const st=segTot(sg),n=(TH[tip]||TH.trapez).length+2;
     const rows=its.map((it,i)=>{
       if(tip==="srafovska")return `<tr><td>${i+1}.</td><td>${esc(it.vrsta)}</td><td>${bj(it.boja)}</td><td>${esc(it.kom)}</td><td>${qtyTxt(it)}</td></tr>`;
       const dv=lenOf(it)?esc(it.duzina):"–";
       const ex=tip==="opsiv"?`<td>${esc(it.sirina)}</td>`:tip==="oluk"?`<td>${it.jm==="komad"?"komad":"metar"}</td>`:"";
       return `<tr><td>${i+1}.</td><td>${esc(it.vrsta)}</td><td>${dv}</td>${ex}<td>${bj(it.boja)}</td><td>${esc(it.kom)}</td><td>${qtyTxt(it)}</td></tr>`}).join("");
-    const cg=tip==="trapez"?CG:tip==="srafovska"?CG4:CG7;
-    return `<div class="sg"><div class="st">${TIPOVI[tip]}</div><table>${cg}<thead><tr><th>#</th>${TH[tip].map(h=>`<th>${h}</th>`).join("")}<th>Ukupno</th></tr></thead><tbody>${rows}</tbody><tfoot><tr><td colspan="${n-2}" style="text-align:right">${multi?"Zbir:":"UKUPNO:"}</td><td>${st.k}</td><td>${st.m?fmt(st.m)+" m²":"–"}</td></tr></tfoot></table></div>`}).join("");
+    const cg=tip==="srafovska"?CG4:(tip==="opsiv"||tip==="oluk")?CG7:CG;
+    return `<div class="sg"><div class="st">${TIPOVI[tip]}</div><table>${cg}<thead><tr><th>#</th>${(TH[tip]||TH.trapez).map(h=>`<th>${h}</th>`).join("")}<th>Ukupno</th></tr></thead><tbody>${rows}</tbody><tfoot><tr><td colspan="${n-2}" style="text-align:right">${multi?"Zbir:":"UKUPNO:"}</td><td>${st.k}</td><td>${st.m?fmt(st.m)+" m²":"–"}</td></tr></tfoot></table></div>`}).join("");
   $("sheet").innerHTML=wf(`<div class="bn"><div><h2>Limarija WD-36</h2><div class="ad"><b>Miloš Spasić PR Kovačka radionica WD-36</b><br>Lole Ribara 40, 25250 Odžaci<br>PIB: 110029026 · MB: 64594940<br>Tekući račun: 325-9500600059441-13</div></div></div><div class="bd">
   <div class="hd"><div style="flex:3"><span>Kupac</span><b>${esc(cur.customer)}</b>${custLine(cur.addr,cur.phone,cur.pib)}</div><div style="flex:2"><span>Radni nalog</span><b class="no">${esc(cur.no)}/${esc(cur.year)}</b><span style="margin-top:10px">Datum</span><b>${fmtDate(cur.date)}</b></div></div>
   ${parts}
@@ -602,13 +614,14 @@ async function save(){
   if(!cur.no||!cur.customer.trim()){$("status").textContent="Unesi broj naloga i kupca.";return false}
   const segments=mkSegments();
   if(!segments.length){$("status").textContent="Dodaj bar jednu stavku sa dužinom i brojem komada.";return false}
+  const dropped=cur.segments.reduce((n,sg)=>n+sg.items.length,0)-segments.reduce((n,sg)=>n+sg.items.length,0);
   const id=oid(cur);
   if(cur._new&&orders.some(o=>oid(o)===id)){$("status").textContent="Nalog "+cur.no+"/"+cur.year+" već postoji – promeni broj.";return false}
   const flat=segments.flatMap(sg=>sg.items.map(i=>({...i,segment:sg.title})));
   const now=new Date().toISOString();
   const doc={no:cur.no,year:cur.year,customer:cur.customer.trim(),addr:(cur.addr||"").trim(),phone:(cur.phone||"").trim(),pib:(cur.pib||"").trim(),date:cur.date,status:cur.status,note:cur.note||"",segments,items:flat,
     totalKom:cntK(flat),totalM2:sumM(flat),updatedAt:now,createdAt:cur._new?now:((orders.find(o=>oid(o)===id)||{}).createdAt||now)};
-  try{await db.collection("orders").doc(id).set(doc);custSync(doc);cur._new=false;dirty=false;cur.segments=segments.map(sg=>({tip:sg.tip,sid:sg.sid,status:sg.status,items:sg.items.map(i=>({vrsta:i.vrsta,tip:sg.tip,duzina:i.duzina||"",sirina:i.sirina||"",boja:i.boja,kom:i.kom,jm:i.jm}))}));renderItems();$("btnDel").classList.remove("hide");$("status").textContent="Sačuvano ✓";lastDoc=doc;try{const d=await syncProformas(doc);if(d.length)$("status").textContent="Sačuvano ✓ – ažuriran i predračun "+d.join(", ")}catch(e){}return true}
+  try{await db.collection("orders").doc(id).set(doc);custSync(doc);cur._new=false;dirty=false;if(dropped>0){dirty=true}else cur.segments=segments.map(sg=>({tip:sg.tip,sid:sg.sid,status:sg.status,items:sg.items.map(i=>({vrsta:i.vrsta,tip:sg.tip,duzina:i.duzina||"",sirina:i.sirina||"",boja:i.boja,kom:i.kom,jm:i.jm}))}));renderItems();$("btnDel").classList.remove("hide");$("status").textContent=dropped>0?"Sačuvano, ali "+dropped+" nepotpunih redova NIJE sačuvano (nedostaje vrsta, dužina ili količina) – ostali su u formi, dopuni ih i sačuvaj ponovo.":"Sačuvano ✓";lastDoc=doc;try{const d=await syncProformas(doc);if(d.length)$("status").textContent="Sačuvano ✓ – ažuriran i predračun "+d.join(", ")}catch(e){}return true}
   catch(e){$("status").textContent="Greška pri čuvanju: "+(e.message||e.code||"nepoznata");return false}
 }
 
@@ -624,6 +637,7 @@ async function saveProDraft(){
   if(!segments.length){S.textContent="Dodaj bar jednu stavku sa dužinom i brojem komada.";return false}
   if(cur._origId&&cur._origId!==cur.year+"_"+cur.no){S.textContent="Broj predračuna ne može da se menja ("+cur._origId.replace("_","/")+").";return false}
   if(cur._new&&proformas.some(p=>p.year===cur.year&&p.no===cur.no)){S.textContent="Predračun "+cur.no+"/"+cur.year+" već postoji – promeni broj.";return false}
+  const droppedP=cur.segments.reduce((n,sg)=>n+sg.items.length,0)-segments.reduce((n,sg)=>n+sg.items.length,0);
   const flat=segments.flatMap(sg=>sg.items),old=cur.lines||[],used=new Set();
   const take=(v,b)=>{let k=old.findIndex((l,i)=>!used.has(i)&&l.vrsta===v&&(l.boja||"")===(b||""));if(k<0)k=old.findIndex((l,i)=>!used.has(i)&&l.vrsta===v);if(k>=0)used.add(k);return k>=0?old[k]:null};
   const lines=flat.map(i=>{const o=take(i.vrsta,i.boja),pr=o&&cn(o)>0?o.cena:priceFor(i.vrsta),cena=pr==null?"":pr;return{vrsta:i.vrsta,boja:i.boja||"",duzina:i.duzina,kom:i.kom,m2:i.m2,jm:i.jm||"m²",cena:cn({cena}),iznos:0}});
@@ -633,7 +647,7 @@ async function saveProDraft(){
   const doc={no:cur.no,year:cur.year,orderId:"",orderNo:"",customer:cur.customer.trim(),addr:(cur.addr||"").trim(),phone:(cur.phone||"").trim(),pib:(cur.pib||"").trim(),kupac:kup,date:cur.date,note:cur.note||"",pdv:rate,placeno:paid,ostalo:r2(kc.t-paid),uplate,lines,osnovica:kc.b,pdvIznos:kc.p,ukupno:kc.t,segments,samostalan:true,createdAt:ex?ex.createdAt:now,updatedAt:now};
   try{await db.collection("proformas").doc(doc.year+"_"+doc.no).set(doc);custSync(doc)}
   catch(e){S.textContent="Greška pri čuvanju: "+(e.message||e.code||"nepoznata");return false}
-  cur=null;dirty=false;openPro(doc);$("pstatus").textContent="Stavke sačuvane ✓ – proveri cene.";return true;
+  cur=null;dirty=false;openPro(doc);$("pstatus").textContent=droppedP>0?"Sačuvano, ali "+droppedP+" nepotpunih redova NIJE sačuvano (nedostaje vrsta, dužina ili količina). Klikni „Izmeni stavke“ da ih dopuniš.":"Stavke sačuvane ✓ – proveri cene.";return true;
 }
 async function syncProformas(doc){
   const id=oid(doc),done=[];
@@ -654,16 +668,53 @@ $("btnDel").onclick=async()=>{
   if(!(await ask("Trajno obrisati nalog "+cur.no+"/"+cur.year+"?")))return;
   try{await db.collection("orders").doc(oid(cur)).delete();dirty=false;closeForm()}catch(e){$("status").textContent="Brisanje nije uspelo."}
 };
+function buildPrintPages(){
+  const H=1120,wrap=document.createElement("div");
+  wrap.style.cssText="position:absolute;left:-10000px;top:0;width:794px;background:#fff";
+  const cl=$("sheet").cloneNode(true);cl.classList.add("prt13");cl.style.cssText="width:794px;max-width:794px;border:0;margin:0";
+  wrap.appendChild(cl);document.body.appendChild(wrap);
+  try{
+    const ft=cl.querySelector(".sfoot"),sg=cl.querySelector(".sigblock");
+    let fh=0,sh=0;
+    if(ft){ft.style.marginTop="0";fh=ft.offsetHeight}
+    if(sg){sg.style.marginTop="0";sh=sg.offsetHeight}
+    if(ft)ft.remove();if(sg)sg.remove();
+    const base=cl.getBoundingClientRect().top,cuts=[];
+    cl.querySelectorAll("tbody tr,tfoot tr,.sg,.hd,.bn,.nt").forEach(el=>{if(el.tagName==="TR"&&el.closest(".ns"))return;cuts.push(Math.round(el.getBoundingClientRect().bottom-base))});
+    const total=Math.ceil(cl.getBoundingClientRect().height),bottom=H-fh-12,limit=bottom-10,pages=[];let y=0;
+    while(y<total-1){
+      const top=pages.length?24:0,avail=limit-top;let end=Math.min(total,y+avail);
+      if(end<total){const c=cuts.filter(v=>v>y+40&&v<=end);if(c.length)end=Math.max(...c)}
+      else if(sg&&top+(total-y)+sh+20>limit){const c=cuts.filter(v=>v>y+40&&v<total-5);if(c.length)end=Math.max(...c)}
+      pages.push({y,end,top});y=end;
+    }
+    if(!pages.length)pages.push({y:0,end:total,top:0});
+    if(sg){const L=pages[pages.length-1];if(L.top+(L.end-L.y)+sh+20>limit)pages.push({y:total,end:total,top:24})}
+    let root=$("prtRoot");if(!root){root=document.createElement("div");root.id="prtRoot";document.body.appendChild(root)}
+    root.innerHTML="";
+    pages.forEach((pg,i)=>{
+      const box=document.createElement("div");box.className="pbox";
+      const win=document.createElement("div");win.className="pwin";win.style.cssText="top:"+pg.top+"px;height:"+(pg.end-pg.y)+"px";
+      const inner=cl.cloneNode(true);inner.style.cssText="position:absolute;left:0;width:794px;max-width:794px;border:0;margin:0;top:"+(-pg.y)+"px";
+      win.appendChild(inner);box.appendChild(win);
+      if(ft){const f=ft.cloneNode(true);const w=document.createElement("div");w.id="sheet";w.className="prt13";w.style.cssText="position:absolute;left:0;width:794px;max-width:794px;border:0;margin:0;padding:0;overflow:visible;background:none;top:"+bottom+"px";f.style.cssText="margin:0";w.appendChild(f);box.appendChild(w)}
+      if(sg&&i===pages.length-1){const g=sg.cloneNode(true);const w=document.createElement("div");w.id="sheet";w.className="prt13";w.style.cssText="position:absolute;left:0;width:794px;max-width:794px;border:0;margin:0;padding:0;overflow:visible;background:none;top:"+(bottom-sh-20)+"px";g.style.cssText=(sg.getAttribute("style")||"")+";margin:0 13px";w.appendChild(g);box.appendChild(w)}
+      if(pages.length>1){const n=document.createElement("div");n.className="pnum";n.style.top=(H-13)+"px";n.textContent="Strana "+(i+1)+" / "+pages.length;box.appendChild(n)}
+      root.appendChild(box);
+    });
+    return root;
+  }finally{wrap.remove()}
+}
 function printSheet(prep,S){
   try{if(prep)prep()}catch(e){}
-  const sb=$("sheetbox"),h=sb&&sb.parentElement;if(!h||!$("sheet").innerHTML.trim()){if(S)S.textContent="Nema dokumenta za štampu.";return}
-  const sh=$("sheet"),saved=sh.innerHTML,ft=sh.querySelector(".sfoot");
-  if(ft){ft.remove();const body=sh.innerHTML;sh.innerHTML='<div class="pgt"><div class="pgb"><div class="pgr"><div class="pgc">'+body+'</div></div></div><div class="pgf"><div class="pgr"><div class="pgs"></div></div></div></div>';sh.appendChild(ft)}
-  h.classList.add("prt-host");document.body.classList.add("prt");
-  const done=()=>{document.body.classList.remove("prt");h.classList.remove("prt-host");if(ft)sh.innerHTML=saved;window.removeEventListener("afterprint",done)};
+  if(!$("sheet").innerHTML.trim()){if(S)S.textContent="Nema dokumenta za štampu.";return}
+  let root;try{root=buildPrintPages()}catch(e){if(S)S.textContent="Priprema štampe nije uspela: "+(e.message||e);return}
+  document.body.classList.add("prt2");
+  const done=()=>{document.body.classList.remove("prt2");if(root)root.innerHTML="";window.removeEventListener("afterprint",done)};
   window.addEventListener("afterprint",done);
-  setTimeout(()=>{try{window.print()}catch(e){done();if(S)S.textContent="Štampa nije dostupna u ovom prikazu – koristi „Preuzmi PDF“."}},60);
+  setTimeout(()=>{try{window.print()}catch(e){done();if(S)S.textContent="Štampa nije dostupna u ovom prikazu – koristi „Preuzmi PDF“."}},80);
 }
+(function(){const sh=$("sheet");if(!sh||!window.MutationObserver)return;const f=()=>{const n=[...sh.querySelectorAll("tbody tr")].filter(r=>!r.closest(".ns")).length;sh.classList.toggle("dense",n>18)};new MutationObserver(f).observe(sh,{childList:true,subtree:true});f()})();
 $("btnPrint").onclick=()=>printSheet(()=>{syncHead();renderSheet()},$("status"));
 $("btnPdf").onclick=()=>{syncHead();renderSheet();pdfOf("Radni_nalog_"+cur.no+"-"+cur.year+"_"+cur.customer.trim().replace(/\s+/g,"_")+".pdf",$("status"))};
 
@@ -717,7 +768,7 @@ function renderPrices(){
   const a=document.activeElement;if(a&&$("ptb").contains(a)&&a.tagName!=="BUTTON")return;
   $("ptb").innerHTML=Object.keys(TIPOVI).map(g=>{
     const rows=prices.filter(p=>(p.grupa||"trapez")===g).sort((x,y)=>String(x.naziv).localeCompare(String(y.naziv),"sr-Latn"));
-    return `<div class="seg"><div class="row" style="justify-content:space-between;margin-bottom:6px"><b>${TIPOVI[g]}</b><button class="p" data-addp="${g}">+ Dodaj cenu</button></div>${rows.length?`<div class="sc"><table><thead><tr><th>Naziv</th><th>Jedinica mere</th><th>Veleprodajna cena (RSD)</th><th class="n">Maloprodajna cena (RSD, +${esc(pdvRate)}% PDV)</th><th></th></tr></thead><tbody>${rows.map(priceRow).join("")}</tbody></table></div>`:`<div class="msg" style="padding:8px">Nema stavki.</div>`}</div>`}).join("");
+    return `<div class="seg"><div class="row" style="justify-content:space-between;margin-bottom:6px"><div class="row" style="gap:6px;flex-wrap:nowrap"><input data-gn="${g}" value="${esc(TIPOVI[g])}" style="font-weight:700;min-width:200px;max-width:320px" title="Klikni da preimenuješ grupu" aria-label="Naziv grupe">${(!BASE_T[g]&&!rows.length)?`<button class="d" data-gdel="${g}" title="Ukloni praznu grupu">✕</button>`:""}</div><button class="p" data-addp="${g}">+ Dodaj cenu</button></div>${rows.length?`<div class="sc"><table><thead><tr><th>Naziv</th><th>Jedinica mere</th><th>Veleprodajna cena (RSD)</th><th class="n">Maloprodajna cena (RSD, +${esc(pdvRate)}% PDV)</th><th></th></tr></thead><tbody>${rows.map(priceRow).join("")}</tbody></table></div>`:`<div class="msg" style="padding:8px">Nema stavki.</div>`}</div>`}).join("");
   $("pempty").textContent="";
 }
 $("ptb").addEventListener("change",async e=>{
@@ -728,11 +779,33 @@ $("ptb").addEventListener("change",async e=>{
 });
 $("ptb").addEventListener("click",async e=>{
   const d=e.target.dataset;
-  if(d.addp){try{await db.collection("prices").doc().set({grupa:d.addp,naziv:"",jm:DEFU[d.addp],vele:0})}catch(x){$("cstatus").textContent="Greška pri čuvanju"}return}
+  if(d.addp){try{await db.collection("prices").doc().set({grupa:d.addp,naziv:"",jm:DEFU[d.addp]||"komad",vele:0})}catch(x){$("cstatus").textContent="Greška pri čuvanju"}return}
   if(d.cp!==undefined){const p=prices.find(x=>x.id===e.target.closest("tr").dataset.id);if(!p)return;
     try{await db.collection("prices").doc().set({grupa:p.grupa||"trapez",naziv:String(p.naziv||"")+" (kopija)",jm:p.jm,vele:p.vele});$("cstatus").textContent="Stavka je kopirana – promeni naziv kopije."}catch(x){$("cstatus").textContent="Greška pri kopiranju"}return}
   if(d.x===undefined||!(await ask("Obrisati ovu cenu?")))return;
   try{await db.collection("prices").doc(e.target.closest("tr").dataset.id).delete()}catch(x){$("cstatus").textContent="Brisanje nije uspelo"}
+});
+
+$("ptb").addEventListener("change",async e=>{
+  const g=e.target.dataset.gn;if(!g)return;const S=$("cstatus");
+  const name=e.target.value.trim();
+  if(!name){e.target.value=TIPOVI[g];S.textContent="Naziv grupe ne sme biti prazan.";return}
+  if(Object.keys(TIPOVI).some(k=>k!==g&&TIPOVI[k].toLowerCase()===name.toLowerCase())){e.target.value=TIPOVI[g];S.textContent="Grupa sa tim nazivom već postoji.";return}
+  try{await saveSet({gNames:{...(SET.gNames||{}),[g]:name}});applyGrupe();S.textContent="Grupa preimenovana ✓";renderPrices()}catch(x){S.textContent="Greška pri čuvanju"}
+});
+$("gAdd").onclick=async()=>{
+  const S=$("cstatus"),name=$("gNewName").value.trim();
+  if(!name){S.textContent="Upiši naziv nove grupe.";return}
+  if(Object.values(TIPOVI).some(v=>v.toLowerCase()===name.toLowerCase())){S.textContent="Grupa sa tim nazivom već postoji.";return}
+  const id="g"+Date.now().toString(36);
+  try{await saveSet({gCustom:[...(Array.isArray(SET.gCustom)?SET.gCustom:[]),id],gNames:{...(SET.gNames||{}),[id]:name}});applyGrupe();$("gNewName").value="";S.textContent="Grupa „"+name+"“ dodata – dodaj cene u nju.";renderPrices()}catch(x){S.textContent="Greška pri čuvanju"}
+};
+$("ptb").addEventListener("click",async e=>{
+  const g=e.target.dataset.gdel;if(!g)return;const S=$("cstatus");
+  if(prices.some(p=>(p.grupa||"trapez")===g)){S.textContent="Grupa nije prazna.";return}
+  if(orders.some(o=>(o.segments||[]).some(sg=>sg.tip===g))||proformas.some(q=>(q.segments||[]).some(sg=>sg.tip===g))){S.textContent="Grupa se koristi u nalozima – ne može da se ukloni.";return}
+  if(!(await ask("Ukloniti praznu grupu „"+TIPOVI[g]+"“?")))return;
+  try{const n={...(SET.gNames||{})};delete n[g];await saveSet({gCustom:(SET.gCustom||[]).filter(x=>x!==g),gNames:n});applyGrupe();renderPrices()}catch(x){S.textContent="Greška pri čuvanju"}
 });
 $("ptb").addEventListener("input",e=>{
   const k=e.target.dataset.k,tr=e.target.closest("tr");if(k!=="vele"&&k!=="mp")return;
@@ -1321,7 +1394,7 @@ async function pdfOf(fname,S){
       draw(items,0,pg.top-pg.y,pg.y,pg.end);
       draw(fi,0,bottom,0,1e9);
       if(i===pages.length-1)draw(si,40,bottom-sh-20,0,1e9);
-      if(pages.length>1){const t=(i+1)+" / "+pages.length;doc.text(W-40-doc.width(t,12,false),bottom-6,12,false,{r:110,g:115,b:122},t,0,0)}
+      if(pages.length>1){const t="Strana "+(i+1)+" / "+pages.length;doc.text(W-40-doc.width(t,12,false),bottom-6,12,false,{r:110,g:115,b:122},t,0,0)}
     });
     await dl.save({filename:fname,data:doc.finish().buffer});S.textContent="PDF sačuvan – otvori ga i štampaj.";
   }catch(e){S.textContent=(e&&e.code==="declined")?"":"PDF nije uspeo: "+((e&&(e.message||e.code))||"nepoznata greška")}
@@ -1347,7 +1420,7 @@ function ordSegs(o){
   const segs=(o.segments&&o.segments.length)?o.segments:[{tip:"trapez",items:o.items||[]}];
   return segs.map((sg,si)=>{const tip=sg.tip||"trapez";
     const base=aggLines((sg.items||[]).filter(i=>i&&String(i.vrsta||"").trim()).map(i=>{const q=Number.isFinite(Number(i.m2))&&i.m2!==""&&i.m2!=null?num(i.m2):r2(rowM2({...i,tip:i.tip||tip}));return{vrsta:i.vrsta+((i.tip||tip)==="opsiv"&&i.sirina?" (RŠ "+i.sirina+" mm)":""),duzina:dzTxt(i.duzina,i.jm),boja:i.boja||"",kom:i.kom,kolicina:q,jm:i.jm||rowUnit({...i,tip:i.tip||tip})}}));
-    return{sid:sg.sid||"s"+si,tip,title:sg.title||TIPOVI[tip]||"Grupa",prod:sg.status||(o.status==="u_radu"?"u_radu":"zavrsen"),base}});
+    return{sid:sg.sid||"s"+si,tip,title:TIPOVI[tip]||sg.title||"Grupa",prod:sg.status||(o.status==="u_radu"?"u_radu":"zavrsen"),base}});
 }
 const orderBase=o=>ordSegs(o).flatMap(g=>g.base);
 function deliveredIdx(excl,plus){
@@ -1783,7 +1856,7 @@ initRole();
   db.collection("nabavne").onSnapshot(s=>{setTimeout(homeUp,0);nabavne=s.docs.map(d=>({id:d.id,od:"",lim:0,filc:0,...d.data()}));if(!$("prod").classList.contains("hide")){renderNab();renderProd()}},()=>{});
   db.collection("otpremnice").onSnapshot(s=>{setTimeout(homeUp,0);otpr=s.docs.map(d=>fixDoc(d.data())).filter(Boolean);refreshLocks();if(!$("olist").classList.contains("hide"))renderOL()},()=>{});
   db.collection("proformas").onSnapshot(s=>{setTimeout(homeUp,0);proformas=s.docs.map(d=>fixDoc(d.data())).filter(Boolean);if(!$("plist").classList.contains("hide"))renderPL()},()=>{});
-  db.doc("settings/main").onSnapshot(s=>{const d=s.data();SET={...SET,...(d||{})};setLoaded=true;applyBoje();if(document.activeElement!==$("bkDays"))$("bkDays").value=bkDays();setTimeout(checkBk,1500);setTimeout(checkBk,5000);pdvRate=d&&d.pdv!=null?+d.pdv:20;lockOn=d&&d.lockAfterDelivery!=null?!!d.lockAfterDelivery:true;$("setLock").checked=lockOn;refreshLocks();if(!$("cen").classList.contains("hide"))renderPrices();if(document.activeElement!==$("pdv"))$("pdv").value=pdvRate},()=>{});
+  db.doc("settings/main").onSnapshot(s=>{const d=s.data();SET={...SET,...(d||{})};setLoaded=true;applyGrupe();applyBoje();if(cur&&!$("view").classList.contains("hide")&&document.activeElement===document.body){try{syncHead();renderItems()}catch(e){}}if(document.activeElement!==$("bkDays"))$("bkDays").value=bkDays();setTimeout(checkBk,1500);setTimeout(checkBk,5000);pdvRate=d&&d.pdv!=null?+d.pdv:20;lockOn=d&&d.lockAfterDelivery!=null?!!d.lockAfterDelivery:true;$("setLock").checked=lockOn;refreshLocks();if(!$("cen").classList.contains("hide"))renderPrices();if(document.activeElement!==$("pdv"))$("pdv").value=pdvRate},()=>{});
 })();
 </script>
 </body>
