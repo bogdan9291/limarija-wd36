@@ -135,28 +135,30 @@ input:focus,select:focus{outline:0;border-bottom-color:var(--ac);background:var(
 .role-pregled #ptb,.role-pregled #ntb,.role-pregled #ztb,.role-pregled #oview .card,.role-pregled #kDet > .card:first-child,.role-pregled #skartBox .row,.role-pregled #stockCard .row,.role-pregled #plUn{pointer-events:none}
 @media (max-width:560px){.side nav button span{display:none}.side nav button{padding:11px 2px}}
 /* printable sheet: always light, A4 */
-#sheet{background:#fff;color:#1d2330;width:100%;max-width:794px;margin:0 auto;padding:0 0 28px;border:1px solid var(--bd);font-family:Arial,Helvetica,sans-serif;overflow:hidden;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-#sheet .bn{background:#fff;color:#1d2330;margin:0 40px;padding:34px 0 14px;border-bottom:5px solid #e8a317;display:block}#sheet .bd{padding:0 40px}
+#sheet{background:#fff;color:#000;width:100%;max-width:794px;margin:0 auto;padding:0 0 28px;border:1px solid var(--bd);font-family:Arial,Helvetica,sans-serif;overflow:hidden;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+#sheet .bn{background:#fff;color:#000;margin:0 40px;padding:34px 0 14px;border-bottom:1px solid #9aa0a8;display:block}#sheet .bd{padding:0 40px}
 #sheet .bn .dt{text-align:right;font-size:24px;font-weight:700;letter-spacing:1.5px;color:#4b5057;line-height:1}
-#sheet h2{font-family:"Arial Black","Arial Bold",Arial,Helvetica,sans-serif;font-size:34px;margin:0;letter-spacing:.3px;font-weight:900;line-height:1.05;color:#1d2330}
-#sheet .ad{font-size:12.5px;margin-top:6px;color:#5b616a;line-height:1.5}
-#sheet .hd{display:flex;gap:12px;margin:22px 0 20px}#sheet .hd>div{flex:1;background:#f1f2f4;border-left:4px solid #8a9099;padding:9px 12px;border-radius:4px}#sheet .hd span{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:#666b73}#sheet .hd b{font-size:17px}#sheet .hd .no{font-size:22px;color:#2f3338}
+#sheet h2{font-family:"Arial Black","Arial Bold",Arial,Helvetica,sans-serif;font-size:34px;margin:0;letter-spacing:.3px;font-weight:900;line-height:1.05;color:#000}
+#sheet .ad{font-size:12.5px;margin-top:6px;color:#000;line-height:1.5}
+#sheet .hd{display:flex;gap:12px;margin:22px 0 20px}#sheet .hd>div{flex:1;background:#f7f8f9;border-left:3px solid #c9ccd1;padding:9px 12px;border-radius:4px}#sheet .hd span{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:#000}#sheet .hd b{font-size:17px}#sheet .hd .no{font-size:22px;color:#000}
 #sheet table{border:1px solid #c9ccd1;border-collapse:collapse;width:100%;table-layout:fixed}
-#sheet th,#sheet td{border:0;border-bottom:1px solid #e3e5e8;border-left:1px solid #d6d8dc;color:#1d2330;padding:9px 10px;font-size:14px;white-space:normal}
-#sheet tbody tr:nth-child(even) td{background:#f5f6f7}
+#sheet th,#sheet td{border:0;border-bottom:1px solid #e3e5e8;border-left:1px solid #d6d8dc;color:#000;padding:9px 10px;font-size:14px;white-space:normal}
+#sheet tbody td{background:#fff}
 #sheet th:first-child,#sheet td:first-child{border-left:0}
-#sheet th{background:#4b5057;color:#fff;border-left-color:#6b7078;font-size:13px;text-transform:none;letter-spacing:0;border-bottom:0}
+#sheet th{background:#e4e6e9;color:#000;border-left-color:#c9ccd1;font-size:13px;text-transform:none;letter-spacing:0;border-bottom:0}
 #sheet th,#sheet td{text-align:center}#sheet thead th:nth-child(2),#sheet table:not(.gt) tbody td:nth-child(2){text-align:left}
-#sheet tfoot td{font-weight:700;background:#e4e6e9;border-top:1px solid #8a9099;border-bottom:0}#sheet .gt td{background:#e8a317;color:#1d2330;font-size:16px;border:0}
-#sheet .sg{margin-bottom:22px;break-inside:avoid}#sheet .st{font-weight:700;font-size:15px;padding:0 0 6px;margin-bottom:6px;background:none;color:#1d2330;border-bottom:3px solid #e8a317;text-transform:uppercase;letter-spacing:.8px;border-radius:0}
+#sheet tfoot td{font-weight:700;background:#f6f7f8;border-top:1px solid #c9ccd1;border-bottom:0}#sheet .gt td{background:#f6f7f8;color:#000;font-size:16px;border:0}
+#sheet .sg{margin-bottom:22px;break-inside:avoid}#sheet .st{font-weight:700;font-size:15px;padding:0 0 6px;margin-bottom:6px;background:none;color:#000;border-bottom:1px solid #9aa0a8;text-transform:uppercase;letter-spacing:.8px;border-radius:0}
 #sheet .sw{display:inline-block;width:11px;height:11px;margin-right:7px;vertical-align:-1px;border:1px solid #8a9099}
-#sheet .sfoot{padding:0 14px;margin-top:26px;text-align:center;font-size:10.5px;color:#444a52;line-height:1.5;white-space:nowrap}#sheet .sfoot hr{border:0;border-top:1px solid #c9ccd1;margin:0 0 8px}#sheet .sfoot .f1{font-weight:700;color:#2f3338}
+#sheet .sfoot{padding:0 14px;margin-top:26px;text-align:center;font-size:10.5px;color:#000;line-height:1.5;white-space:nowrap}#sheet .sfoot hr{border:0;border-top:1px solid #9aa0a8;margin:0 0 8px}#sheet .sfoot .f1{font-weight:700;color:#000}
 #sheet .nt{margin-top:16px;font-size:14px;white-space:pre-wrap}
 @media print{
  @page{size:A4;margin:12mm}
  body{background:#fff}.side,.mhead{display:none!important}.app{display:block}
  body.prt .wrap>*:not(.prt-host){display:none!important}
  body.prt .prt-host>*:not(#sheetbox){display:none!important}
+ .pgt{display:table;width:100%}.pgb{display:table-row-group}.pgf{display:table-footer-group}.pgr{display:table-row}.pgc,.pgs{display:table-cell}.pgs{height:22mm}
+ body.prt #sheet .sfoot{position:fixed;left:0;right:0;bottom:0;margin:0;padding:0 4px;background:#fff;white-space:normal}
  #sheetbox,#sheet{border:0;padding:0;margin:0;max-width:none}
 }
 </style>
@@ -170,7 +172,7 @@ input:focus,select:focus{outline:0;border-bottom-color:var(--ac);background:var(
  <h2 class="ptitle" id="ptitle">Početna</h2>
  <div id="bkBanner" class="lockmsg hide" style="margin-bottom:14px"><span id="bkBanTx"></span> <span class="row" style="display:inline-flex;margin-top:8px"><button class="p" id="bkbDrive">Sačuvaj na Google Drive</button><button id="bkbJson">Preuzmi kopiju</button><button id="bkbLater">Podseti me sutra</button></span></div>
  <datalist id="custl"></datalist>
- <div id="home"><div class="row" style="justify-content:space-between;margin-bottom:12px"><div><div id="hdate" style="color:var(--mu);font-size:13px"></div></div><div class="row"><button id="btnNewPH">+ Novi predračun</button><button class="p" id="btnNewH">+ Novi radni nalog</button></div></div><div class="card" style="padding:10px 14px"><input id="gs" placeholder="Pretraga: kupac, broj dokumenta (npr. 12/2026), telefon, PIB…" style="width:100%"><div id="gsr" class="sc hide" style="margin-top:8px"></div></div><div id="hbody"></div></div>
+ <div id="home"><div class="row" style="justify-content:space-between;margin-bottom:12px"><div><div id="hdate" style="color:var(--mu);font-size:13px"></div></div><div class="row"><button class="p" id="btnNewPH">+ Novi predračun</button><button class="p" id="btnNewH">+ Novi radni nalog</button></div></div><div class="card" style="padding:10px 14px"><input id="gs" placeholder="Pretraga: kupac, broj dokumenta (npr. 12/2026), telefon, PIB…" style="width:100%"><div id="gsr" class="sc hide" style="margin-top:8px"></div></div><div id="hbody"></div></div>
 
  <div id="list" class="hide">
   <div class="card">
@@ -375,7 +377,7 @@ const $=id=>document.getElementById(id);
 function ask(m){return new Promise(r=>{$("ovm").textContent=m;$("ov").classList.remove("hide");const f=v=>{$("ov").classList.add("hide");$("ovy").onclick=$("ovn").onclick=null;r(v)};$("ovy").onclick=()=>f(true);$("ovn").onclick=()=>f(false);$("ovn").focus()})}
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const fmt=n=>(Math.round(n*100)/100).toFixed(2).replace(".",",");
-const custLine=(a,t,p)=>{const x=[];if(a&&String(a).trim())x.push(esc(String(a).trim()));if(t&&String(t).trim())x.push("Tel: "+esc(String(t).trim()));if(p&&String(p).trim())x.push("PIB: "+esc(String(p).trim()));return x.map(l=>`<small style="display:block;font-size:12.5px;font-weight:400;color:#444a52;margin-top:2px">${l}</small>`).join("")};
+const custLine=(a,t,p)=>{const x=[];if(a&&String(a).trim())x.push(esc(String(a).trim()));if(t&&String(t).trim())x.push("Tel: "+esc(String(t).trim()));if(p&&String(p).trim())x.push("PIB: "+esc(String(p).trim()));return x.map(l=>`<small style="display:block;font-size:12.5px;font-weight:400;color:#000;margin-top:2px">${l}</small>`).join("")};
 const FOOT=`<div class="sfoot"><hr><div><span class="f1">Miloš Spasić PR Kovačka radionica WD-36</span> · PIB: 110029026 · Lole Ribara 40, 25250 Odžaci · Tel: 069/4567-999 · Tekući račun: 325-9500600059441-13</div></div>`;
 const wf=h=>h+FOOT;
 const BHEX={"antracit":"#3b3f44","crna":"#111","bordo":"#6d1a2a","braon":"#6b4226","plava":"#1f4e9c","bela":"#fff","zelena":"#2e6b3a","silver":"#b8bcc2","drvo dekor":"#9a6a3a","pocink.":"#d3d6da"};
@@ -654,8 +656,10 @@ $("btnDel").onclick=async()=>{
 function printSheet(prep,S){
   try{if(prep)prep()}catch(e){}
   const sb=$("sheetbox"),h=sb&&sb.parentElement;if(!h||!$("sheet").innerHTML.trim()){if(S)S.textContent="Nema dokumenta za štampu.";return}
+  const sh=$("sheet"),saved=sh.innerHTML,ft=sh.querySelector(".sfoot");
+  if(ft){ft.remove();const body=sh.innerHTML;sh.innerHTML='<div class="pgt"><div class="pgb"><div class="pgr"><div class="pgc">'+body+'</div></div></div><div class="pgf"><div class="pgr"><div class="pgs"></div></div></div></div>';sh.appendChild(ft)}
   h.classList.add("prt-host");document.body.classList.add("prt");
-  const done=()=>{document.body.classList.remove("prt");h.classList.remove("prt-host");window.removeEventListener("afterprint",done)};
+  const done=()=>{document.body.classList.remove("prt");h.classList.remove("prt-host");if(ft)sh.innerHTML=saved;window.removeEventListener("afterprint",done)};
   window.addEventListener("afterprint",done);
   setTimeout(()=>{try{window.print()}catch(e){done();if(S)S.textContent="Štampa nije dostupna u ovom prikazu – koristi „Preuzmi PDF“."}},60);
 }
@@ -1100,9 +1104,9 @@ function proSheet(){
   <div class="sg"><table>${CG8}<thead><tr><th>#</th><th>Vrsta robe</th><th>Jed.</th><th>Količina</th><th>${fz?"Cena sa PDV":"Cena bez PDV"}</th><th>Iznos</th></tr></thead><tbody>${rows}</tbody></table></div>
   <table class="sg ns" style="width:60%;margin-left:auto"><colgroup><col style="width:50%"><col style="width:50%"></colgroup><tbody>
   ${fz?"":`<tr><td ${R}>Osnovica:</td><td ${R}>${money(t.b)} RSD</td></tr>${t.rate?`<tr><td ${R}>PDV (${esc(t.rate)}%):</td><td ${R}>${money(t.p)} RSD</td></tr>`:""}`}
-  <tr><td style="background:#e8a317;color:#1d2330;font-weight:700;text-align:right">UKUPNO:</td><td style="background:#e8a317;color:#1d2330;font-weight:700;text-align:right">${money(t.t)} RSD</td></tr>
+  <tr><td style="background:#f1f2f4;color:#000;font-weight:700;text-align:right">UKUPNO:</td><td style="background:#f1f2f4;color:#000;font-weight:700;text-align:right">${money(t.t)} RSD</td></tr>
   <tr><td ${R}>Plaćeno:</td><td ${R}>${money(t.paid)} RSD</td></tr>
-  <tr><td style="background:#f1f2f4;font-weight:700;text-align:right">Ostalo za plaćanje:</td><td style="background:#f1f2f4;font-weight:700;text-align:right">${money(t.left)} RSD</td></tr></tbody></table>
+  <tr><td style="background:#f8f9fa;font-weight:700;text-align:right">Ostalo za plaćanje:</td><td style="background:#f8f9fa;font-weight:700;text-align:right">${money(t.left)} RSD</td></tr></tbody></table>
   ${ntx?`<div class="nt">${ntx}</div>`:""}
   <div class="sigblock" style="display:flex;justify-content:flex-end;margin-top:56px"><div style="width:42%;border-top:1px solid #444;padding-top:4px;text-align:center;font-size:13px">Sastavio</div></div></div>`);
 }
@@ -1467,7 +1471,7 @@ function oSheet(){
   const tot=vis.length?`<tr><td colspan="3" style="text-align:right"><b>Ukupno:</b></td><td style="text-align:center"><b>${fmt(tq)}</b></td>${C?`<td></td><td style="text-align:center"><b>${money(k.b)}</b></td>`:""}</tr>`:"";
   const sums=C&&vis.length?`<table class="sg ns" style="width:60%;margin-left:auto"><colgroup><col style="width:50%"><col style="width:50%"></colgroup><tbody>
   ${rate>0?`<tr><td ${R}>Osnovica (bez PDV):</td><td ${R}>${money(k.b)} RSD</td></tr><tr><td ${R}>PDV (${esc(rate)}%):</td><td ${R}>${money(k.p)} RSD</td></tr>`:""}
-  <tr><td style="background:#e8a317;color:#1d2330;font-weight:700;text-align:right">${rate>0?"UKUPNO SA PDV:":"UKUPNO (bez PDV):"}</td><td style="background:#e8a317;color:#1d2330;font-weight:700;text-align:right">${money(k.t)} RSD</td></tr></tbody></table>`:"";
+  <tr><td style="background:#f1f2f4;color:#000;font-weight:700;text-align:right">${rate>0?"UKUPNO SA PDV:":"UKUPNO (bez PDV):"}</td><td style="background:#f1f2f4;color:#000;font-weight:700;text-align:right">${money(k.t)} RSD</td></tr></tbody></table>`:"";
   const ntx=[ocur.izvor?esc(ocur.izvor):"",ocur.note?esc(ocur.note):""].filter(Boolean).join(" · ");
   const sg='style="width:42%;border-top:1px solid #444;padding-top:4px;text-align:center;font-size:13px"';
   $("sheet").innerHTML=wf(`<div class="bn"><div><h2>Limarija WD-36</h2><div class="ad"><b>Miloš Spasić PR Kovačka radionica WD-36</b><br>Lole Ribara 40, 25250 Odžaci<br>PIB: 110029026 · MB: 64594940<br>Tekući račun: 325-9500600059441-13</div></div></div><div class="bd">
@@ -1643,13 +1647,15 @@ function mergeRows(list){
   });
   return Object.values(m).sort((a,b)=>(a.vrsta.startsWith(SKART)-b.vrsta.startsWith(SKART))||a.vrsta.localeCompare(b.vrsta,"sr-Latn"));
 }
-function recapCard(title,rows){
+function recapCard(title,rows,pref){
   const T={kom:0,m2:0,lim:0,filc:0,prodaja:0,nabavka:0,bruto:0};rows.forEach(r=>Object.keys(T).forEach(k=>T[k]+=r[k]));
   const red=v=>v<0?' style="color:#c0392b"':"";
   const body=rows.map(r=>`<tr><td>${esc(r.vrsta)}</td><td class="n">${fmt(r.kom).replace(",00","")}</td><td class="n">${fmt(r.m2)}</td><td class="n">${fmt(r.lim)}</td><td class="n">${fmt(r.filc)}</td><td class="n">${money(r.prodaja)}</td><td class="n">${money(r.nabavka)}</td><td class="n"${red(r.bruto)}>${money(r.bruto)}</td></tr>`).join("");
   const np=rows.filter(r=>r.noPrice).map(r=>r.vrsta),nn=rows.some(r=>r.noNab);
   const warn=(np.length?`<div style="color:#c0392b;font-size:12px;margin-top:6px">Nema prodajne cene u cenovniku za: ${np.map(esc).join(", ")}.</div>`:"")+(nn?`<div style="color:#c0392b;font-size:12px;margin-top:6px">Za deo perioda nema nabavne cene – nabavka je prikazana kao 0. Unesi je gore.</div>`:"");
-  return `<div class="card"><b>${esc(title)}</b><div class="sc" style="margin-top:8px"><table><thead><tr><th>Profil</th><th class="n">Kom.</th><th class="n">Proizvedeno (m²)</th><th class="n">Utrošen lim (m²)</th><th class="n">Utrošen filc (m²)</th><th class="n">Prodaja (RSD)</th><th class="n">Nabavka (RSD)</th><th class="n">Bruto zarada (RSD)</th></tr></thead><tbody>${body}</tbody><tfoot><tr><td><b>UKUPNO</b></td><td class="n"><b>${fmt(T.kom).replace(",00","")}</b></td><td class="n"><b>${fmt(T.m2)}</b></td><td class="n"><b>${fmt(T.lim)}</b></td><td class="n"><b>${fmt(T.filc)}</b></td><td class="n"><b>${money(T.prodaja)}</b></td><td class="n"><b>${money(T.nabavka)}</b></td><td class="n"${red(T.bruto)}><b>${money(T.bruto)}</b></td></tr></tfoot></table></div>${warn}</div>`;
+  const nOrd=orders.filter(o=>String(o.date||"").startsWith(pref||"@")).length;
+  const kp=`<div class="grid" style="margin-top:10px"><div class="kpi"><span>Proizvedeno</span><b>${fmt(T.m2)} m²</b></div><div class="kpi"><span>Radnih naloga</span><b>${nOrd}</b></div><div class="kpi"><span>Prodaja (bez PDV)</span><b>${money(T.prodaja)}</b></div><div class="kpi"><span>Bruto zarada</span><b${red(T.bruto)}>${money(T.bruto)}</b></div></div>`;
+  return `<div class="card"><b>${esc(title)}</b>${kp}<div class="sc" style="margin-top:12px"><table><thead><tr><th>Profil</th><th class="n">Kom.</th><th class="n">Proizvedeno (m²)</th><th class="n">Utrošen lim (m²)</th><th class="n">Utrošen filc (m²)</th><th class="n">Prodaja (RSD)</th><th class="n">Nabavka (RSD)</th><th class="n">Bruto zarada (RSD)</th></tr></thead><tbody>${body}</tbody><tfoot><tr><td><b>UKUPNO</b></td><td class="n"><b>${fmt(T.kom).replace(",00","")}</b></td><td class="n"><b>${fmt(T.m2)}</b></td><td class="n"><b>${fmt(T.lim)}</b></td><td class="n"><b>${fmt(T.filc)}</b></td><td class="n"><b>${money(T.prodaja)}</b></td><td class="n"><b>${money(T.nabavka)}</b></td><td class="n"${red(T.bruto)}><b>${money(T.bruto)}</b></td></tr></tfoot></table></div>${warn}</div>`;
 }
 function renderProd(){
   renderStock();
@@ -1662,10 +1668,10 @@ function renderProd(){
   yms.forEach(ym=>{monthRows[ym]=calcMonth(ym,data[ym])});
   let html="";
   if(!yms.length)html='<div class="card"><div class="msg">Nema naloga sa trapeznim limom za izabrani period.</div></div>';
-  else if(sel==="all")html=years.map(y=>recapCard(y+". godina – ukupno",mergeRows(yms.filter(k=>k.startsWith(y)).map(k=>monthRows[k])))).join("");
+  else if(sel==="all")html=years.map(y=>recapCard(y+". godina – ukupno",mergeRows(yms.filter(k=>k.startsWith(y)).map(k=>monthRows[k])),y+"-")).join("");
   else{
     const mine=yms.filter(k=>k.startsWith(sel));
-    html=recapCard(sel+". godina – ukupno",mergeRows(mine.map(k=>monthRows[k])))+mine.map(k=>recapCard(MES[+k.slice(5)-1]+" "+sel,monthRows[k])).join("");
+    html=recapCard(sel+". godina – ukupno",mergeRows(mine.map(k=>monthRows[k])),sel+"-")+mine.map(k=>recapCard(MES[+k.slice(5)-1]+" "+sel,monthRows[k],k)).join("");
   }
   $("rbody").innerHTML=html;
 }
@@ -1714,7 +1720,7 @@ function renderHome(){
   const months=[];for(let i=G?0:5;G?i<12:i>=0;G?i++:i--){const d=G?new Date(Y,i,1):new Date(Y,M-i,1),k=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0");months.push({k,lbl:MES[d.getMonth()].slice(0,3),v:sum(calcMonth(k,data[k]||{}),"m2")})}
   const mx=Math.max(1,...months.map(m=>m.v));
   const bars=months.map(m=>`<div><span>${m.v?(G?Math.round(m.v).toLocaleString("sr-RS"):fmt(m.v).replace(",00","")):""}</span><i style="height:${Math.round(m.v/mx*70)}px"></i>${m.lbl}</div>`).join("");
-  const prow=cm.length?`<div class="sc" style="margin-top:12px"><table><thead><tr><th>Profil</th><th class="n">Kom.</th><th class="n">m²</th><th class="n">Bruto zarada</th></tr></thead><tbody>${cm.map(r=>`<tr><td>${esc(r.vrsta)}</td><td class="n">${fmt(r.kom).replace(",00","")}</td><td class="n">${fmt(r.m2)}</td><td class="n">${money(r.bruto)}</td></tr>`).join("")}</tbody></table></div>`:`<div class="msg">${G?"Ove godine":"Ovog meseca"} još nema naloga sa trapeznim limom.</div>`;
+  const prow=cm.length?`<div class="sc" style="margin-top:12px"><table><thead><tr><th>Profil</th><th class="n">Kom.</th><th class="n">m²</th></tr></thead><tbody>${cm.map(r=>`<tr><td>${esc(r.vrsta)}</td><td class="n">${fmt(r.kom).replace(",00","")}</td><td class="n">${fmt(r.m2)}</td></tr>`).join("")}</tbody></table></div>`:`<div class="msg">${G?"Ove godine":"Ovog meseca"} još nema naloga sa trapeznim limom.</div>`;
   // upozorenja
   const W=[];
   const miss=new Set();orders.filter(o=>{const k=String(o.date||"").slice(0,7);return k===ym||k===pym}).forEach(o=>(o.items||[]).forEach(i=>{if(priceFor(i.vrsta)==null)miss.add(i.vrsta)}));
@@ -1728,7 +1734,7 @@ function renderHome(){
   $("hbody").innerHTML=`
   <div class="card">
    <div class="row" style="justify-content:space-between;margin-bottom:10px"><b>Proizvodnja – ${G?yr+". godina":MES[M]+" "+Y}</b><div class="row"><select id="hMo" aria-label="Mesec" style="width:auto;flex:none">${mOpts}</select><select id="hYr" aria-label="Godina" style="width:auto;flex:none">${yOpts}</select><button data-go="r">Detalji →</button></div></div>
-   <div class="grid"><div class="kpi"><span>Proizvedeno</span><b>${fmt(m2c)} m²</b>${dTxt}</div><div class="kpi"><span>Radnih naloga</span><b>${nOrd}</b></div><div class="kpi"><span>Prodaja (bez PDV)</span><b>${money(sum(cm,"prodaja"))}</b></div><div class="kpi"><span>Bruto zarada</span><b${red}>${money(bruto)}</b></div></div>
+   <div class="grid"><div class="kpi"><span>Proizvedeno</span><b>${fmt(m2c)} m²</b>${dTxt}</div><div class="kpi"><span>Radnih naloga</span><b>${nOrd}</b></div></div>
    ${prow}
    <div class="hs" style="margin-top:16px">Proizvedeno po mesecima (m²)</div><div class="bars${G?" y12":""}">${bars}</div>
   </div>
