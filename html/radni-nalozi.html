@@ -163,7 +163,7 @@ input:focus,select:focus{outline:0;border-bottom-color:var(--ac);background:var(
 #prtRoot .pbox:last-child{break-after:auto;page-break-after:auto}
 #prtRoot .pwin{position:absolute;left:0;width:794px;overflow:hidden}
 #prtRoot .pwin *{break-inside:auto!important;break-before:auto!important;break-after:auto!important;page-break-inside:auto!important}
-#prtRoot .pnum{position:absolute;right:13px;font:11px Arial,Helvetica,sans-serif;color:#000}
+#prtRoot .pnum{position:absolute;right:40px;font:11px Arial,Helvetica,sans-serif;color:#000}
 #sheet.prt13 .bn,.prt13 .bn{margin:0 13px!important;padding-top:12px!important}.prt13 .bd{padding:0 13px!important}
 #sheet.dense th,#sheet.dense td{padding:4px 8px;font-size:12px}#sheet.dense th{font-size:11.5px}#sheet.dense .st{font-size:13px;padding-bottom:4px;margin-bottom:4px}#sheet.dense .sg{margin-bottom:14px}#sheet.dense .gt td{font-size:14px}
 </style>
@@ -221,6 +221,8 @@ input:focus,select:focus{outline:0;border-bottom-color:var(--ac);background:var(
   <div class="setrow"><div style="color:var(--mu);font-size:13px">Rezervna kopija čuva sve naloge, predračune, otpremnice, cenovnik, kupce i ostale podatke u jedan fajl. Preporuka: jednom nedeljno. <span id="bkInfo"></span></div></div>
   <div class="setrow" style="margin-top:10px"><div><b>Podsetnik za rezervnu kopiju</b><div style="color:var(--mu);font-size:13px;margin-top:4px">Pri otvaranju aplikacije dobijaš podsetnik ako je od poslednje kopije prošlo toliko dana. Upiši 0 da isključiš podsetnik.</div></div><div class="row" style="flex-wrap:nowrap"><input id="bkDays" inputmode="numeric" style="width:70px;text-align:right" aria-label="Podsetnik za kopiju u danima"><span style="color:var(--mu)">dana</span></div></div>
   <div class="row" style="margin-top:6px"><button class="p" id="bkJson">Preuzmi sve podatke (JSON)</button><button id="bkDrive">Sačuvaj kopiju na Google Drive</button><button id="bkCsv">Preuzmi pregled dokumenata (CSV za Excel)</button><button id="bkRestore">Vrati podatke iz fajla…</button><input type="file" id="bkFile" accept=".json,application/json" class="hide"></div>
+  <div class="setrow" style="margin-top:16px"><div><b>Izvoz pojedinačnih delova</b><div style="color:var(--mu);font-size:13px;margin-top:4px">Preuzmi samo jedan deo podataka (npr. cenovnik) da ga preneseš u drugi program. Uvoz radiš dugmetom „Vrati podatke iz fajla…“ – menja se samo taj deo, a nalozi, predračuni i ostalo što nije u fajlu ostaju netaknuti. Kod cenovnika uvoz ZAMENJUJE postojeći cenovnik.</div></div></div>
+  <div class="row" id="bkParts" style="margin-top:6px"></div>
   <div class="msg" id="bkStatus"></div>
   <div class="stl" style="margin-top:22px">Opasna zona</div>
   <div class="setrow"><div style="color:var(--mu);font-size:13px;line-height:1.5"><b style="color:var(--tx)">RESET</b> briše naloge, predračune, otpremnice, nabavne cene i zalihu. Cenovnik, kupci i podešavanja (PDV, boje…) ostaju. Brisanje ne može da se opozove, pa pre toga preuzmi rezervnu kopiju.</div><button class="btn-reset" id="btnReset">RESET</button></div>
@@ -671,7 +673,7 @@ $("btnDel").onclick=async()=>{
 function buildPrintPages(){
   const H=1120,wrap=document.createElement("div");
   wrap.style.cssText="position:absolute;left:-10000px;top:0;width:794px;background:#fff";
-  const cl=$("sheet").cloneNode(true);cl.classList.add("prt13");cl.style.cssText="width:794px;max-width:794px;border:0;margin:0";
+  const cl=$("sheet").cloneNode(true);cl.style.cssText="width:794px;max-width:794px;border:0;margin:0";
   wrap.appendChild(cl);document.body.appendChild(wrap);
   try{
     const ft=cl.querySelector(".sfoot"),sg=cl.querySelector(".sigblock");
@@ -697,8 +699,8 @@ function buildPrintPages(){
       const win=document.createElement("div");win.className="pwin";win.style.cssText="top:"+pg.top+"px;height:"+(pg.end-pg.y)+"px";
       const inner=cl.cloneNode(true);inner.style.cssText="position:absolute;left:0;width:794px;max-width:794px;border:0;margin:0;top:"+(-pg.y)+"px";
       win.appendChild(inner);box.appendChild(win);
-      if(ft){const f=ft.cloneNode(true);const w=document.createElement("div");w.id="sheet";w.className="prt13";w.style.cssText="position:absolute;left:0;width:794px;max-width:794px;border:0;margin:0;padding:0;overflow:visible;background:none;top:"+bottom+"px";f.style.cssText="margin:0";w.appendChild(f);box.appendChild(w)}
-      if(sg&&i===pages.length-1){const g=sg.cloneNode(true);const w=document.createElement("div");w.id="sheet";w.className="prt13";w.style.cssText="position:absolute;left:0;width:794px;max-width:794px;border:0;margin:0;padding:0;overflow:visible;background:none;top:"+(bottom-sh-20)+"px";g.style.cssText=(sg.getAttribute("style")||"")+";margin:0 13px";w.appendChild(g);box.appendChild(w)}
+      if(ft){const f=ft.cloneNode(true);const w=document.createElement("div");w.id="sheet";w.style.cssText="position:absolute;left:0;width:794px;max-width:794px;border:0;margin:0;padding:0;overflow:visible;background:none;top:"+bottom+"px";f.style.cssText="margin:0";w.appendChild(f);box.appendChild(w)}
+      if(sg&&i===pages.length-1){const g=sg.cloneNode(true);const w=document.createElement("div");w.id="sheet";w.style.cssText="position:absolute;left:0;width:794px;max-width:794px;border:0;margin:0;padding:0;overflow:visible;background:none;top:"+(bottom-sh-20)+"px";g.style.cssText=(sg.getAttribute("style")||"")+";margin:0 40px";w.appendChild(g);box.appendChild(w)}
       if(pages.length>1){const n=document.createElement("div");n.className="pnum";n.style.top=(H-13)+"px";n.textContent="Strana "+(i+1)+" / "+pages.length;box.appendChild(n)}
       root.appendChild(box);
     });
@@ -1052,7 +1054,7 @@ $("bkbDrive").onclick=()=>{goTab("s");$("bkDrive").click()};
 $("bkbJson").onclick=()=>{goTab("s");$("bkJson").click()};
 $("bkbLater").onclick=()=>{try{localStorage.setItem("bkSnooze",String(Date.now()+864e5))}catch(e){}$("bkBanner").classList.add("hide")};
 $("bkDays").onchange=async()=>{const v=Math.max(0,Math.round(num($("bkDays").value)));try{await saveSet({bkDays:v});$("setStatus").textContent="Sačuvano ✓";checkBk()}catch(e){$("setStatus").textContent="Greška pri čuvanju"}};
-function bkInfo(){checkBk();const t=SET.lastBackup;$("bkInfo").textContent=t?"Poslednja kopija: "+fmtDate(String(t).slice(0,10)):"Kopija još nije napravljena."}
+function bkInfo(){renderBkParts();checkBk();const t=SET.lastBackup;$("bkInfo").textContent=t?"Poslednja kopija: "+fmtDate(String(t).slice(0,10)):"Kopija još nije napravljena."}
 $("bkDrive").onclick=async()=>{
   const S=$("bkStatus"),B=$("bkDrive");B.disabled=true;S.textContent="Slanje na Google Drive…";
   try{
@@ -1116,16 +1118,34 @@ $("bkCsv").onclick=async()=>{
   try{await saveFile("Limarija_WD-36_pregled_"+fdate()+".csv","\ufeff"+rows.map(r=>r.map(x=>q(typeof x==="number"?String(x).replace(".",","):x)).join(";")).join("\n"));S.textContent="CSV sačuvan ✓"}
   catch(e){S.textContent=(e&&e.code==="declined")?"":"Greška: "+(e.message||e.code||"nepoznata")}
 };
+
+const BK_PARTS=[["orders","Radni nalozi"],["proformas","Predračuni"],["otpremnice","Otpremnice"],["prices","Cenovnik (sa grupama)"],["nabavne","Nabavne cene"],["customers","Kupci"],["zaliha","Zaliha"],["settings","Podešavanja (boje, mašine, PDV…)"]];
+function renderBkParts(){
+  const box=$("bkParts");if(!box)return;
+  box.innerHTML=BK_PARTS.map(([k,t])=>{const c=BK_COLL.find(z=>z.n===k);return `<button data-part="${k}">${t}${c?" ("+c.get().length+")":""}</button>`}).join("");
+}
+$("bkParts").addEventListener("click",async e=>{
+  const k=e.target.dataset.part;if(!k)return;const S=$("bkStatus"),data={},c=BK_COLL.find(z=>z.n===k);
+  if(c)data[k]=c.get();
+  if(k==="prices")data.settings=[["main",{gNames:SET.gNames||{},gCustom:Array.isArray(SET.gCustom)?SET.gCustom:[]}]];
+  if(k==="settings"){const {lastBackup,...rest}=SET;data.settings=[["main",rest]]}
+  const nm={orders:"nalozi",proformas:"predracuni",otpremnice:"otpremnice",prices:"cenovnik",nabavne:"nabavne",customers:"kupci",zaliha:"zaliha",settings:"podesavanja"}[k];
+  try{await saveFile("Limarija_WD-36_"+nm+"_"+fdate()+".json",JSON.stringify({app:"limarija-wd36",verzija:1,napravljeno:new Date().toISOString(),delimicno:[k],data}));S.textContent="Fajl „"+nm+"“ sačuvan ✓"}
+  catch(x){S.textContent=(x&&x.code==="declined")?"":"Greška: "+(x.message||x.code||"nepoznata")}
+});
 $("bkRestore").onclick=()=>$("bkFile").click();
 $("bkFile").onchange=async()=>{
   const S=$("bkStatus"),f=$("bkFile").files[0];$("bkFile").value="";if(!f)return;
   try{
     const j=JSON.parse(await f.text());if(j.app!=="limarija-wd36"||!j.data)throw new Error("Ovo nije fajl rezervne kopije aplikacije.");
     const names=Object.keys(j.data).filter(n=>n!=="settings"),cnt=names.reduce((t,n)=>t+(j.data[n]||[]).length,0);
-    if(!(await ask("Vratiti "+cnt+" dokumenata iz kopije od "+fmtDate(String(j.napravljeno||"").slice(0,10))+"? Dokumenti sa istim brojem biće prepisani. Ostali ostaju nepromenjeni.")))return;
+    const part=Array.isArray(j.delimicno)?j.delimicno:null,replacePrices=!!(part&&part.length===1&&part[0]==="prices");
+    const msg=part?("Uvoz dela podataka ("+part.map(k=>(BK_PARTS.find(z=>z[0]===k)||[k,k])[1]).join(", ")+"): "+cnt+" dokumenata. "+(replacePrices?"Postojeći cenovnik biće ZAMENJEN cenovnikom iz fajla (stare cene se brišu). ":"Dokumenti sa istim brojem biće prepisani. ")+"Sve što nije u fajlu ostaje netaknuto."):("Vratiti "+cnt+" dokumenata iz kopije od "+fmtDate(String(j.napravljeno||"").slice(0,10))+"? Dokumenti sa istim brojem biće prepisani. Ostali ostaju nepromenjeni.");
+    if(!(await ask(msg)))return;
     let n=0;for(const c of names)for(const [id,d] of j.data[c]){await db.collection(c).doc(id).set(d);n++;S.textContent="Vraćam… "+n+"/"+cnt}
-    if(j.data.settings&&j.data.settings[0])await saveSet(j.data.settings[0][1]);
-    S.textContent="Vraćeno "+n+" dokumenata ✓"}
+    if(replacePrices){const keep=new Set((j.data.prices||[]).map(x=>x[0]));for(const pr of prices.slice()){if(!keep.has(pr.id))await db.collection("prices").doc(pr.id).delete()}}
+    if(j.data.settings&&j.data.settings[0]){const si={...j.data.settings[0][1]};if(part)delete si.lastBackup;if(si.gNames||si.gCustom){si.gNames={...(SET.gNames||{}),...(si.gNames||{})};si.gCustom=[...new Set([...(Array.isArray(SET.gCustom)?SET.gCustom:[]),...(Array.isArray(si.gCustom)?si.gCustom:[])])]}await saveSet(si);applyGrupe()}
+    S.textContent=n?("Vraćeno "+n+" dokumenata ✓"):"Podešavanja vraćena ✓";renderBkParts()}
   catch(e){S.textContent="Greška: "+(e.message||e.code||"nepoznata")}
 };
 $("btnCenPrint").onclick=()=>printSheet(priceSheet,$("cstatus"));
