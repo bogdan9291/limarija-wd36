@@ -20,6 +20,7 @@ h1{font-size:20px;margin:0}
 button,select,input{font:inherit;color:var(--tx);background:var(--card);border:1px solid var(--bd);border-radius:7px;padding:8px 10px}
 input,select{width:100%}
 button{cursor:pointer;width:auto}
+.seg.dropB{box-shadow:0 -3px 0 var(--ac)}.seg.dropA{box-shadow:0 3px 0 var(--ac)}.seg.dragging{opacity:.5}
 button.p{background:var(--ac);color:var(--acx);border-color:var(--ac);font-weight:600}
 button.d{color:#c0392b}
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
@@ -140,12 +141,12 @@ input:focus,select:focus{outline:0;border-bottom-color:var(--ac);background:var(
 #sheet .bn .dt{text-align:right;font-size:24px;font-weight:700;letter-spacing:1.5px;color:#4b5057;line-height:1}
 #sheet h2{font-family:"Arial Black","Arial Bold",Arial,Helvetica,sans-serif;font-size:34px;margin:0;letter-spacing:.3px;font-weight:900;line-height:1.05;color:#000}
 #sheet .ad{font-size:12.5px;margin-top:6px;color:#000;line-height:1.5}
-#sheet .hd{display:flex;gap:12px;margin:22px 0 20px}#sheet .hd>div{flex:1;background:#f7f8f9;border-left:3px solid #c9ccd1;padding:9px 12px;border-radius:4px}#sheet .hd span{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:#000}#sheet .hd b{font-size:17px}#sheet .hd .no{font-size:22px;color:#000}
+#sheet .hd{display:flex;gap:12px;margin:22px 0 20px}#sheet .hd>div{flex:1;background:#fff;border:1px solid #9aa0a8;padding:9px 12px;border-radius:0}#sheet .hd span{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:#000}#sheet .hd b{font-size:17px}#sheet .hd .no{font-size:22px;color:#000}
 #sheet table{border:1px solid #c9ccd1;border-collapse:collapse;width:100%;table-layout:fixed}
 #sheet th,#sheet td{border:0;border-bottom:1px solid #e3e5e8;border-left:1px solid #d6d8dc;color:#000;padding:9px 10px;font-size:14px;white-space:normal}
 #sheet tbody td{background:#fff}
 #sheet th:first-child,#sheet td:first-child{border-left:0}
-#sheet th{background:#e4e6e9;color:#000;border-left-color:#c9ccd1;font-size:13px;text-transform:none;letter-spacing:0;border-bottom:0}
+#sheet th{background:#f1f2f4;color:#000;border-left-color:#d6d8dc;font-size:13px;text-transform:none;letter-spacing:0;border-bottom:0}
 #sheet th,#sheet td{text-align:center}#sheet thead th:nth-child(2),#sheet table:not(.gt) tbody td:nth-child(2){text-align:left}
 #sheet tfoot td{font-weight:700;background:#f6f7f8;border-top:1px solid #c9ccd1;border-bottom:0}#sheet .gt td{background:#f6f7f8;color:#000;font-size:16px;border:0}
 #sheet .sg{margin-bottom:22px;break-inside:avoid}#sheet .st{font-weight:700;font-size:15px;padding:0 0 6px;margin-bottom:6px;background:none;color:#000;border-bottom:1px solid #9aa0a8;text-transform:uppercase;letter-spacing:.8px;border-radius:0}
@@ -396,7 +397,7 @@ const fmtDate=s=>{if(!s)return"";const[y,m,d]=s.split("-");return d+"."+m+"."+y+
 const m2=(v,d,k)=>(/tr\s*-?\s*18(?!\d)/i.test(String(v||""))?d*1.1*k:d*k)/1000;
 
 let db=null,orders=[],cur=null,dirty=false;
-function blank(l,tip){tip=tip||"trapez";const def="";return{tip,vrsta:(l&&l.tip===tip&&l.vrsta)||def,duzina:"",sirina:"",jm:"metar",boja:tip==="srafovska"?((l&&l.tip===tip&&l.boja)||""):((l&&l.tip===tip)?(l.boja||""):((l&&l.boja)||defBoja())),kom:""}}
+function blank(l,tip){tip=tip||"trapez";const def="";return{tip,vrsta:(l&&l.tip===tip&&l.vrsta)||def,duzina:"",sirina:"",jm:"metar",boja:kindOf(tip)==="srafovska"?((l&&l.tip===tip&&l.boja)||""):((l&&l.tip===tip)?(l.boja||""):((l&&l.boja)||defBoja())),kom:""}}
 
 function newOrder(){
   const y=new Date().getFullYear();
@@ -449,32 +450,35 @@ const usesLen=v=>{const u=unitOf(v);return u==="m²"||u==="metar"};
 const num=x=>parseFloat(String(x).replace(",","."))||0;
 const BASE_T={trapez:"Trapezni lim",opsiv:"Opšiv",oluk:"Oluk",srafovska:"Šrafovska roba"};
 const TIPOVI={...BASE_T};
+const kindOf=t=>BASE_T[t]?t:((SET&&SET.gKind&&SET.gKind[t])||"trapez");
 function applyGrupe(){
   const n=(SET&&SET.gNames)||{},cu=(SET&&Array.isArray(SET.gCustom))?SET.gCustom:[];
+  const all=[...Object.keys(BASE_T),...cu],ord=(SET&&Array.isArray(SET.gOrder))?SET.gOrder:[];
+  const seq=[...ord.filter((k,i)=>all.includes(k)&&ord.indexOf(k)===i),...all.filter(k=>!ord.includes(k))];
   Object.keys(TIPOVI).forEach(k=>delete TIPOVI[k]);
-  Object.keys(BASE_T).forEach(k=>{TIPOVI[k]=String(n[k]||"").trim()||BASE_T[k]});
-  cu.forEach(id=>{TIPOVI[id]=String(n[id]||"").trim()||"Nova grupa";if(!DEFU[id])DEFU[id]="komad"});
+  seq.forEach(k=>{TIPOVI[k]=BASE_T[k]?(String(n[k]||"").trim()||BASE_T[k]):(String(n[k]||"").trim()||"Nova grupa");if(!BASE_T[k])DEFU[k]=DEFU[kindOf(k)]||"komad"});
 }
 const DEFU={trapez:"m²",opsiv:"m²",oluk:"metar",srafovska:"komad"};
 const TH={trapez:["Vrsta robe","Dužina (mm)","Boja","Kom."],opsiv:["Vrsta robe","Dužina (mm)","RŠ (mm)","Boja","Kom."],oluk:["Vrsta robe","Dužina (m)","Jedinica","Boja","Kom."],srafovska:["Vrsta robe","Boja","Kom."]};
-function rowUnit(it){const t=it.tip||"trapez";return t==="opsiv"?"m²":t==="oluk"?(it.jm==="komad"?"komad":"metar"):t==="srafovska"?unitOf(it.vrsta,"komad"):unitOf(it.vrsta)}
-const lenOf=it=>{const t=it.tip||"trapez";return t==="opsiv"?true:t==="oluk"?it.jm!=="komad":t==="srafovska"?false:usesLen(it.vrsta)};
-const rowM2=it=>{const d=num(it.duzina),k=num(it.kom),t=it.tip||"trapez";if(t==="opsiv")return d*num(it.sirina)*k/1e6;if(t==="oluk")return it.jm==="komad"?k:d*k;if(t==="srafovska")return k;return usesLen(it.vrsta)?m2(it.vrsta,d,k):k};
+function rowUnit(it){const t=kindOf(it.tip||"trapez");return t==="opsiv"?"m²":t==="oluk"?(it.jm==="komad"?"komad":"metar"):t==="srafovska"?unitOf(it.vrsta,"komad"):unitOf(it.vrsta)}
+const lenOf=it=>{const t=kindOf(it.tip||"trapez");return t==="opsiv"?true:t==="oluk"?it.jm!=="komad":t==="srafovska"?false:usesLen(it.vrsta)};
+const rowM2=it=>{const d=num(it.duzina),k=num(it.kom),t=kindOf(it.tip||"trapez");if(t==="opsiv")return d*num(it.sirina)*k/1e6;if(t==="oluk")return it.jm==="komad"?k:d*k;if(t==="srafovska")return k;return usesLen(it.vrsta)?m2(it.vrsta,d,k):k};
 const qtyTxt=it=>{const q=rowM2(it),u=rowUnit(it);return((u==="komad"||u==="set")&&Number.isInteger(q)?String(q):fmt(q))+" "+u};
 const cntK=a=>a.filter(i=>i.jm!=="sat"&&i.jm!=="km").reduce((s,i)=>s+i.kom,0),sumM=a=>Math.round(a.filter(i=>i.jm==="m²").reduce((s,i)=>s+i.m2,0)*100)/100;
 function vl(c,t){const g=t||"trapez",s=new Set(),a=[];prices.filter(p=>(p.grupa||"trapez")===g).map(p=>String(p.naziv).trim()).forEach(x=>{const k=x.toLowerCase();if(x&&!s.has(k)){s.add(k);a.push(x)}});return a.sort((x,y)=>x.localeCompare(y))}
 function segTot(sg){let k=0,m=0;sg.items.forEach(it=>{const u=rowUnit(it);if(u!=="sat"&&u!=="km")k+=num(it.kom);if(u==="m²")m+=rowM2(it)});return{k:Math.round(k*100)/100,m:Math.round(m*100)/100}}
 function totals(){let k=0,m=0;cur.segments.forEach(sg=>{const t=segTot(sg);k+=t.k;m+=t.m});return{k,m:Math.round(m*100)/100}}
-const CG='<colgroup><col style="width:6%"><col style="width:26%"><col style="width:17%"><col style="width:23%"><col style="width:10%"><col style="width:18%"></colgroup>';
+const CG='<colgroup><col style="width:44px"><col style="width:26%"><col style="width:17%"><col style="width:23%"><col style="width:10%"><col></colgroup>';
 function cells(it,tip){
+  const K=kindOf(tip);
   const L=vl("",tip),legacy=!!it.vrsta&&!L.some(x=>x.toLowerCase()===String(it.vrsta).trim().toLowerCase()),all=legacy?[it.vrsta,...L]:L;
   const v=`<td><select data-f="vrsta">${all.length?opts(all,it.vrsta):'<option value="">Nema stavki u cenovniku</option>'}</select>${legacy?'<div style="font-size:11px;color:#c0392b">nije u cenovniku</div>':""}</td>`;
-  const d=`<td><input data-f="duzina" inputmode="${tip==="oluk"?"decimal":"numeric"}" value="${esc(it.duzina||"")}" style="width:100px"${lenOf(it)?"":" disabled"}></td>`;
+  const d=`<td><input data-f="duzina" inputmode="${K==="oluk"?"decimal":"numeric"}" value="${esc(it.duzina||"")}" style="width:100px"${lenOf(it)?"":" disabled"}></td>`;
   const b=`<td><select data-f="boja">${bopts(["",...BOJE],it.boja||"")}</select></td>`;
   const k=`<td><input data-f="kom" inputmode="decimal" value="${esc(it.kom)}" style="width:80px"></td>`;
-  if(tip==="srafovska")return v+`<td><select data-f="boja">${bopts(["",...BOJE],it.boja||"")}</select></td>`+k;
-  if(tip==="opsiv")return v+d+`<td><input data-f="sirina" inputmode="numeric" value="${esc(it.sirina||"")}" style="width:110px"></td>`+b+k;
-  if(tip==="oluk")return v+d+`<td><select data-f="jm">${opts(["metar","komad"],it.jm==="komad"?"komad":"metar")}</select></td>`+b+k;
+  if(K==="srafovska")return v+`<td><select data-f="boja">${bopts(["",...BOJE],it.boja||"")}</select></td>`+k;
+  if(K==="opsiv")return v+d+`<td><input data-f="sirina" inputmode="numeric" value="${esc(it.sirina||"")}" style="width:110px"></td>`+b+k;
+  if(K==="oluk")return v+d+`<td><select data-f="jm">${opts(["metar","komad"],it.jm==="komad"?"komad":"metar")}</select></td>`+b+k;
   return v+d+b+k;
 }
 const newSid=()=>"g"+Date.now().toString(36)+Math.random().toString(36).slice(2,5);
@@ -486,31 +490,31 @@ function updSegBadges(){
 }
 function renderItems(){
   cur.segments.forEach(sg=>{if(!sg.sid)sg.sid=newSid();if(!sg.status)sg.status=cur.status==="u_radu"?"u_radu":"zavrsen"});
-  cur.segments.forEach(sg=>{sg.tip=sg.tip||"trapez";sg.items.forEach(i=>{i.tip=sg.tip;if(!i.vrsta){const L=vl("",sg.tip);if(L.length)i.vrsta=L[0]}if(i.boja===undefined&&sg.tip!=="srafovska")i.boja=defBoja()})});
+  cur.segments.forEach(sg=>{sg.tip=sg.tip||"trapez";sg.items.forEach(i=>{i.tip=sg.tip;if(!i.vrsta){const L=vl("",sg.tip);if(L.length)i.vrsta=L[0]}if(i.boja===undefined&&kindOf(sg.tip)!=="srafovska")i.boja=defBoja()})});
   $("segs").innerHTML=cur.segments.map((sg,si)=>{const t=segTot(sg),tip=sg.tip;return `<div class="seg" data-s="${si}">
    <div class="row" style="margin-bottom:6px;align-items:flex-end"><span class="dh" data-drag="seg" title="Prevuci grupu za promenu redosleda" style="font-size:22px;padding-bottom:8px">⠿</span><div style="flex:1;min-width:160px"><label>Vrsta grupe</label><select data-st="1" style="font-weight:600">${Object.keys(TIPOVI).map(k=>`<option value="${k}"${k===tip?" selected":""}>${TIPOVI[k]}</option>`).join("")}</select></div><div class="gstw" style="width:150px"><label>Status grupe</label><select data-gst><option value="u_radu"${sg.status!=="zavrsen"?" selected":""}>U radu</option><option value="zavrsen"${sg.status==="zavrsen"?" selected":""}>Završena</option></select></div><span class="tag segbadge" data-sb="${sg.sid}"></span><button class="d" data-delseg${cur.segments.length<2?" disabled":""}>Ukloni grupu</button></div>
-   <div class="sc"><table><thead><tr><th>#</th>${(TH[tip]||TH.trapez).map(h=>`<th>${h}</th>`).join("")}<th class="n">Ukupno</th><th></th></tr></thead><tbody>`+
+   <div class="sc"><table><thead><tr><th>#</th>${(TH[kindOf(tip)]||TH.trapez).map(h=>`<th>${h}</th>`).join("")}<th class="n">Ukupno</th><th></th></tr></thead><tbody>`+
    sg.items.map((it,i)=>`<tr data-i="${i}"><td style="white-space:nowrap"><span class="dh" data-drag="row" title="Prevuci za promenu redosleda">⠿</span>${i+1}.</td>${cells(it,tip)}<td class="n" data-m2>${qtyTxt(it)}</td><td><button class="d" data-del title="Ukloni stavku">✕</button></td></tr>`).join("")+
-   `</tbody><tfoot><tr><td colspan="${(TH[tip]||TH.trapez).length}" class="n"><b>Zbir grupe:</b></td><td data-sk><b>${t.k}</b></td><td class="n" data-sm><b>${t.m?fmt(t.m)+" m²":"–"}</b></td><td></td></tr></tfoot></table></div>
+   `</tbody><tfoot><tr><td colspan="${(TH[kindOf(tip)]||TH.trapez).length}" class="n"><b>Zbir grupe:</b></td><td data-sk><b>${t.k}</b></td><td class="n" data-sm><b>${t.m?fmt(t.m)+" m²":"–"}</b></td><td></td></tr></tfoot></table></div>
    <div class="row" style="margin-top:8px"><button data-add>+ Dodaj stavku</button></div></div>`}).join("");
   renderSheet();applyOrderLock();updSegBadges();
 }
 function renderSheet(){
   const t=totals(),multi=cur.segments.length>1;
-  const CG7='<colgroup><col style="width:6%"><col style="width:20%"><col style="width:12%"><col style="width:16%"><col style="width:15%"><col style="width:8%"><col style="width:23%"></colgroup>';
-  const CG4='<colgroup><col style="width:8%"><col style="width:38%"><col style="width:20%"><col style="width:12%"><col style="width:22%"></colgroup>';
+  const CG7='<colgroup><col style="width:44px"><col style="width:20%"><col style="width:12%"><col style="width:16%"><col style="width:15%"><col style="width:8%"><col></colgroup>';
+  const CG4='<colgroup><col style="width:44px"><col style="width:38%"><col style="width:20%"><col style="width:12%"><col></colgroup>';
   const parts=cur.segments.map(sg=>{
-    const tip=sg.tip||"trapez",its=sg.items.filter(it=>it.duzina||it.kom||it.sirina);if(!its.length)return"";
-    const st=segTot(sg),n=(TH[tip]||TH.trapez).length+2;
+    const tip=sg.tip||"trapez",K=kindOf(tip),its=sg.items.filter(it=>it.duzina||it.kom||it.sirina);if(!its.length)return"";
+    const st=segTot(sg),n=(TH[kindOf(tip)]||TH.trapez).length+2;
     const rows=its.map((it,i)=>{
-      if(tip==="srafovska")return `<tr><td>${i+1}.</td><td>${esc(it.vrsta)}</td><td>${bj(it.boja)}</td><td>${esc(it.kom)}</td><td>${qtyTxt(it)}</td></tr>`;
+      if(K==="srafovska")return `<tr><td>${i+1}.</td><td>${esc(it.vrsta)}</td><td>${bj(it.boja)}</td><td>${esc(it.kom)}</td><td>${qtyTxt(it)}</td></tr>`;
       const dv=lenOf(it)?esc(it.duzina):"–";
-      const ex=tip==="opsiv"?`<td>${esc(it.sirina)}</td>`:tip==="oluk"?`<td>${it.jm==="komad"?"komad":"metar"}</td>`:"";
+      const ex=K==="opsiv"?`<td>${esc(it.sirina)}</td>`:K==="oluk"?`<td>${it.jm==="komad"?"komad":"metar"}</td>`:"";
       return `<tr><td>${i+1}.</td><td>${esc(it.vrsta)}</td><td>${dv}</td>${ex}<td>${bj(it.boja)}</td><td>${esc(it.kom)}</td><td>${qtyTxt(it)}</td></tr>`}).join("");
-    const cg=tip==="srafovska"?CG4:(tip==="opsiv"||tip==="oluk")?CG7:CG;
-    return `<div class="sg"><div class="st">${TIPOVI[tip]}</div><table>${cg}<thead><tr><th>#</th>${(TH[tip]||TH.trapez).map(h=>`<th>${h}</th>`).join("")}<th>Ukupno</th></tr></thead><tbody>${rows}</tbody><tfoot><tr><td colspan="${n-2}" style="text-align:right">${multi?"Zbir:":"UKUPNO:"}</td><td>${st.k}</td><td>${st.m?fmt(st.m)+" m²":"–"}</td></tr></tfoot></table></div>`}).join("");
+    const cg=K==="srafovska"?CG4:(K==="opsiv"||K==="oluk")?CG7:CG;
+    return `<div class="sg"><div class="st">${TIPOVI[tip]}</div><table>${cg}<thead><tr><th>#</th>${(TH[kindOf(tip)]||TH.trapez).map(h=>`<th>${h}</th>`).join("")}<th>Ukupno</th></tr></thead><tbody>${rows}</tbody><tfoot><tr><td colspan="${n-2}" style="text-align:right">${multi?"Zbir:":"UKUPNO:"}</td><td>${st.k}</td><td>${st.m?fmt(st.m)+" m²":"–"}</td></tr></tfoot></table></div>`}).join("");
   $("sheet").innerHTML=wf(`<div class="bn"><div><h2>Limarija WD-36</h2><div class="ad"><b>Miloš Spasić PR Kovačka radionica WD-36</b><br>Lole Ribara 40, 25250 Odžaci<br>PIB: 110029026 · MB: 64594940<br>Tekući račun: 325-9500600059441-13</div></div></div><div class="bd">
-  <div class="hd"><div style="flex:3"><span>Kupac</span><b>${esc(cur.customer)}</b>${custLine(cur.addr,cur.phone,cur.pib)}</div><div style="flex:2"><span>Radni nalog</span><b class="no">${esc(cur.no)}/${esc(cur.year)}</b><span style="margin-top:10px">Datum</span><b>${fmtDate(cur.date)}</b></div></div>
+  <div class="hd"><div style="flex:2"><span>Radni nalog</span><b class="no">${esc(cur.no)}/${esc(cur.year)}</b><span style="margin-top:10px">Datum</span><b>${fmtDate(cur.date)}</b></div><div style="flex:3"><span>Kupac</span><b>${esc(cur.customer)}</b>${custLine(cur.addr,cur.phone,cur.pib)}</div></div>
   ${parts}
   ${multi?`<table class="sg gt ns">${CG}<tbody><tr><td colspan="4" style="text-align:right;font-weight:700">UKUPNO (sve grupe):</td><td style="font-weight:700">${t.k}</td><td style="font-weight:700">${t.m?fmt(t.m)+" m²":"–"}</td></tr></tbody></table>`:""}
   ${cur.note?`<div class="nt"><b>Napomena:</b> ${esc(cur.note)}</div>`:""}</div>`);
@@ -606,7 +610,7 @@ $("segs").addEventListener("click",async e=>{
 });
 
 function mkSegments(){return cur.segments.map(sg=>{
-    const items=sg.items.filter(it=>it.vrsta&&(num(it.kom)>0)&&(lenOf(it)?num(it.duzina)>0:true)&&(sg.tip!=="opsiv"||num(it.sirina)>0)).map(it=>({vrsta:it.vrsta,tip:sg.tip,duzina:num(it.duzina),sirina:num(it.sirina),boja:it.boja||"",kom:num(it.kom),jm:rowUnit(it),m2:r2(rowM2(it))}));
+    const items=sg.items.filter(it=>it.vrsta&&(num(it.kom)>0)&&(lenOf(it)?num(it.duzina)>0:true)&&(kindOf(sg.tip)!=="opsiv"||num(it.sirina)>0)).map(it=>({vrsta:it.vrsta,tip:sg.tip,duzina:num(it.duzina),sirina:num(it.sirina),boja:it.boja||"",kom:num(it.kom),jm:rowUnit(it),m2:r2(rowM2(it))}));
     return{tip:sg.tip,title:TIPOVI[sg.tip],sid:sg.sid||newSid(),status:sg.status||"u_radu",items,totalKom:cntK(items),totalM2:sumM(items)};
   }).filter(sg=>sg.items.length)}
 async function save(){
@@ -770,7 +774,7 @@ function renderPrices(){
   const a=document.activeElement;if(a&&$("ptb").contains(a)&&a.tagName!=="BUTTON")return;
   $("ptb").innerHTML=Object.keys(TIPOVI).map(g=>{
     const rows=prices.filter(p=>(p.grupa||"trapez")===g).sort((x,y)=>String(x.naziv).localeCompare(String(y.naziv),"sr-Latn"));
-    return `<div class="seg"><div class="row" style="justify-content:space-between;margin-bottom:6px"><div class="row" style="gap:6px;flex-wrap:nowrap"><input data-gn="${g}" value="${esc(TIPOVI[g])}" style="font-weight:700;min-width:200px;max-width:320px" title="Klikni da preimenuješ grupu" aria-label="Naziv grupe">${(!BASE_T[g]&&!rows.length)?`<button class="d" data-gdel="${g}" title="Ukloni praznu grupu">✕</button>`:""}</div><button class="p" data-addp="${g}">+ Dodaj cenu</button></div>${rows.length?`<div class="sc"><table><thead><tr><th>Naziv</th><th>Jedinica mere</th><th>Veleprodajna cena (RSD)</th><th class="n">Maloprodajna cena (RSD, +${esc(pdvRate)}% PDV)</th><th></th></tr></thead><tbody>${rows.map(priceRow).join("")}</tbody></table></div>`:`<div class="msg" style="padding:8px">Nema stavki.</div>`}</div>`}).join("");
+    return `<div class="seg" data-g="${g}"><div class="row" style="justify-content:space-between;margin-bottom:6px"><div class="row" style="gap:6px;flex-wrap:nowrap"><span data-gh="${g}" title="Prevuci da promeniš redosled grupa" aria-label="Prevuci grupu" style="cursor:grab;touch-action:none;user-select:none;padding:6px 8px;font-size:20px;line-height:1;color:var(--mu)">⠿</span><input data-gn="${g}" value="${esc(TIPOVI[g])}" style="font-weight:700;min-width:200px;max-width:320px" title="Klikni da preimenuješ grupu" aria-label="Naziv grupe">${(!BASE_T[g]&&!rows.length)?`<button class="d" data-gdel="${g}" title="Ukloni praznu grupu">✕</button>`:""}</div><div class="row" style="gap:8px;flex-wrap:nowrap"><button class="p" data-gdup="${g}" title="Napravi kopiju cele grupe sa svim cenama" style="white-space:nowrap">⧉ Dupliraj grupu</button><button class="p" data-addp="${g}" style="white-space:nowrap">+ Dodaj cenu</button></div></div>${rows.length?`<div class="sc"><table><thead><tr><th>Naziv</th><th>Jedinica mere</th><th>Veleprodajna cena (RSD)</th><th>Maloprodajna cena (RSD, +${esc(pdvRate)}% PDV)</th><th></th></tr></thead><tbody>${rows.map(priceRow).join("")}</tbody></table></div>`:`<div class="msg" style="padding:8px">Nema stavki.</div>`}</div>`}).join("");
   $("pempty").textContent="";
 }
 $("ptb").addEventListener("change",async e=>{
@@ -795,6 +799,35 @@ $("ptb").addEventListener("change",async e=>{
   if(Object.keys(TIPOVI).some(k=>k!==g&&TIPOVI[k].toLowerCase()===name.toLowerCase())){e.target.value=TIPOVI[g];S.textContent="Grupa sa tim nazivom već postoji.";return}
   try{await saveSet({gNames:{...(SET.gNames||{}),[g]:name}});applyGrupe();S.textContent="Grupa preimenovana ✓";renderPrices()}catch(x){S.textContent="Greška pri čuvanju"}
 });
+
+$("ptb").addEventListener("click",async e=>{
+  const g=e.target.dataset.gdup;if(!g)return;const S=$("cstatus"),B=e.target;B.disabled=true;
+  try{
+    const src=prices.filter(p=>(p.grupa||"trapez")===g),base=TIPOVI[g]||"Grupa";
+    let name=base+" (kopija)",i=2;while(Object.values(TIPOVI).some(v=>v.toLowerCase()===name.toLowerCase()))name=base+" (kopija "+(i++)+")";
+    const id="g"+Date.now().toString(36);
+    await saveSet({gCustom:[...(Array.isArray(SET.gCustom)?SET.gCustom:[]),id],gNames:{...(SET.gNames||{}),[id]:name},gKind:{...(SET.gKind||{}),[id]:kindOf(g)}});applyGrupe();
+    for(const p of src)await db.collection("prices").doc().set({grupa:id,naziv:p.naziv,jm:p.jm,vele:p.vele});
+    S.textContent="Grupa „"+name+"“ napravljena sa "+src.length+" cena – preimenuj je i prilagodi cene.";renderPrices();
+  }catch(x){S.textContent="Greška pri dupliranju: "+(x.message||x.code||"nepoznata")}
+  finally{B.disabled=false}
+});
+let gdrag=null;
+function gdClear(){$("ptb").querySelectorAll(".seg").forEach(x=>x.classList.remove("dropB","dropA","dragging"))}
+$("ptb").addEventListener("pointerdown",e=>{const h=e.target.closest("[data-gh]");if(!h)return;e.preventDefault();const seg=h.closest(".seg");gdrag={g:h.dataset.gh,seg,over:null,after:false};seg.classList.add("dragging");try{h.setPointerCapture(e.pointerId)}catch(x){}});
+$("ptb").addEventListener("pointermove",e=>{
+  if(!gdrag)return;
+  if(e.clientY<90)window.scrollBy(0,-14);else if(e.clientY>window.innerHeight-90)window.scrollBy(0,14);
+  const el=document.elementFromPoint(e.clientX,e.clientY),t=el&&el.closest?el.closest("#ptb .seg"):null;
+  $("ptb").querySelectorAll(".seg").forEach(x=>x.classList.remove("dropB","dropA"));
+  if(t&&t!==gdrag.seg){const r=t.getBoundingClientRect(),after=e.clientY>r.top+r.height/2;t.classList.add(after?"dropA":"dropB");gdrag.over=t.dataset.g;gdrag.after=after}else gdrag.over=null;
+});
+$("ptb").addEventListener("pointerup",async()=>{
+  if(!gdrag)return;const d=gdrag;gdrag=null;gdClear();if(!d.over)return;
+  const keys=Object.keys(TIPOVI).filter(k=>k!==d.g);keys.splice(keys.indexOf(d.over)+(d.after?1:0),0,d.g);
+  try{await saveSet({gOrder:keys});applyGrupe();renderPrices();$("cstatus").textContent="Redosled grupa sačuvan ✓"}catch(x){$("cstatus").textContent="Greška pri čuvanju"}
+});
+$("ptb").addEventListener("pointercancel",()=>{gdrag=null;gdClear()});
 $("gAdd").onclick=async()=>{
   const S=$("cstatus"),name=$("gNewName").value.trim();
   if(!name){S.textContent="Upiši naziv nove grupe.";return}
@@ -807,7 +840,7 @@ $("ptb").addEventListener("click",async e=>{
   if(prices.some(p=>(p.grupa||"trapez")===g)){S.textContent="Grupa nije prazna.";return}
   if(orders.some(o=>(o.segments||[]).some(sg=>sg.tip===g))||proformas.some(q=>(q.segments||[]).some(sg=>sg.tip===g))){S.textContent="Grupa se koristi u nalozima – ne može da se ukloni.";return}
   if(!(await ask("Ukloniti praznu grupu „"+TIPOVI[g]+"“?")))return;
-  try{const n={...(SET.gNames||{})};delete n[g];await saveSet({gCustom:(SET.gCustom||[]).filter(x=>x!==g),gNames:n});applyGrupe();renderPrices()}catch(x){S.textContent="Greška pri čuvanju"}
+  try{const n={...(SET.gNames||{})},kd={...(SET.gKind||{})};delete n[g];delete kd[g];await saveSet({gCustom:(SET.gCustom||[]).filter(x=>x!==g),gNames:n,gKind:kd});applyGrupe();renderPrices()}catch(x){S.textContent="Greška pri čuvanju"}
 });
 $("ptb").addEventListener("input",e=>{
   const k=e.target.dataset.k,tr=e.target.closest("tr");if(k!=="vele"&&k!=="mp")return;
@@ -815,7 +848,7 @@ $("ptb").addEventListener("input",e=>{
   if(k==="vele")tr.querySelector('[data-k="mp"]').value=r2(v*rt);else tr.querySelector('[data-k="vele"]').value=r2(v/rt);
 });
 function priceSheet(){
-  const CG5='<colgroup><col style="width:6%"><col style="width:38%"><col style="width:14%"><col style="width:21%"><col style="width:21%"></colgroup>';
+  const CG5='<colgroup><col style="width:44px"><col style="width:38%"><col style="width:14%"><col style="width:21%"><col></colgroup>';
   const parts=Object.keys(TIPOVI).map(g=>{
     const rows=prices.filter(p=>(p.grupa||"trapez")===g&&String(p.naziv).trim()).sort((x,y)=>String(x.naziv).localeCompare(String(y.naziv),"sr-Latn")).map((p,i)=>`<tr><td>${i+1}.</td><td>${esc(p.naziv)}</td><td>${esc(p.jm)}</td><td>${money(p.vele)}</td><td>${money(r2(p.vele*(1+pdvRate/100)))}</td></tr>`).join("");
     if(!rows)return"";
@@ -851,7 +884,7 @@ function stockOf(tip){
   const e=zaliha.filter(z=>z.tip===tip&&z.datum);if(!e.length)return null;
   const start=e.map(z=>z.datum).sort()[0],ulaz=r2(e.reduce((t,z)=>t+num(z.kolicina),0));let use=0;
   orders.forEach(o=>{if(String(o.date||"")<start)return;
-    (o.items||[]).forEach(i=>{if((i.tip||"trapez")!=="trapez"||(i.jm||"m²")!=="m²")return;const m=num(i.m2);if(tip==="lim")use+=m;else if(/filc/i.test(i.vrsta))use+=m*filcK(i.vrsta)});
+    (o.items||[]).forEach(i=>{if(kindOf(i.tip||"trapez")!=="trapez"||(i.jm||"m²")!=="m²")return;const m=num(i.m2);if(tip==="lim")use+=m;else if(/filc/i.test(i.vrsta))use+=m*filcK(i.vrsta)});
     });
   use=r2(use*(1+(tip==="lim"?skPct():skPctF())/100));return{start,ulaz,use,left:r2(ulaz-use)};
 }
@@ -1127,7 +1160,7 @@ function renderBkParts(){
 $("bkParts").addEventListener("click",async e=>{
   const k=e.target.dataset.part;if(!k)return;const S=$("bkStatus"),data={},c=BK_COLL.find(z=>z.n===k);
   if(c)data[k]=c.get();
-  if(k==="prices")data.settings=[["main",{gNames:SET.gNames||{},gCustom:Array.isArray(SET.gCustom)?SET.gCustom:[]}]];
+  if(k==="prices")data.settings=[["main",{gNames:SET.gNames||{},gCustom:Array.isArray(SET.gCustom)?SET.gCustom:[],gKind:SET.gKind||{},gOrder:Array.isArray(SET.gOrder)?SET.gOrder:[]}]];
   if(k==="settings"){const {lastBackup,...rest}=SET;data.settings=[["main",rest]]}
   const nm={orders:"nalozi",proformas:"predracuni",otpremnice:"otpremnice",prices:"cenovnik",nabavne:"nabavne",customers:"kupci",zaliha:"zaliha",settings:"podesavanja"}[k];
   try{await saveFile("Limarija_WD-36_"+nm+"_"+fdate()+".json",JSON.stringify({app:"limarija-wd36",verzija:1,napravljeno:new Date().toISOString(),delimicno:[k],data}));S.textContent="Fajl „"+nm+"“ sačuvan ✓"}
@@ -1144,7 +1177,7 @@ $("bkFile").onchange=async()=>{
     if(!(await ask(msg)))return;
     let n=0;for(const c of names)for(const [id,d] of j.data[c]){await db.collection(c).doc(id).set(d);n++;S.textContent="Vraćam… "+n+"/"+cnt}
     if(replacePrices){const keep=new Set((j.data.prices||[]).map(x=>x[0]));for(const pr of prices.slice()){if(!keep.has(pr.id))await db.collection("prices").doc(pr.id).delete()}}
-    if(j.data.settings&&j.data.settings[0]){const si={...j.data.settings[0][1]};if(part)delete si.lastBackup;if(si.gNames||si.gCustom){si.gNames={...(SET.gNames||{}),...(si.gNames||{})};si.gCustom=[...new Set([...(Array.isArray(SET.gCustom)?SET.gCustom:[]),...(Array.isArray(si.gCustom)?si.gCustom:[])])]}await saveSet(si);applyGrupe()}
+    if(j.data.settings&&j.data.settings[0]){const si={...j.data.settings[0][1]};if(part)delete si.lastBackup;if(si.gNames||si.gCustom){si.gNames={...(SET.gNames||{}),...(si.gNames||{})};si.gKind={...(SET.gKind||{}),...(si.gKind||{})};if(Array.isArray(si.gOrder))si.gOrder=[...si.gOrder,...(Array.isArray(SET.gOrder)?SET.gOrder:[]).filter(k=>!si.gOrder.includes(k))];si.gCustom=[...new Set([...(Array.isArray(SET.gCustom)?SET.gCustom:[]),...(Array.isArray(si.gCustom)?si.gCustom:[])])]}await saveSet(si);applyGrupe()}
     S.textContent=n?("Vraćeno "+n+" dokumenata ✓"):"Podešavanja vraćena ✓";renderBkParts()}
   catch(e){S.textContent="Greška: "+(e.message||e.code||"nepoznata")}
 };
@@ -1188,13 +1221,13 @@ function renderPro(){
   proSheet();
 }
 function proSheet(){
-  const t=proTot(),CG8='<colgroup><col style="width:5%"><col style="width:41%"><col style="width:9%"><col style="width:13%"><col style="width:16%"><col style="width:16%"></colgroup>',fz=kupacOf(pcur)==="fizicko";
+  const t=proTot(),CG8='<colgroup><col style="width:44px"><col style="width:41%"><col style="width:9%"><col style="width:13%"><col style="width:16%"><col></colgroup>',fz=kupacOf(pcur)==="fizicko";
   const grp=new Map();pcur.lines.filter(l=>String(l.vrsta).trim()||num(l.m2)).forEach(l=>{const k=[String(l.vrsta).trim().toLowerCase(),String(l.boja||"").trim().toLowerCase(),l.jm||"m²",cn(l)].join("|");const g=grp.get(k);if(g){g.m2+=num(l.m2);if(l.kom!==""&&l.kom!=null)g.kom=(g.kom===""?0:g.kom)+num(l.kom)}else grp.set(k,{vrsta:l.vrsta,boja:l.boja,jm:l.jm,cena:l.cena,m2:num(l.m2),kom:(l.kom!==""&&l.kom!=null)?num(l.kom):""})});
   const rows=[...grp.values()].map((l,i)=>`<tr><td>${i+1}.</td><td>${esc(goodsName(l))}</td><td>${esc(l.jm||"m²")}</td><td>${fmt(r2(l.m2))}</td><td>${money(fz?priceVat(l,t.rate):cn(l))}</td><td>${money(lineAmt(l,t.rate,fz?"fizicko":"pravno"))}</td></tr>`).join("");
   const ntx=[pcur.orderNo?"Po radnom nalogu br. "+esc(pcur.orderNo):"",pcur.note?esc(pcur.note):""].filter(Boolean).join(" · ");
   const R='style="text-align:right"';
   $("sheet").innerHTML=wf(`<div class="bn"><div><h2>Limarija WD-36</h2><div class="ad"><b>Miloš Spasić PR Kovačka radionica WD-36</b><br>Lole Ribara 40, 25250 Odžaci<br>PIB: 110029026 · MB: 64594940<br>Tekući račun: 325-9500600059441-13</div></div></div><div class="bd">
-  <div class="hd"><div style="flex:3"><span>Kupac</span><b>${esc(pcur.customer)}</b>${custLine(pcur.addr,pcur.phone,pcur.pib)}</div><div style="flex:2"><span>Predračun</span><b class="no">${esc(pcur.no)}/${esc(pcur.year)}</b><span style="margin-top:10px">Datum</span><b>${fmtDate(pcur.date)}</b></div></div>
+  <div class="hd"><div style="flex:2"><span>Predračun</span><b class="no">${esc(pcur.no)}/${esc(pcur.year)}</b><span style="margin-top:10px">Datum</span><b>${fmtDate(pcur.date)}</b></div><div style="flex:3"><span>Kupac</span><b>${esc(pcur.customer)}</b>${custLine(pcur.addr,pcur.phone,pcur.pib)}</div></div>
   <div class="sg"><table>${CG8}<thead><tr><th>#</th><th>Vrsta robe</th><th>Jed.</th><th>Količina</th><th>${fz?"Cena sa PDV":"Cena bez PDV"}</th><th>Iznos</th></tr></thead><tbody>${rows}</tbody></table></div>
   <table class="sg ns" style="width:60%;margin-left:auto"><colgroup><col style="width:50%"><col style="width:50%"></colgroup><tbody>
   ${fz?"":`<tr><td ${R}>Osnovica:</td><td ${R}>${money(t.b)} RSD</td></tr>${t.rate?`<tr><td ${R}>PDV (${esc(t.rate)}%):</td><td ${R}>${money(t.p)} RSD</td></tr>`:""}`}
@@ -1439,7 +1472,7 @@ const orderItems=o=>(o.items&&o.items.length)?o.items:(o.segments||[]).flatMap(s
 function ordSegs(o){
   const segs=(o.segments&&o.segments.length)?o.segments:[{tip:"trapez",items:o.items||[]}];
   return segs.map((sg,si)=>{const tip=sg.tip||"trapez";
-    const base=aggLines((sg.items||[]).filter(i=>i&&String(i.vrsta||"").trim()).map(i=>{const q=Number.isFinite(Number(i.m2))&&i.m2!==""&&i.m2!=null?num(i.m2):r2(rowM2({...i,tip:i.tip||tip}));return{vrsta:i.vrsta+((i.tip||tip)==="opsiv"&&i.sirina?" (RŠ "+i.sirina+" mm)":""),duzina:dzTxt(i.duzina,i.jm),boja:i.boja||"",kom:i.kom,kolicina:q,jm:i.jm||rowUnit({...i,tip:i.tip||tip})}}));
+    const base=aggLines((sg.items||[]).filter(i=>i&&String(i.vrsta||"").trim()).map(i=>{const q=Number.isFinite(Number(i.m2))&&i.m2!==""&&i.m2!=null?num(i.m2):r2(rowM2({...i,tip:i.tip||tip}));return{vrsta:i.vrsta+(kindOf(i.tip||tip)==="opsiv"&&i.sirina?" (RŠ "+i.sirina+" mm)":""),duzina:dzTxt(i.duzina,i.jm),boja:i.boja||"",kom:i.kom,kolicina:q,jm:i.jm||rowUnit({...i,tip:i.tip||tip})}}));
     return{sid:sg.sid||"s"+si,tip,title:TIPOVI[tip]||sg.title||"Grupa",prod:sg.status||(o.status==="u_radu"?"u_radu":"zavrsen"),base}});
 }
 const orderBase=o=>ordSegs(o).flatMap(g=>g.base);
@@ -1556,7 +1589,7 @@ function renderOtp(){
 function oSheet(){
   try{refreshIzvor();updateDeliv()}catch(e){}
   const C=otpC(),rate=otpRate(),fz=false,kup="pravno",R='style="text-align:right"'; /* cene na otpremnici su uvek bez PDV */
-  const CG=C?'<colgroup><col style="width:5%"><col style="width:41%"><col style="width:9%"><col style="width:13%"><col style="width:16%"><col style="width:16%"></colgroup>':'<colgroup><col style="width:8%"><col style="width:58%"><col style="width:14%"><col style="width:20%"></colgroup>';
+  const CG=C?'<colgroup><col style="width:44px"><col style="width:41%"><col style="width:9%"><col style="width:13%"><col style="width:16%"><col></colgroup>':'<colgroup><col style="width:44px"><col style="width:58%"><col style="width:14%"><col></colgroup>';
   const vis=aggLines(ocur.lines.filter(l=>String(l.vrsta).trim()||num(l.kolicina)).map(l=>({...l,vrsta:String(l.vrsta).trim(),jm:l.jm||"m²"})),C);
   const pl=l=>({cena:l.cena,m2:l.kolicina});
   const rows=vis.map((l,i)=>`<tr><td>${i+1}.</td><td>${esc(goodsName(l))}</td><td>${esc(l.jm||"m²")}</td><td>${fmt(num(l.kolicina))}</td>${C?`<td>${money(fz?priceVat(l,rate):cn(l))}</td><td>${money(lineAmt(pl(l),rate,kup))}</td>`:""}</tr>`).join("");
@@ -1569,7 +1602,7 @@ function oSheet(){
   const ntx=[ocur.izvor?esc(ocur.izvor):"",ocur.note?esc(ocur.note):""].filter(Boolean).join(" · ");
   const sg='style="width:42%;border-top:1px solid #444;padding-top:4px;text-align:center;font-size:13px"';
   $("sheet").innerHTML=wf(`<div class="bn"><div><h2>Limarija WD-36</h2><div class="ad"><b>Miloš Spasić PR Kovačka radionica WD-36</b><br>Lole Ribara 40, 25250 Odžaci<br>PIB: 110029026 · MB: 64594940<br>Tekući račun: 325-9500600059441-13</div></div></div><div class="bd">
-  <div class="hd"><div style="flex:3"><span>Kupac</span><b>${esc(ocur.customer)}</b>${custLine(ocur.addr,ocur.phone,ocur.pib)}</div><div style="flex:2"><span>Otpremnica</span><b class="no">${esc(ocur.no)}/${esc(ocur.year)}</b><span style="margin-top:10px">Datum</span><b>${fmtDate(ocur.date)}</b></div></div>
+  <div class="hd"><div style="flex:2"><span>Otpremnica</span><b class="no">${esc(ocur.no)}/${esc(ocur.year)}</b><span style="margin-top:10px">Datum</span><b>${fmtDate(ocur.date)}</b></div><div style="flex:3"><span>Kupac</span><b>${esc(ocur.customer)}</b>${custLine(ocur.addr,ocur.phone,ocur.pib)}</div></div>
   <div class="sg"><table>${CG}<thead><tr><th>#</th><th>Vrsta robe</th><th>Jed.</th><th>Količina</th>${C?`<th>${rate>0?"Cena bez PDV":"Cena"}</th><th>Iznos</th>`:""}</tr></thead><tbody>${rows}${tot}</tbody></table></div>
   ${sums}
   ${ntx?`<div class="nt">${ntx}</div>`:""}
@@ -1711,7 +1744,7 @@ function prodData(doneOpt){
     if(done&&o.status==="u_radu")return;
     const ym=String(o.date||"").slice(0,7);if(!/^\d{4}-\d{2}$/.test(ym))return;
     (o.items||[]).forEach(i=>{
-      if((i.tip||"trapez")!=="trapez")return;
+      if(kindOf(i.tip||"trapez")!=="trapez")return;
       const m=data[ym]=data[ym]||{},r=m[i.vrsta]=m[i.vrsta]||{kom:0,m2:0};
       r.kom+=num(i.kom);if((i.jm||"m²")==="m²")r.m2+=num(i.m2);
     });
