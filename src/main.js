@@ -66,14 +66,24 @@ else {
     ipcMain.handle("wd", async (e, op, a) => {
       if (op === "file.save") { core.need(); return saveFile(a); }
       if (op === "app.openBackups") { core.owner(); return shell.openPath(core.backupDir); }
+      if (op === "app.backupNow") { core.owner(); core.snapshot(); return core.backupInfo(); }
+      if (op === "app.backupInfo") { core.owner(); return core.backupInfo(); }
+      if (op === "app.pickMirror") {
+        core.owner();
+        const r = await dialog.showOpenDialog(win, { title: "Dodatni folder za rezervne kopije", properties: ["openDirectory", "createDirectory"] });
+        if (!r.canceled && r.filePaths[0]) core.setMirror(r.filePaths[0]);
+        return core.backupInfo();
+      }
+      if (op === "app.clearMirror") { core.owner(); core.setMirror(""); return core.backupInfo(); }
       if (op === "app.update") { core.owner(); return checkUpdate(); }
       if (op === "app.logout") { core.handle("auth.logout"); win.webContents.reload(); return true; }
       return core.handle(op, a);
     });
+    setInterval(() => { try { core.snapshot(); } catch (e) { /* ne ruši program */ } }, 30 * 60 * 1000);
     createWindow();
     setupUpdater();
     app.on("activate", () => { if (!BrowserWindow.getAllWindows().length) createWindow(); });
   });
-  app.on("before-quit", () => { if (core) core.flush(); });
+  app.on("before-quit", () => { if (core) { core.flush(); try { core.snapshot(); } catch (e) { /* ignoriši */ } } });
   app.on("window-all-closed", () => { if (core) core.flush(); app.quit(); });
 }

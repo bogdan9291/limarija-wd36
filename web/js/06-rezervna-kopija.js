@@ -103,7 +103,7 @@ const RST={
   settings:{t:"Reset podešavanja",d:"Podešavanja (PDV, zaključavanje, boje, minimumi zalihe, škart, podsetnik) vraćaju se na početne vrednosti.",c:[],settings:true}
 };
 let rstJob=null;
-function openReset(k){if(ROLE!=="vlasnik")return;rstJob=RST[k];$("rTitle").textContent=rstJob.t;$("rDesc").textContent=rstJob.d+" Ovo ne može da se opozove.";$("rIn").value="";$("rSt").textContent="";$("rGo").disabled=true;$("rov").classList.remove("hide");$("rIn").focus()}
+function openReset(k){if(ROLE!=="vlasnik")return;rstJob=RST[k];$("rTitle").textContent=rstJob.t;$("rDesc").textContent=rstJob.d+" Ovo ne može da se opozove.";$("rIn").value="";$("rMsg").textContent="";$("rGo").disabled=true;$("rov").classList.remove("hide");$("rIn").focus()}
 $("btnReset").onclick=()=>openReset("all");
 $("resetCats").addEventListener("click",e=>{const k=e.target.dataset.rc;if(k)openReset(k)});
 $("rIn").addEventListener("input",()=>{$("rGo").disabled=$("rIn").value.trim().toLowerCase()!=="reset"});
@@ -111,13 +111,13 @@ $("rNo").onclick=()=>$("rov").classList.add("hide");
 $("rBk").onclick=()=>$("bkJson").onclick();
 $("rGo").onclick=async()=>{
   if(ROLE!=="vlasnik"||!rstJob||$("rIn").value.trim().toLowerCase()!=="reset")return;
-  $("rGo").disabled=true;$("rSt").textContent="Brisanje u toku…";
+  $("rGo").disabled=true;$("rMsg").textContent="Brisanje u toku…";
   try{
     for(const n of rstJob.c){const c=BK_COLL.find(z=>z.n===n);for(const [id] of c.get()){await db.collection(n).doc(id).delete()}}
     if(rstJob.settings){SET={pdv:20,lockAfterDelivery:true,lastBackup:SET.lastBackup};await db.doc("settings/main").set(SET);lockOn=true;try{$("setLock").checked=true;$("pdv").value="20"}catch(e){}}
     $("rov").classList.add("hide");$("bkStatus").textContent=rstJob.t+": završeno ✓";
     goTab(rstJob===RST.all?"h":"s");
-  }catch(e){$("rSt").textContent="Greška pri resetu: "+(e.message||e.code||"nepoznata");$("rGo").disabled=false}
+  }catch(e){$("rMsg").textContent="Greška pri resetu: "+(e.message||e.code||"nepoznata");$("rGo").disabled=false}
 };
 $("bkJson").onclick=async()=>{
   const S=$("bkStatus");

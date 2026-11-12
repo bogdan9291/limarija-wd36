@@ -118,6 +118,19 @@
   </div>
   <div class="card"><div class="row"><div style="width:150px"><label>Godina</label><select id="rYear"></select></div><div style="width:260px"><label>Nalozi</label><select id="rSt"><option value="all">Svi nalozi</option><option value="done">Samo završeni i isporučeni</option></select></div></div></div>
   <div id="rbody"></div>
+  <div class="card" id="xCard">
+   <div class="stl" style="margin:0 0 10px">Izveštaji</div>
+   <div class="row" style="align-items:flex-end">
+    <div style="width:170px"><label>Izveštaj po</label><select id="xBy"><option value="kupac">Kupcu</option><option value="boja">Boji</option><option value="mesec">Mesecu</option></select></div>
+    <div style="width:130px"><label>Godina</label><select id="xYear"></select></div>
+    <div style="width:150px"><label>Mesec</label><select id="xMon"><option value="">Svi meseci</option></select></div>
+    <div style="width:230px"><label>Nalozi</label><select id="xSt"><option value="all">Svi nalozi</option><option value="done">Samo završeni i isporučeni</option></select></div>
+    <button id="xCsv">Preuzmi za Excel (CSV)</button>
+   </div>
+   <div class="sc" style="margin-top:12px"><table><thead id="xHead"></thead><tbody id="xBody"></tbody></table></div>
+   <div class="msg" id="xMsg" style="text-align:left;padding:6px 0"></div>
+   <p style="font-size:12px;color:var(--mu);margin:4px 0 0">Prodaja = proizvedena kvadratura trapeznog lima × veleprodajna cena iz cenovnika (bez PDV), isto kao u pregledu iznad. Kvadratura (m²) se računa za stavke u m², a metri za stavke u metrima.</p>
+  </div>
  </div>
 
  <div id="pview" class="hide">
@@ -211,7 +224,7 @@
 </main>
 </div>
 
-<div id="rov" class="hide"><div class="bx"><p><b id="rTitle">Reset</b></p><p id="rDesc"></p><p>Za potvrdu ukucaj reč <b>reset</b>:</p><input id="rIn" autocomplete="off" placeholder="reset"><div class="msg" id="rSt"></div><div class="row" style="justify-content:space-between;margin-top:12px"><button id="rBk">Prvo preuzmi kopiju</button><span class="row"><button id="rNo">Odustani</button><button class="btn-reset" id="rGo" disabled>Resetuj</button></span></div></div></div>
+<div id="rov" class="hide"><div class="bx"><p><b id="rTitle">Reset</b></p><p id="rDesc"></p><p>Za potvrdu ukucaj reč <b>reset</b>:</p><input id="rIn" autocomplete="off" placeholder="reset"><div class="msg" id="rMsg"></div><div class="row" style="justify-content:space-between;margin-top:12px"><button id="rBk">Prvo preuzmi kopiju</button><span class="row"><button id="rNo">Odustani</button><button class="btn-reset" id="rGo" disabled>Resetuj</button></span></div></div></div>
 <div id="ov" class="hide"><div class="bx"><p id="ovm"></p><div class="row" style="justify-content:flex-end"><button id="ovn">Odustani</button><button class="p" id="ovy">Potvrdi</button></div></div></div>
 <script src="js/01-osnova.js"></script>
 <script src="js/02-nalozi.js"></script>
@@ -223,6 +236,7 @@
 <script src="js/08-pdf-stampa.js"></script>
 <script src="js/09-otpremnice.js"></script>
 <script src="js/10-proizvodnja.js"></script>
+<script src="js/12-izvestaji.js"></script>
 <script src="js/11-pocetna-baza.js"></script>
 </body>
 </html>

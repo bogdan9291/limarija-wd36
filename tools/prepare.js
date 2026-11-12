@@ -17,6 +17,10 @@ const usersHtml = `<div class="stl" style="margin-top:22px">Korisnici i uloge</d
   <div class="row" style="margin-top:8px"><input id="uIme" placeholder="Korisničko ime" style="width:170px" autocomplete="off"><input id="uPw" type="password" placeholder="Lozinka (min. 6)" style="width:170px" autocomplete="new-password"><select id="uRole" style="width:150px"><option value="radnik">Radnik</option><option value="pregled">Samo pregled</option><option value="vlasnik">Vlasnik</option></select><button class="p" id="uAdd">+ Dodaj korisnika</button></div>
   <div class="msg" id="uSt" style="padding:6px 0;text-align:left"></div>
   <div style="color:var(--mu);font-size:13px;line-height:1.5;margin-top:6px"><span id="appInfo"></span></div>
+  <div class="stl" style="margin-top:18px">Automatska rezervna kopija</div>
+  <div style="color:var(--mu);font-size:13px;line-height:1.5">Program sam pravi kopiju podataka svakog dana pri pokretanju, zatim na svakih 30 minuta i pri zatvaranju (čuva se oko 30 dana unazad). Da kopije ne bi ostale samo na ovom računaru, izaberi dodatni folder (USB disk, OneDrive, mrežni disk) – kopije se upisuju i tamo.</div>
+  <div id="bkAuto" style="margin-top:8px;font-size:13px"></div>
+  <div class="row" style="margin-top:8px"><button class="p" id="bkNow">Napravi kopiju sada</button><button id="bkMir">Izaberi dodatni folder…</button><button id="bkMirX">Ukloni dodatni folder</button></div>
   <div class="row" style="margin-top:8px"><button id="appBk">Otvori folder sa automatskim kopijama</button><button id="appUp">Proveri ažuriranja</button><button id="appOut">Odjavi se</button></div>
   `;
 h = h.slice(0, a) + usersHtml + h.slice(b);
@@ -56,13 +60,22 @@ const js = `
       else if(e.target.dataset.udel!==undefined){if(!confirm("Obrisati ovog korisnika?"))return;await (await U()).remove({id});msg("Korisnik je obrisan ✓");usrRender()}
     }catch(x){msg(x.message,true)}
   });
+  const bkFmt=t=>{const d=new Date(t),p=n=>String(n).padStart(2,"0");return p(d.getDate())+"."+p(d.getMonth()+1)+"."+d.getFullYear()+". "+p(d.getHours())+":"+p(d.getMinutes())};
+  function bkShow(i){
+    $("bkAuto").innerHTML="Poslednja kopija: <b>"+(i.last?bkFmt(i.last):"još nije napravljena")+"</b> · sačuvano kopija: "+i.count+"<br>Dodatni folder: "+(i.mirror?"<b>"+esc(i.mirror)+"</b>":"nije izabran")+(i.mirrorErr?'<br><span style="color:var(--rd,#c0392b)">Upis u dodatni folder nije uspeo: '+esc(i.mirrorErr)+"</span>":"");
+    $("bkMirX").style.display=i.mirror?"":"none";
+  }
+  async function bkLoad(){try{bkShow(await (await claude.use("app")).backupInfo())}catch(e){}}
+  $("bkNow").onclick=async()=>{try{bkShow(await (await claude.use("app")).backupNow());msg("Kopija je napravljena ✓")}catch(e){msg(e.message,true)}};
+  $("bkMir").onclick=async()=>{try{bkShow(await (await claude.use("app")).pickMirror())}catch(e){msg(e.message,true)}};
+  $("bkMirX").onclick=async()=>{try{bkShow(await (await claude.use("app")).clearMirror())}catch(e){msg(e.message,true)}};
   $("appBk").onclick=async()=>{try{await (await claude.use("app")).openBackups()}catch(e){msg(e.message,true)}};
   $("appUp").onclick=async()=>{const b=$("appUp");b.disabled=true;msg("Proveravam…");try{msg(await (await claude.use("app")).update())}catch(e){msg(e.message,true)}b.disabled=false};
   $("appOut").onclick=async()=>{try{await (await claude.use("app")).logout()}catch(e){}};
   // „Sačuvaj na Drive“ postaje čuvanje JSON kopije u folder
   $("bkDrive").onclick=()=>$("bkJson").click();
   $("bkbDrive").onclick=()=>{goTab("s");$("bkJson").click()};
-  usrRender();
+  usrRender();bkLoad();
 })();
 `;
 const i = h.lastIndexOf("</script>");

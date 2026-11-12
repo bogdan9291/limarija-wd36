@@ -4,7 +4,7 @@ const fs = require("fs"), path = require("path"), crypto = require("crypto");
 const SCHEMA = 1;
 const ADMIN_ONLY = new Set(["prices", "proformas", "nabavne", "customers"]); // samo vlasnik
 const ROLES = ["vlasnik", "radnik", "pregled"];
-const MAX_BACKUPS = 30;
+const MAX_BACKUPS = 60; // 2 fajla dnevno (početak dana + poslednje stanje) = oko 30 dana
 
 const err = (m) => Object.assign(new Error(m), { user: true });
 const hashPw = (pw, salt) => crypto.scryptSync(String(pw), salt, 32).toString("hex");
@@ -17,6 +17,8 @@ class Core {
     this.file = path.join(dir, "podaci.json");
     this.backupDir = path.join(dir, "kopije");
     fs.mkdirSync(this.backupDir, { recursive: true });
+    this.cfgFile = path.join(dir, "kopije.json");
+    try { this.cfg = JSON.parse(fs.readFileSync(this.cfgFile, "utf8")) || {}; } catch (e) { this.cfg = {}; }
     this.sess = null; this.fails = 0; this.lockUntil = 0; this.timer = null; this.dirty = false;
     this.load();
   }
@@ -47,19 +49,46 @@ class Core {
     if (fs.existsSync(this.file)) fs.copyFileSync(this.file, this.file + ".bak");
     fs.renameSync(tmp, this.file);
   }
+  prune(dir) {
+    const all = fs.readdirSync(dir).filter((f) => f.startsWith("kopija_")).sort();
+    while (all.length > MAX_BACKUPS) fs.unlinkSync(path.join(dir, all.shift()));
+  }
+  mirrorWrite(name, txt) { // isti fajl i u dodatni folder (USB, OneDrive, mrežni disk…)
+    const m = this.cfg.mirror; if (!m) return;
+    try { fs.mkdirSync(m, { recursive: true }); fs.writeFileSync(path.join(m, name), txt); this.prune(m); this.cfg.mirrorErr = ""; }
+    catch (e) { this.cfg.mirrorErr = String(e.message || e); }
+  }
   backupNow(tag) {
     try {
       const name = "kopija_" + today() + (tag ? "_" + tag : "") + ".json";
       const p = path.join(this.backupDir, name);
-      if (fs.existsSync(this.file) || this.d) fs.writeFileSync(p, JSON.stringify(this.d || JSON.parse(fs.readFileSync(this.file, "utf8"))));
-      const all = fs.readdirSync(this.backupDir).filter((f) => f.startsWith("kopija_")).sort();
-      while (all.length > MAX_BACKUPS) fs.unlinkSync(path.join(this.backupDir, all.shift()));
+      const txt = JSON.stringify(this.d || JSON.parse(fs.readFileSync(this.file, "utf8")));
+      fs.writeFileSync(p, txt); this.prune(this.backupDir);
+      this.mirrorWrite(name, txt);
       return p;
     } catch (e) { return null; }
   }
-  autoBackup() { // jednom dnevno, pri pokretanju
+  autoBackup() { // jednom dnevno: stanje na početku dana (ne prepisuje se)
     const p = path.join(this.backupDir, "kopija_" + today() + ".json");
     if (!fs.existsSync(p) && Object.keys(this.d.data).length) this.backupNow("");
+  }
+  snapshot() { // poslednje stanje tekućeg dana: poziva se na 30 min i pri zatvaranju programa
+    this.autoBackup();
+    if (Object.keys(this.d.data).length) this.backupNow("zadnja");
+  }
+  backupInfo() {
+    let last = null, count = 0;
+    try {
+      const fl = fs.readdirSync(this.backupDir).filter((f) => f.startsWith("kopija_"));
+      count = fl.length;
+      fl.forEach((f) => { const t = fs.statSync(path.join(this.backupDir, f)).mtimeMs; if (!last || t > last) last = t; });
+    } catch (e) { /* prazno */ }
+    return { last, count, dir: this.backupDir, mirror: this.cfg.mirror || "", mirrorErr: this.cfg.mirrorErr || "" };
+  }
+  setMirror(dir) {
+    this.cfg.mirror = dir || ""; this.cfg.mirrorErr = "";
+    fs.writeFileSync(this.cfgFile, JSON.stringify({ mirror: this.cfg.mirror }));
+    if (dir) this.snapshot();
   }
 
   /* ---------- dozvole ---------- */

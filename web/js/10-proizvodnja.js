@@ -84,6 +84,7 @@ function renderProd(){
     html=recapCard(sel+". godina – ukupno",mergeRows(mine.map(k=>monthRows[k])),sel+"-")+mine.map(k=>recapCard(MES[+k.slice(5)-1]+" "+sel,monthRows[k],k)).join("");
   }
   $("rbody").innerHTML=html;
+  if(typeof renderRep==="function")renderRep();
 }
 $("rYear").onchange=renderProd;$("rSt").onchange=renderProd;
 
