@@ -103,11 +103,13 @@ $("ptb").addEventListener("pointerup",async()=>{
 });
 $("ptb").addEventListener("pointercancel",()=>{gdrag=null;gdClear()});
 $("gAdd").onclick=async()=>{
-  const S=$("cstatus"),name=$("gNewName").value.trim();
-  if(!name){S.textContent="Upiši naziv nove grupe.";return}
-  if(Object.values(TIPOVI).some(v=>v.toLowerCase()===name.toLowerCase())){S.textContent="Grupa sa tim nazivom već postoji.";return}
+  const S=$("cstatus"),M=$("gMsg"),say=(t,ok)=>{S.textContent=t;M.textContent=t;M.style.color=ok?"var(--ok,#2e7d32)":"var(--rd,#c0392b)"},name=$("gNewName").value.trim();
+  if(!name){say("Upiši naziv nove grupe.");$("gNewName").focus();return}
+  if(Object.values(TIPOVI).some(v=>v.toLowerCase()===name.toLowerCase())){say("Grupa sa tim nazivom već postoji.");return}
   const id="g"+Date.now().toString(36);
-  try{await saveSet({gCustom:[...(Array.isArray(SET.gCustom)?SET.gCustom:[]),id],gNames:{...(SET.gNames||{}),[id]:name}});applyGrupe();$("gNewName").value="";S.textContent="Grupa „"+name+"“ dodata – dodaj cene u nju.";renderPrices()}catch(x){S.textContent="Greška pri čuvanju"}
+  try{await saveSet({gCustom:[...(Array.isArray(SET.gCustom)?SET.gCustom:[]),id],gNames:{...(SET.gNames||{}),[id]:name}});applyGrupe();$("gNewName").value="";renderPrices();say("Grupa „"+name+"“ dodata – dodaj cene u nju.",true);
+    const sg=$("ptb").querySelector('.seg[data-g="'+id+'"]');if(sg){sg.scrollIntoView({block:"center",behavior:"smooth"});sg.style.outline="2px solid var(--ac)";setTimeout(()=>{sg.style.outline=""},2500)}
+  }catch(x){say("Greška pri čuvanju: "+(x&&x.message||x))}
 };
 $("ptb").addEventListener("click",async e=>{
   const g=e.target.dataset.gdel;if(!g)return;const S=$("cstatus");
