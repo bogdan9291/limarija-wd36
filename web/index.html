@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="sr-Latn">
+<head>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&display=swap">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Limarija WD-36</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="app">
+<aside class="side"><div class="brand"><h1>Limarija WD-36</h1><div class="sub">Menadžer proizvodnje i prodaje</div></div><nav><button id="tabH"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg><span>Početna</span></button><button id="tabN"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h6"/></svg><span>Nalozi</span></button><button id="tabP"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg><span>Predračuni</span></button><button id="tabO"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h11v10H3z"/><path d="M14 10h4l3 3v3h-7z"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg><span>Otpremnice</span></button><button id="tabR"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span>Proizvodnja</span></button><button id="tabK"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14.3c2 .7 3.5 2.6 3.5 5.7"/></svg><span>Kupci</span></button><button id="tabC"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12l-8 8-9-9V3h8z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg><span>Cenovnik</span></button><button id="tabS"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3h0a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5h0a1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8v0a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span>Podešavanja</span></button></nav></aside>
+<main class="wrap">
+ <div class="mhead"><b>Limarija WD-36</b><span>Menadžer proizvodnje i prodaje</span></div>
+
+ <h2 class="ptitle" id="ptitle">Početna</h2>
+ <div id="bkBanner" class="lockmsg hide" style="margin-bottom:14px"><span id="bkBanTx"></span> <span class="row" style="display:inline-flex;margin-top:8px"><button class="p" id="bkbDrive">Sačuvaj na Google Drive</button><button id="bkbJson">Preuzmi kopiju</button><button id="bkbLater">Podseti me sutra</button></span></div>
+ <datalist id="custl"></datalist>
+ <div id="home"><div class="row" style="justify-content:space-between;margin-bottom:12px"><div><div id="hdate" style="color:var(--mu);font-size:13px"></div></div><div class="row"><button class="p" id="btnNewPH">+ Novi predračun</button><button class="p" id="btnNewH">+ Novi radni nalog</button></div></div><div class="card" style="padding:10px 14px"><input id="gs" placeholder="Pretraga: kupac, broj dokumenta (npr. 12/2026), telefon, PIB…" style="width:100%"><div id="gsr" class="sc hide" style="margin-top:8px"></div></div><div id="hbody"></div></div>
+
+ <div id="list" class="hide">
+  <div class="card">
+   <div class="row" style="margin-bottom:10px"><button class="p" id="btnNew">+ Novi radni nalog</button></div>
+   <div class="row" style="margin-bottom:10px">
+    <div style="flex:1;min-width:180px"><input id="q" placeholder="Pretraga (broj, kupac)…"></div>
+    <div style="width:120px"><select id="fy"></select></div>
+    <div style="width:170px"><select id="fm"></select></div>
+    <div style="width:150px"><select id="fv"><option value="list">Lista</option><option value="mes">Po mesecima</option></select></div>
+   </div>
+   <div class="sc"><table><thead><tr><th class="sh" data-sort="broj" data-l="Broj">Broj</th><th class="sh" data-sort="datum" data-l="Datum">Datum</th><th class="sh" data-sort="kupac" data-l="Kupac">Kupac</th><th class="sh n" data-sort="kom" data-l="Kom.">Kom.</th><th class="sh n" data-sort="m2" data-l="m²">m²</th><th class="sh" data-sort="status" data-l="Status">Status</th><th></th></tr></thead><tbody id="tb"></tbody></table></div>
+   <div class="msg" id="empty"></div>
+   <div class="row" style="justify-content:space-between;margin-top:8px;font-size:13px;color:var(--mu)"><span id="cnt"></span><span id="sum"></span></div>
+  </div>
+ </div>
+
+ <div id="plist" class="hide"><div class="card"><div class="row" style="margin-bottom:10px"><button class="p" id="pNew">+ Novi predračun</button></div><div class="sc"><table><thead><tr><th>Broj</th><th>Datum</th><th>Kupac</th><th>Radni nalog</th><th class="n">Ukupno (RSD)</th><th></th></tr></thead><tbody id="pltb"></tbody></table></div><div class="msg" id="plempty"></div></div></div>
+
+ <div id="cen" class="hide"><div class="card">
+    <div class="row" style="margin-bottom:12px"><input id="gNewName" placeholder="Naziv nove grupe (npr. Ravni lim)" style="max-width:300px" aria-label="Naziv nove grupe"><button class="p" id="gAdd">+ Nova grupa</button></div>
+    <div id="ptb"></div>
+  <div class="msg" id="pempty"></div>
+  <div class="row"><button id="btnCenPdf">Preuzmi PDF</button><button id="btnCenPrint">Štampaj</button><span id="cstatus" style="color:var(--mu);font-size:13px"></span></div>
+  <p style="font-size:12px;color:var(--mu);margin:10px 0 0">Možeš da upišeš veleprodajnu ili maloprodajnu cenu, a druga se izračuna sama (maloprodajna = veleprodajna + PDV). Predračun uzima veleprodajnu cenu stavke čiji se naziv poklapa sa vrstom robe u radnom nalogu (npr. „TR 18 FILC“) i na nju obračunava PDV. Promene se čuvaju čim izađeš iz polja.</p><datalist id="jml"><option>m²</option><option>m</option><option>kom</option><option>kg</option><option>set</option></datalist><p hidden></p>
+ </div></div>
+
+ <div id="sett" class="hide"><div class="card">
+  <div class="setrow"><div><b>Nakon izdavanja otpremnice zaključati povezani nalog i predračun</b><div style="color:var(--mu);font-size:13px;margin-top:4px">Zaključani nalog i predračun ne mogu da se menjaju ni brišu. Izuzeci: status naloga i uplaćeni iznos na predračunu ostaju izmenjivi. Ako obrišeš otpremnicu, dokumenti se ponovo otključavaju.</div></div>
+   <label class="tgl"><input type="checkbox" id="setLock" aria-label="Zaključavanje nakon otpremnice"><i></i></label></div>
+  <div class="setrow" style="margin-top:14px;padding-top:14px;border-top:1px solid var(--bd)"><div><b>Visina PDV-a (%)</b><div style="color:var(--mu);font-size:13px;margin-top:4px">Koristi se u cenovniku (maloprodajna cena) i kao podrazumevana stopa na novim predračunima.</div></div>
+   <input id="pdv" inputmode="decimal" style="width:80px;text-align:right" aria-label="Visina PDV-a"></div>
+  <div class="stl" style="margin-top:22px">Boje</div>
+  <div style="color:var(--mu);font-size:13px;line-height:1.5">Boje koje se nude u nalozima i otpremnicama. U izboru uvek postoji i prazno polje: tada se boja ne dodaje na naziv robe. Promena naziva menja ga i u svim postojećim nalozima, predračunima i otpremnicama. Uklanjanje samo skida boju iz ponude, a postojeći dokumenti je zadržavaju.</div>
+  <div id="bojeList" style="margin-top:10px"></div>
+  <div class="row" style="margin-top:8px"><input id="bojeNew" placeholder="Nova boja" style="width:200px"><button class="p" id="bojeAdd">+ Dodaj boju</button></div>
+  <div class="msg" id="bojeSt" style="padding:6px 0;text-align:left"></div>
+  <div class="stl" style="margin-top:22px">Pristup i uloge</div>
+  <div style="color:var(--mu);font-size:13px;line-height:1.5">Prijava i lozinke rade preko claude.ai naloga: aplikaciju ne može da otvori niko ko nema pristup. Novog korisnika dodaješ dugmetom <b style="color:var(--tx)">Share</b> (iznad aplikacije): uneseš njegovu e-adresu i izabereš ulogu. Korisnik se prijavljuje svojim claude.ai nalogom (sopstveno korisničko ime i lozinka), a pristup možeš da mu oduzmeš u istom meniju. Dobijaju ga samo osobe koje ti izričito dodaš, dok je link privatan.</div>
+  <div style="color:var(--mu);font-size:13px;line-height:1.5;margin-top:10px"><b style="color:var(--tx)">Editor</b> ima pun pristup (vlasnik). <b style="color:var(--tx)">Contributor</b> je „radnik“: vidi naloge, menja status naloga i grupa, ali ne vidi cene, predračune, proizvodnju, kupce ni cenovnik. <b style="color:var(--tx)">Viewer</b> je „samo pregled“ (npr. knjigovođa): vidi sve, ali ne može da menja ništa. Osetljivi podaci (cene, predračuni, kupci) i na nivou baze su dostupni samo Editorima.</div>
+  <div class="stl" style="margin-top:22px">Podaci i rezervna kopija</div>
+  <div class="setrow"><div style="color:var(--mu);font-size:13px">Rezervna kopija čuva sve naloge, predračune, otpremnice, cenovnik, kupce i ostale podatke u jedan fajl. Preporuka: jednom nedeljno. <span id="bkInfo"></span></div></div>
+  <div class="setrow" style="margin-top:10px"><div><b>Podsetnik za rezervnu kopiju</b><div style="color:var(--mu);font-size:13px;margin-top:4px">Pri otvaranju aplikacije dobijaš podsetnik ako je od poslednje kopije prošlo toliko dana. Upiši 0 da isključiš podsetnik.</div></div><div class="row" style="flex-wrap:nowrap"><input id="bkDays" inputmode="numeric" style="width:70px;text-align:right" aria-label="Podsetnik za kopiju u danima"><span style="color:var(--mu)">dana</span></div></div>
+  <div class="row" style="margin-top:6px"><button class="p" id="bkJson">Preuzmi sve podatke (JSON)</button><button id="bkDrive">Sačuvaj kopiju na Google Drive</button><button id="bkCsv">Preuzmi pregled dokumenata (CSV za Excel)</button><button id="bkRestore">Vrati podatke iz fajla…</button><input type="file" id="bkFile" accept=".json,application/json" class="hide"></div>
+  <div class="setrow" style="margin-top:16px"><div><b>Izvoz pojedinačnih delova</b><div style="color:var(--mu);font-size:13px;margin-top:4px">Preuzmi samo jedan deo podataka (npr. cenovnik) da ga preneseš u drugi program. Uvoz radiš dugmetom „Vrati podatke iz fajla…“ – menja se samo taj deo, a nalozi, predračuni i ostalo što nije u fajlu ostaju netaknuti. Kod cenovnika uvoz ZAMENJUJE postojeći cenovnik.</div></div></div>
+  <div class="row" id="bkParts" style="margin-top:6px"></div>
+  <div class="msg" id="bkStatus"></div>
+  <div class="stl" style="margin-top:22px">Opasna zona</div>
+  <div class="setrow"><div style="color:var(--mu);font-size:13px;line-height:1.5"><b style="color:var(--tx)">RESET</b> briše naloge, predračune, otpremnice, nabavne cene i zalihu. Cenovnik, kupci i podešavanja (PDV, boje…) ostaju. Brisanje ne može da se opozove, pa pre toga preuzmi rezervnu kopiju.</div><button class="btn-reset" id="btnReset">RESET</button></div>
+  <div style="color:var(--mu);font-size:13px;margin:12px 0 8px">Pojedinačno brisanje po kategorijama:</div>
+  <div class="row" id="resetCats">
+   <button class="d" data-rc="orders">Reset naloga</button><button class="d" data-rc="proformas">Reset predračuna</button><button class="d" data-rc="otpremnice">Reset otpremnica</button><button class="d" data-rc="nabavne">Reset nabavnih cena</button><button class="d" data-rc="zaliha">Reset zalihe</button><button class="d" data-rc="prices">Reset cenovnika</button><button class="d" data-rc="customers">Reset kupaca</button><button class="d" data-rc="settings">Reset podešavanja</button>
+  </div>
+  <div class="msg" id="setStatus"></div>
+ </div></div>
+
+<div id="kup" class="hide">
+  <div class="card" id="kList">
+   <div class="row" style="margin-bottom:10px"><input id="kSearch" placeholder="Pretraži kupce (ime, telefon, PIB)…" style="flex:1;min-width:200px"><button class="p" id="kNew">+ Novi kupac</button></div>
+   <div class="sc"><table><thead><tr><th>Kupac</th><th>Telefon</th><th>PIB</th><th class="n">Nalozi</th><th class="n">Dug (RSD)</th></tr></thead><tbody id="ktb"></tbody></table></div>
+   <div class="msg" id="kEmpty"></div>
+  </div>
+  <div id="kDet" class="hide">
+   <div class="card">
+    <div class="cols"><div>
+     <div class="stl">Podaci o kupcu</div>
+     <div><label>Ime / naziv *</label><input id="kName"></div>
+     <div><label>Adresa</label><input id="kAddr"></div></div>
+     <div><div class="stl">&nbsp;</div>
+     <div><label>Telefon</label><input id="kPhone" inputmode="tel"></div>
+     <div><label>PIB (pravna lica)</label><input id="kPib" inputmode="numeric"></div>
+     <div><label>E-pošta (za slanje dokumenata)</label><input id="kMail" inputmode="email"></div></div></div>
+    <div class="row bar" style="margin-bottom:0"><button class="p" id="kSave">Sačuvaj</button><button id="kBack">← Lista kupaca</button><button class="d" id="kDel">Obriši</button><span id="kStatus" style="color:var(--mu);font-size:13px"></span></div>
+   </div>
+   <div class="card" id="kHist"></div>
+  </div>
+ </div>
+
+<div id="prod" class="hide">
+  <div class="card">
+   <div class="row" style="justify-content:space-between;margin-bottom:8px"><b>Nabavne cene materijala (RSD po m², bez PDV)</b><span id="nstatus" style="color:var(--mu);font-size:13px"></span></div>
+   <div class="sc"><table><thead><tr><th>Važi od</th><th>Lim (RSD/m²)</th><th>Filc (RSD/m²)</th><th></th></tr></thead><tbody id="ntb"></tbody></table></div>
+   <div class="msg" id="nempty"></div>
+   <div class="row"><button class="p" id="btnNab">+ Dodaj nabavnu cenu</button></div>
+   <p style="font-size:12px;color:var(--mu);margin:10px 0 0">Cena važi od izabranog datuma do sledeće unete, pa možeš da uneseš novu cenu kad se promeni. Utrošak lima jednak je kvadraturi proizvedenih profila. Filc se troši samo za profile čiji naziv sadrži „FILC“: TR 35 – 1,19 m² filca na 1 m² lima, TR 18 – 1,19 m² filca na 1,1 m² lima. Prodaja = kvadratura × veleprodajna cena iz cenovnika (trenutna cena, bez PDV-a). Bruto zarada = prodaja − nabavna vrednost lima i filca. Računaju se samo trapezni limovi, po datumu radnog naloga.</p>
+  </div>
+  <div class="card" id="skartBox">
+   <div class="row" style="align-items:flex-end"><div style="width:200px"><label>Škart lima (% od utrošenog)</label><input id="skPct" inputmode="decimal"></div><div style="width:200px"><label>Škart filca (% od utrošenog)</label><input id="skPctF" inputmode="decimal"></div><span id="skStatus" style="color:var(--mu);font-size:13px"></span></div>
+   <p style="font-size:12px;color:var(--mu);margin:8px 0 0">Škart se obračunava procentualno na utrošen lim i filc i prikazuje se kao poseban red u rekapitulaciji (umanjuje bruto zaradu), a smanjuje i zalihu materijala.</p>
+  </div>
+  <div class="card" id="stockCard">
+   <div class="row" style="justify-content:space-between;margin-bottom:8px"><b>Zaliha materijala</b><span id="zstatus" style="color:var(--mu);font-size:13px"></span></div>
+   <div class="grid" id="zKpi"></div>
+   <div class="row" style="margin-top:12px;align-items:flex-end"><div style="width:170px"><label>Minimum lima (m²)</label><input id="zMinL" inputmode="decimal"></div><div style="width:170px"><label>Minimum filca (m²)</label><input id="zMinF" inputmode="decimal"></div></div>
+   <div class="stl" style="margin-top:16px">Ulazi materijala</div>
+   <div class="sc"><table><thead><tr><th>Datum</th><th>Materijal</th><th class="n">Količina (m²)</th><th>Napomena</th><th></th></tr></thead><tbody id="ztb"></tbody></table></div>
+   <div class="msg" id="zempty"></div>
+   <div class="row"><button class="p" id="btnZal">+ Dodaj ulaz</button></div>
+   <p style="font-size:12px;color:var(--mu);margin:10px 0 0">Prvi unos može da bude početno stanje (npr. „popis“). Potrošnja se računa iz radnih naloga (lim = proizvedena kvadratura, filc po formuli, plus škart) počev od datuma prvog unosa za taj materijal.</p>
+  </div>
+  <div class="card"><div class="row"><div style="width:150px"><label>Godina</label><select id="rYear"></select></div><div style="width:260px"><label>Nalozi</label><select id="rSt"><option value="all">Svi nalozi</option><option value="done">Samo završeni i isporučeni</option></select></div></div></div>
+  <div id="rbody"></div>
+ </div>
+
+ <div id="pview" class="hide">
+  <div class="lockmsg hide" id="pLockMsg"></div>
+  <div class="card"><div class="cols">
+    <div>
+     <div class="stl">Kupac</div>
+     <div><label>Kupac (ime) *</label><input id="pCust" list="custl" autocomplete="off"></div>
+     <div><label>Adresa</label><input id="pAddr"></div>
+     <div><label>Telefon</label><input id="pPhone" inputmode="tel"></div>
+     <div><label>PIB</label><input id="pPib" inputmode="numeric"></div>
+     <div><label>Vrsta kupca</label><select id="pKup"><option value="pravno">Pravno lice</option><option value="fizicko">Fizičko lice</option></select></div>
+    </div>
+    <div>
+     <div class="stl">Predračun</div>
+     <div><label>Broj predračuna</label><input id="pNo" inputmode="numeric"></div>
+     <div><label>Godina</label><input id="pYr" inputmode="numeric"></div>
+     <div><label>Datum</label><input id="pDate" type="date"></div>
+     <div><label>PDV %</label><input id="pPdv" inputmode="decimal"></div>
+     <div id="paybox"><label>Uplate (RSD)</label><div id="pPays"></div><div class="row" style="margin-top:6px;justify-content:space-between"><button type="button" id="pPayAdd">+ Dodaj uplatu</button><span id="pPayTot" style="color:var(--mu);font-size:13px"></span></div></div>
+     <div><label>Napomena (opciono)</label><input id="pNote"></div>
+    </div></div>
+   <div class="sc" style="margin-top:12px"><table><thead id="plh"><tr><th>Vrsta robe</th><th>Boja</th><th>Dužina</th><th>Kom.</th><th class="n">Količina</th><th>Cena</th><th class="n">Iznos</th></tr></thead><tbody id="plines"></tbody></table></div>
+   <div id="phint" style="font-size:12px;color:var(--mu);margin-top:8px"></div></div>
+  <div class="row bar"><button class="p" id="pSave">Sačuvaj</button><button class="p hide" id="pMkOrd">Napravi radni nalog</button><button class="hide" id="pEdit">Izmeni stavke</button><button id="pPdf">Preuzmi PDF za štampu</button><button id="pPrint">Štampaj</button><button id="pMail">Pošalji mejlom</button><button id="pOtp">Otpremnica</button><button id="pCopy">Kopiraj</button><button id="pOrd">← Radni nalog</button><button id="pBack">Lista predračuna</button><button class="d" id="pDel">Obriši</button><span id="pstatus" style="color:var(--mu);font-size:13px"></span></div>
+ </div>
+
+<div id="olist" class="hide"><div class="card"><div class="row" style="margin-bottom:10px"><button class="p" id="oNew">+ Nova otpremnica</button></div><div class="sc"><table><thead><tr><th>Broj</th><th>Datum</th><th>Kupac</th><th>Izvor</th><th></th></tr></thead><tbody id="oltb"></tbody></table></div><div class="msg" id="olempty"></div></div></div>
+
+ <div id="oview" class="hide">
+  <div class="card"><div class="cols">
+    <div>
+     <div class="stl">Kupac</div>
+     <div><label>Kupac (ime) *</label><input id="oCust" list="custl" autocomplete="off"></div>
+     <div><label>Adresa</label><input id="oAddr"></div>
+     <div><label>Telefon</label><input id="oPhone" inputmode="tel"></div>
+     <div><label>PIB</label><input id="oPib" inputmode="numeric"></div>
+    </div>
+    <div>
+     <div class="stl">Otpremnica</div>
+     <div><label>Broj otpremnice</label><input id="oNo" inputmode="numeric"></div>
+     <div><label>Godina</label><input id="oYr" inputmode="numeric"></div>
+     <div><label>Datum</label><input id="oDate" type="date"></div>
+     <div><label>Napomena (opciono)</label><input id="oNote"></div>
+     <div id="oCeneBox"><label>Cene na otpremnici</label><select id="oCene"><option value="0">Bez cena</option><option value="1">Sa cenama</option></select></div>
+     <div id="oPdvBox" class="hide"><label>PDV na otpremnici</label><select id="oPdv"></select></div>
+    </div></div>
+   <div id="oDeliv" class="lockmsg hide" style="margin-top:12px"></div>
+   <div class="sc" style="margin-top:12px"><table><thead id="ohead"></thead><tbody id="olines"></tbody></table></div>
+   <div class="row" style="margin-top:8px"><button id="oAdd">+ Dodaj stavku</button><button id="oPickBtn">+ Dodaj grupe iz naloga</button></div><div id="oPick" class="hide"></div>
+   <div id="oHint" style="font-size:12px;color:var(--mu);margin-top:8px"></div></div>
+  <div class="row bar"><button class="p" id="oSave">Sačuvaj</button><button id="oPdf">Preuzmi PDF za štampu</button><button id="oPrint">Štampaj</button><button id="oMail">Pošalji mejlom</button><button id="oSrc">← Izvor</button><button id="oBack">Lista otpremnica</button><button class="d" id="oDel">Obriši</button><span id="ostatus" style="color:var(--mu);font-size:13px"></span></div>
+ </div>
+
+ <div id="view" class="hide">
+  <div class="lockmsg hide" id="lockMsg"></div>
+  <div class="card">
+   <div class="cols">
+    <div>
+     <div class="stl">Kupac</div>
+     <div><label>Kupac (ime) *</label><input id="fCust" list="custl" autocomplete="off" placeholder="npr. Aca Petrović"></div>
+     <div><label>Adresa</label><input id="fAddr"></div>
+     <div><label>Telefon</label><input id="fPhone" inputmode="tel"></div>
+     <div><label>PIB (pravna lica)</label><input id="fPib" inputmode="numeric"></div>
+    </div>
+    <div>
+     <div class="stl" id="fStl">Radni nalog</div>
+     <div><label id="fNoL">Broj naloga</label><input id="fNo" inputmode="numeric"></div>
+     <div><label>Godina</label><input id="fYr" inputmode="numeric"></div>
+     <div><label>Datum</label><input id="fDate" type="date"></div>
+     <div id="fStW"><label>Status</label><select id="fSt"><option value="u_radu">U radu</option><option value="zavrsen">Završen</option><option value="isporucen">Isporučen</option></select></div>
+    </div>
+   </div>
+   <div class="stl" style="margin-top:18px;margin-bottom:8px">Stavke</div>
+   <div id="segs"></div>
+   <div class="row" style="margin-top:4px"><button id="btnSeg">+ Dodaj grupu</button></div>
+   <div style="margin-top:12px"><label>Napomena (opciono)</label><input id="fNote"></div>
+  </div>
+  <div class="row bar">
+   <button class="p" id="btnSave">Sačuvaj</button>
+   <button id="btnPdf">Preuzmi PDF za štampu</button><button id="btnPrint">Štampaj</button>
+   <button id="btnPro">Predračun</button>
+   <button id="btnOtp">Otpremnica</button>
+   <button id="btnCopy">Kopiraj</button>
+   <button id="btnBack">← Nazad na listu</button>
+   <button class="d" id="btnDel">Obriši</button>
+   <span id="status" style="color:var(--mu);font-size:13px"></span>
+  </div>
+  <div id="sheetbox"><div id="sheet"></div></div>
+ </div>
+</main>
+</div>
+
+<div id="rov" class="hide"><div class="bx"><p><b id="rTitle">Reset</b></p><p id="rDesc"></p><p>Za potvrdu ukucaj reč <b>reset</b>:</p><input id="rIn" autocomplete="off" placeholder="reset"><div class="msg" id="rSt"></div><div class="row" style="justify-content:space-between;margin-top:12px"><button id="rBk">Prvo preuzmi kopiju</button><span class="row"><button id="rNo">Odustani</button><button class="btn-reset" id="rGo" disabled>Resetuj</button></span></div></div></div>
+<div id="ov" class="hide"><div class="bx"><p id="ovm"></p><div class="row" style="justify-content:flex-end"><button id="ovn">Odustani</button><button class="p" id="ovy">Potvrdi</button></div></div></div>
+<script src="js/01-osnova.js"></script>
+<script src="js/02-nalozi.js"></script>
+<script src="js/03-samostalni-predracun.js"></script>
+<script src="js/04-cenovnik.js"></script>
+<script src="js/05-zaliha-kupci-pretraga.js"></script>
+<script src="js/06-rezervna-kopija.js"></script>
+<script src="js/07-predracuni.js"></script>
+<script src="js/08-pdf-stampa.js"></script>
+<script src="js/09-otpremnice.js"></script>
+<script src="js/10-proizvodnja.js"></script>
+<script src="js/11-pocetna-baza.js"></script>
+</body>
+</html>

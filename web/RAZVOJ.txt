@@ -1,0 +1,25 @@
+RAZVOJ – Limarija WD-36 (izvorni fajlovi)
+
+web/index.html     struktura stranice (HTML) + spisak skripti
+web/styles.css     ceo CSS
+web/js/*.js        kod po oblastima; redosled učitavanja je redosled brojeva u imenu:
+  01-osnova                 pomoćne funkcije, grupe/tipovi, stanje
+  02-nalozi                 lista, forma, događaji radnog naloga
+  03-samostalni-predracun   predračun bez radnog naloga
+  04-cenovnik               cenovnik, grupe, prevlačenje
+  05-zaliha-kupci-pretraga  kopiranje, zaliha, uloge, kupci, pretraga
+  06-rezervna-kopija        izvoz/uvoz, delimične kopije
+  07-predracuni             lista i izrada predračuna
+  08-pdf-stampa             vektorski PDF i direktna štampa
+  09-otpremnice             otpremnice
+  10-proizvodnja            proizvodnja, prodaja, bruto zarada
+  11-pocetna-baza           početna strana, inicijalizacija baze
+
+Sve skripte dele isti globalni prostor (kao nekad jedan veliki <script>).
+Novi fajl: dodaj ga kao <script src="js/NN-ime.js"></script> u index.html na željeno mesto.
+
+Sastavljanje u jedan HTML (za Artifact i desktop program):
+  node tools/build-html.js                         -> html/radni-nalozi.html
+  node tools/build-html.js putanja/izlaz.html      -> proizvoljan izlaz
+  node tools/prepare.js                            -> app/index.html (desktop)
+Ne menjaj html/radni-nalozi.html ručno – menja se u web/, pa se ponovo sastavi.

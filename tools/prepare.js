@@ -1,6 +1,8 @@
 // Pravi app/index.html od izvornog HTML-a: zamenjuje claude.ai-specifične delove lokalnim.
 const fs = require("fs"), path = require("path");
 const root = path.join(__dirname, "..");
+// ako postoje izvorni fajlovi u web/, prvo sastavi html/radni-nalozi.html iz njih
+if (fs.existsSync(path.join(root, "web", "index.html"))) require("child_process").execFileSync(process.execPath, [path.join(__dirname, "build-html.js")], { stdio: "inherit" });
 let h = fs.readFileSync(path.join(root, "html", "radni-nalozi.html"), "utf8");
 
 function must(cond, what) { if (!cond) { console.error("PREPARE GREŠKA: ne nalazim " + what); process.exit(1); } }
