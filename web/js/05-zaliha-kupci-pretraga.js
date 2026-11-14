@@ -69,7 +69,11 @@ let customers=[],kcur=null;
 const nrm=v=>String(v||"").trim().toLowerCase();
 /* pretraga bez obzira na č/ć/š/ž/đ: „cacak“ nalazi „Čačak“, „djordje“ nalazi „Đorđe“ */
 const fold=v=>String(v||"").trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/đ/g,"d").replace(/dj/g,"d");
-const custId=n=>nrm(n).replace(/[\/\\#?%\s]+/g,"_").slice(0,80);
+// Baza u Artifact-u dozvoljava u ID-ju samo slova, cifre i _ - . ~ : @ + (bez š, đ, č, ć, ž…): ostali znaci se zamenjuju, a dodaje se kratak kod da dva imena ne dobiju isti ID
+const safeDocId=s=>{s=String(s);if(/^[A-Za-z0-9_.~:@+-]+$/.test(s))return s;
+  const t=s.replace(/đ/g,"dj").replace(/Đ/g,"Dj").normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^A-Za-z0-9_.~:@+-]+/g,"_");
+  let h=0;for(const ch of s)h=(h*31+ch.charCodeAt(0))>>>0;return t.slice(0,70)+"_"+h.toString(36)};
+const custId=n=>safeDocId(nrm(n).replace(/[\/\\#?%\s]+/g,"_").slice(0,80));
 const custBy=n=>customers.find(c=>nrm(c.name)===nrm(n));
 function fillCustList(){$("custl").innerHTML=customers.map(c=>`<option value="${esc(c.name)}">`).join("")}
 async function custSync(d){
@@ -88,14 +92,14 @@ function showKupci(){$("kList").classList.remove("hide");$("kDet").classList.add
 function renderKupci(){
   const q=fold($("kSearch").value);
   const rows=customers.filter(c=>!q||[c.name,c.phone,c.pib,c.addr].some(v=>fold(v).includes(q))).sort((a,b)=>String(a.name).localeCompare(String(b.name),"sr-Latn"));
-  $("ktb").innerHTML=rows.map(c=>{const d=custDocs(c.name),debt=r2(d.p.reduce((t,x)=>t+Math.max(0,proRest(x)),0));return `<tr class="cl" data-kid="${esc(c.id)}"><td>${esc(c.name)}</td><td>${esc(c.phone||"")}</td><td>${esc(c.pib||"")}</td><td class="n">${d.o.length}</td><td class="n"${debt>0?' style="color:#c0392b;font-weight:600"':""}>${debt>0?money(debt):"–"}</td></tr>`}).join("");
+  $("ktb").innerHTML=rows.map(c=>{const d=custDocs(c.name),debt=r2(d.p.reduce((t,x)=>t+Math.max(0,proRest(x)),0));return `<tr class="cl" data-kid="${esc(c.id)}"><td>${esc(c.name)}${c.cene&&Object.keys(c.cene).length?' <span class="tag zavrsen" title="Kupac ima poseban cenovnik">poseban cenovnik</span>':""}</td><td>${esc(c.phone||"")}</td><td>${esc(c.pib||"")}</td><td class="n">${d.o.length}</td><td class="n"${debt>0?' style="color:#c0392b;font-weight:600"':""}>${debt>0?money(debt):"–"}</td></tr>`}).join("");
   $("kEmpty").textContent=rows.length?"":(customers.length?"Nema rezultata.":"Još nema kupaca. Dodaju se sami kad sačuvaš dokument ili klikom na „+ Novi kupac“.");
 }
 function openKupac(c){
   kcur=c?{...c}:{id:"",name:"",addr:"",phone:"",pib:"",email:"",_new:true};
   $("kName").value=kcur.name;$("kAddr").value=kcur.addr||"";$("kPhone").value=kcur.phone||"";$("kPib").value=kcur.pib||"";$("kMail").value=kcur.email||"";
   $("kDel").classList.toggle("hide",!!kcur._new);$("kStatus").textContent="";
-  $("kList").classList.add("hide");$("kDet").classList.remove("hide");renderKHist();window.scrollTo(0,0);
+  $("kList").classList.add("hide");$("kDet").classList.remove("hide");renderKHist();kpDirty=false;renderKPrc();window.scrollTo(0,0);
 }
 function renderKHist(){
   if(kcur._new){$("kHist").innerHTML='<div class="msg">Istorija će se pojaviti nakon prvog dokumenta.</div>';return}
@@ -118,12 +122,12 @@ $("kHist").addEventListener("click",e=>{
 });
 $("kSave").onclick=async()=>{
   const S=$("kStatus"),name=$("kName").value.trim();if(!name){S.textContent="Unesi ime kupca.";return}
-  const d={name,addr:$("kAddr").value.trim(),phone:$("kPhone").value.trim(),pib:$("kPib").value.trim(),email:$("kMail").value.trim()},id=kcur._new?custId(name):kcur.id;
+  const d={name,addr:$("kAddr").value.trim(),phone:$("kPhone").value.trim(),pib:$("kPib").value.trim(),email:$("kMail").value.trim(),...(kcur.cene&&Object.keys(kcur.cene).length?{cene:kcur.cene}:{})},id=kcur._new?custId(name):kcur.id;
   if(kcur._new&&customers.some(c=>c.id===id)){S.textContent="Kupac sa tim imenom već postoji.";return}
   try{
     if(!kcur._new&&nrm(kcur.name)!==nrm(name)&&custDocs(kcur.name).o.length+custDocs(kcur.name).p.length+custDocs(kcur.name).t.length){
       if(!(await ask("Postojeći dokumenti kupca zadržavaju staro ime ("+kcur.name+"). Nastaviti?")))return}
-    await db.collection("customers").doc(id).set(d);kcur={...d,id};S.textContent="Sačuvano ✓";$("kDel").classList.remove("hide");renderKHist()}
+    await db.collection("customers").doc(id).set(d);kcur={...d,id};S.textContent="Sačuvano ✓";$("kDel").classList.remove("hide");renderKHist();kpDirty=false;renderKPrc()}
   catch(e){S.textContent="Greška pri čuvanju: "+(e.message||e.code||"nepoznata")}
 };
 $("kDel").onclick=async()=>{

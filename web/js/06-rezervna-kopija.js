@@ -164,8 +164,8 @@ $("bkFile").onchange=async()=>{
     const part=Array.isArray(j.delimicno)?j.delimicno:null,replacePrices=!!(part&&part.length===1&&part[0]==="prices");
     const msg=part?("Uvoz dela podataka ("+part.map(k=>(BK_PARTS.find(z=>z[0]===k)||[k,k])[1]).join(", ")+"): "+cnt+" dokumenata. "+(replacePrices?"Postojeći cenovnik biće ZAMENJEN cenovnikom iz fajla (stare cene se brišu). ":"Dokumenti sa istim brojem biće prepisani. ")+"Sve što nije u fajlu ostaje netaknuto."):("Vratiti "+cnt+" dokumenata iz kopije od "+fmtDate(String(j.napravljeno||"").slice(0,10))+"? Dokumenti sa istim brojem biće prepisani. Ostali ostaju nepromenjeni.");
     if(!(await ask(msg)))return;
-    let n=0;for(const c of names)for(const [id,d] of j.data[c]){await db.collection(c).doc(id).set(d);n++;S.textContent="Vraćam… "+n+"/"+cnt}
-    if(replacePrices){const keep=new Set((j.data.prices||[]).map(x=>x[0]));for(const pr of prices.slice()){if(!keep.has(pr.id))await db.collection("prices").doc(pr.id).delete()}}
+    let n=0;for(const c of names)for(const [id,d] of j.data[c]){await db.collection(c).doc(safeDocId(id)).set(d);n++;S.textContent="Vraćam… "+n+"/"+cnt}
+    if(replacePrices){const keep=new Set((j.data.prices||[]).map(x=>safeDocId(x[0])));for(const pr of prices.slice()){if(!keep.has(pr.id))await db.collection("prices").doc(pr.id).delete()}}
     if(j.data.settings&&j.data.settings[0]){const si={...j.data.settings[0][1]};if(part)delete si.lastBackup;if(si.gNames||si.gCustom){si.gNames={...(SET.gNames||{}),...(si.gNames||{})};si.gKind={...(SET.gKind||{}),...(si.gKind||{})};if(Array.isArray(si.gOrder))si.gOrder=[...si.gOrder,...(Array.isArray(SET.gOrder)?SET.gOrder:[]).filter(k=>!si.gOrder.includes(k))];si.gCustom=[...new Set([...(Array.isArray(SET.gCustom)?SET.gCustom:[]),...(Array.isArray(si.gCustom)?si.gCustom:[])])]}await saveSet(si);applyGrupe()}
     S.textContent=n?("Vraćeno "+n+" dokumenata ✓"):"Podešavanja vraćena ✓";renderBkParts()}
   catch(e){S.textContent="Greška: "+(e.message||e.code||"nepoznata")}
