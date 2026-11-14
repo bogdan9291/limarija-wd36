@@ -3,7 +3,7 @@ function nextPro(y){const n=proformas.filter(p=>p.year===y).map(p=>p.no);return(
 function buildPro(o){
   const y=new Date().getFullYear();
   return{_new:true,no:nextPro(y),year:y,orderId:oid(o),orderNo:o.no+"/"+o.year,customer:o.customer,addr:o.addr||"",phone:o.phone||"",pib:o.pib||"",date:new Date().toISOString().slice(0,10),note:"",uplate:[],pdv:pdvRate,
-   lines:(o.items||[]).map(i=>{const pr=priceFor(i.vrsta,i.boja);return{vrsta:i.vrsta,boja:i.boja,duzina:i.duzina,kom:i.kom,m2:i.m2,jm:i.jm||"m²",cena:pr==null?"":pr}})};
+   lines:(o.items||[]).map(i=>{const pr=priceFor(i.vrsta,i.boja);return{vrsta:i.vrsta,boja:i.boja,duzina:dLine(i),kom:i.kom,m2:i.m2,jm:i.jm||"m²",cena:pr==null?"":pr}})};
 }
 const payTotal=q=>r2((q.uplate||[]).reduce((t,u)=>t+num(u.iznos),0));
 function renderPays(){

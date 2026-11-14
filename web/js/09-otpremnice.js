@@ -13,7 +13,7 @@ const orderItems=o=>(o.items&&o.items.length)?o.items:(o.segments||[]).flatMap(s
 function ordSegs(o){
   const segs=(o.segments&&o.segments.length)?o.segments:[{tip:"trapez",items:o.items||[]}];
   return segs.map((sg,si)=>{const tip=sg.tip||"trapez";
-    const base=aggLines((sg.items||[]).filter(i=>i&&String(i.vrsta||"").trim()).map(i=>{const q=Number.isFinite(Number(i.m2))&&i.m2!==""&&i.m2!=null?num(i.m2):r2(rowM2({...i,tip:i.tip||tip}));return{vrsta:i.vrsta+(kindOf(i.tip||tip)==="opsiv"&&i.sirina?" (RŠ "+i.sirina+" mm)":""),duzina:dzTxt(i.duzina,i.jm),boja:i.boja||"",kom:i.kom,kolicina:q,jm:i.jm||rowUnit({...i,tip:i.tip||tip})}}));
+    const base=aggLines((sg.items||[]).filter(i=>i&&String(i.vrsta||"").trim()).map(i=>{const q=Number.isFinite(Number(i.m2))&&i.m2!==""&&i.m2!=null?num(i.m2):r2(rowM2({...i,tip:i.tip||tip}));return{vrsta:i.vrsta+(kindOf(i.tip||tip)==="opsiv"&&i.sirina?" (RŠ "+i.sirina+" mm)":""),duzina:kindOf(i.tip||tip)==="opsiv"?(num(i.duzina)?mTxt(opsLm(i))+" m":""):dzTxt(i.duzina,i.jm),boja:i.boja||"",kom:i.kom,kolicina:q,jm:i.jm||rowUnit({...i,tip:i.tip||tip})}}));
     return{sid:sg.sid||"s"+si,tip,title:TIPOVI[tip]||sg.title||"Grupa",prod:sg.status||(o.status==="u_radu"?"u_radu":"zavrsen"),base}});
 }
 const orderBase=o=>ordSegs(o).flatMap(g=>g.base);

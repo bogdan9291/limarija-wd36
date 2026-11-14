@@ -40,6 +40,10 @@ const UNITS=["m²","komad","sat","km","metar","set"];
 function unitOf(v,d){const k=String(v).trim().toLowerCase();const p=prices.find(x=>String(x.naziv).trim().toLowerCase()===k);return p?p.jm:(d||"m²")}
 const usesLen=v=>{const u=unitOf(v);return u==="m²"||u==="metar"};
 const num=x=>parseFloat(String(x).replace(",","."))||0;
+// Opšiv: dužina se unosi u METRIMA (zaokružuje se na 2 decimale). Stari nalozi su čuvali milimetre (>= 50), pa se oni pretvaraju.
+const opsLm=it=>{const d=num(it.duzina);return it.um==="m"||d<50?d:d/1000};
+const mTxt=d=>(Math.round((+d||0)*100)/100).toFixed(2).replace(".",",");
+const dLine=it=>kindOf(it.tip||"trapez")==="opsiv"?(num(it.duzina)?mTxt(opsLm(it))+" m":""):it.duzina;
 const BASE_T={trapez:"Trapezni lim",opsiv:"Opšiv",oluk:"Oluk",srafovska:"Šrafovska roba"};
 const TIPOVI={...BASE_T};
 const kindOf=t=>BASE_T[t]?t:((SET&&SET.gKind&&SET.gKind[t])||"trapez");
@@ -51,10 +55,10 @@ function applyGrupe(){
   seq.forEach(k=>{TIPOVI[k]=BASE_T[k]?(String(n[k]||"").trim()||BASE_T[k]):(String(n[k]||"").trim()||"Nova grupa");if(!BASE_T[k])DEFU[k]=DEFU[kindOf(k)]||"komad"});
 }
 const DEFU={trapez:"m²",opsiv:"m²",oluk:"metar",srafovska:"komad"};
-const TH={trapez:["Vrsta robe","Dužina (mm)","Boja","Kom."],opsiv:["Vrsta robe","Dužina (mm)","RŠ (mm)","Boja","Kom."],oluk:["Vrsta robe","Dužina (m)","Jedinica","Boja","Kom."],srafovska:["Vrsta robe","Boja","Kom."]};
+const TH={trapez:["Vrsta robe","Dužina (mm)","Boja","Kom."],opsiv:["Vrsta robe","Dužina (m)","RŠ (mm)","Boja","Kom."],oluk:["Vrsta robe","Dužina (m)","Jedinica","Boja","Kom."],srafovska:["Vrsta robe","Boja","Kom."]};
 function rowUnit(it){const t=kindOf(it.tip||"trapez");return t==="opsiv"?"m²":t==="oluk"?(it.jm==="komad"?"komad":"metar"):t==="srafovska"?unitOf(it.vrsta,"komad"):unitOf(it.vrsta)}
 const lenOf=it=>{const t=kindOf(it.tip||"trapez");return t==="opsiv"?true:t==="oluk"?it.jm!=="komad":t==="srafovska"?false:usesLen(it.vrsta)};
-const rowM2=it=>{const d=num(it.duzina),k=num(it.kom),t=kindOf(it.tip||"trapez");if(t==="opsiv")return d*num(it.sirina)*k/1e6;if(t==="oluk")return it.jm==="komad"?k:d*k;if(t==="srafovska")return k;return usesLen(it.vrsta)?m2(it.vrsta,d,k):k};
+const rowM2=it=>{const d=num(it.duzina),k=num(it.kom),t=kindOf(it.tip||"trapez");if(t==="opsiv")return r2(opsLm(it))*num(it.sirina)/1000*k;if(t==="oluk")return it.jm==="komad"?k:d*k;if(t==="srafovska")return k;return usesLen(it.vrsta)?m2(it.vrsta,d,k):k};
 const qtyTxt=it=>{const q=rowM2(it),u=rowUnit(it);return((u==="komad"||u==="set")&&Number.isInteger(q)?String(q):fmt(q))+" "+u};
 const cntK=a=>a.filter(i=>i.jm!=="sat"&&i.jm!=="km").reduce((s,i)=>s+i.kom,0),sumM=a=>Math.round(a.filter(i=>i.jm==="m²").reduce((s,i)=>s+i.m2,0)*100)/100;
 function vl(c,t){const g=t||"trapez",s=new Set(),a=[];prices.filter(p=>(p.grupa||"trapez")===g).map(p=>String(p.naziv).trim()).forEach(x=>{const k=x.toLowerCase();if(x&&!s.has(k)){s.add(k);a.push(x)}});return a.sort((x,y)=>x.localeCompare(y))}
@@ -65,7 +69,7 @@ function cells(it,tip){
   const K=kindOf(tip);
   const L=vl("",tip),legacy=!!it.vrsta&&!L.some(x=>x.toLowerCase()===String(it.vrsta).trim().toLowerCase()),all=legacy?[it.vrsta,...L]:L;
   const v=`<td><select data-f="vrsta">${all.length?opts(all,it.vrsta):'<option value="">Nema stavki u cenovniku</option>'}</select>${legacy?'<div style="font-size:11px;color:#c0392b">nije u cenovniku</div>':""}</td>`;
-  const d=`<td><input data-f="duzina" inputmode="${K==="oluk"?"decimal":"numeric"}" value="${esc(it.duzina||"")}" style="width:100px"${lenOf(it)?"":" disabled"}></td>`;
+  const d=`<td><input data-f="duzina" inputmode="${K==="oluk"||K==="opsiv"?"decimal":"numeric"}" value="${esc(it.duzina||"")}" style="width:100px"${lenOf(it)?"":" disabled"}></td>`;
   const b=`<td><select data-f="boja">${bopts(["",...BOJE],it.boja||"")}</select></td>`;
   const k=`<td><input data-f="kom" inputmode="decimal" value="${esc(it.kom)}" style="width:80px"></td>`;
   if(K==="srafovska")return v+`<td><select data-f="boja">${bopts(["",...BOJE],it.boja||"")}</select></td>`+k;
@@ -82,7 +86,7 @@ function updSegBadges(){
 }
 function renderItems(){
   cur.segments.forEach(sg=>{if(!sg.sid)sg.sid=newSid();if(!sg.status)sg.status=cur.status==="u_radu"?"u_radu":"zavrsen"});
-  cur.segments.forEach(sg=>{sg.tip=sg.tip||"trapez";sg.items.forEach(i=>{i.tip=sg.tip;if(!i.vrsta){const L=vl("",sg.tip);if(L.length)i.vrsta=L[0]}if(i.boja===undefined&&kindOf(sg.tip)!=="srafovska")i.boja=defBoja()})});
+  cur.segments.forEach(sg=>{sg.tip=sg.tip||"trapez";sg.items.forEach(i=>{i.tip=sg.tip;if(!i.vrsta){const L=vl("",sg.tip);if(L.length)i.vrsta=L[0]}if(i.boja===undefined&&kindOf(sg.tip)!=="srafovska")i.boja=defBoja();if(kindOf(sg.tip)==="opsiv"&&i.um!=="m"){const d=num(i.duzina);if(d>=50)i.duzina=mTxt(d/1000);i.um="m"}})});
   $("segs").innerHTML=cur.segments.map((sg,si)=>{const t=segTot(sg),tip=sg.tip;return `<div class="seg" data-s="${si}">
    <div class="row" style="margin-bottom:6px;align-items:flex-end"><span class="dh" data-drag="seg" title="Prevuci grupu za promenu redosleda" style="font-size:22px;padding-bottom:8px">⠿</span><div style="flex:1;min-width:160px"><label>Vrsta grupe</label><select data-st="1" style="font-weight:600">${Object.keys(TIPOVI).map(k=>`<option value="${k}"${k===tip?" selected":""}>${TIPOVI[k]}</option>`).join("")}</select></div><div class="gstw" style="width:150px"><label>Status grupe</label><select data-gst><option value="u_radu"${sg.status!=="zavrsen"?" selected":""}>U radu</option><option value="zavrsen"${sg.status==="zavrsen"?" selected":""}>Završena</option></select></div><span class="tag segbadge" data-sb="${sg.sid}"></span><button class="d" data-delseg${cur.segments.length<2?" disabled":""}>Ukloni grupu</button></div>
    <div class="sc"><table><thead><tr><th>#</th>${(TH[kindOf(tip)]||TH.trapez).map(h=>`<th>${h}</th>`).join("")}<th class="n">Ukupno</th><th></th></tr></thead><tbody>`+
@@ -100,7 +104,7 @@ function renderSheet(){
     const st=segTot(sg),n=(TH[kindOf(tip)]||TH.trapez).length+2;
     const rows=its.map((it,i)=>{
       if(K==="srafovska")return `<tr><td>${i+1}.</td><td>${esc(it.vrsta)}</td><td>${bj(it.boja)}</td><td>${esc(it.kom)}</td><td>${qtyTxt(it)}</td></tr>`;
-      const dv=lenOf(it)?esc(it.duzina):"–";
+      const dv=lenOf(it)?(K==="opsiv"?(num(it.duzina)?mTxt(opsLm(it)):""):esc(it.duzina)):"–";
       const ex=K==="opsiv"?`<td>${esc(it.sirina)}</td>`:K==="oluk"?`<td>${it.jm==="komad"?"komad":"metar"}</td>`:"";
       return `<tr><td>${i+1}.</td><td>${esc(it.vrsta)}</td><td>${dv}</td>${ex}<td>${bj(it.boja)}</td><td>${esc(it.kom)}</td><td>${qtyTxt(it)}</td></tr>`}).join("");
     const cg=K==="srafovska"?CG4:(K==="opsiv"||K==="oluk")?CG7:CG;
@@ -153,6 +157,11 @@ $("tb").onclick=async e=>{
 $("fSt").addEventListener("input",()=>{if(!cur)return;const v=$("fSt").value;cur.segments.forEach(z=>{z.status=v==="u_radu"?"u_radu":"zavrsen"});document.querySelectorAll("#segs [data-gst]").forEach((el,i)=>{if(cur.segments[i])el.value=cur.segments[i].status})});
 ["fNo","fYr","fCust","fAddr","fPhone","fPib","fDate","fSt","fNote"].forEach(id=>$(id).addEventListener("input",()=>{syncHead();dirty=true;renderSheet()}));
 $("btnSeg").onclick=()=>{const l=cur.segments[cur.segments.length-1];cur.segments.push({tip:"trapez",items:[blank(l.items[l.items.length-1],"trapez")]});dirty=true;renderItems()};
+$("segs").addEventListener("change",e=>{
+  const seg=e.target.closest(".seg");if(!seg||e.target.dataset.f!=="duzina")return;const sg=cur.segments[+seg.dataset.s];
+  if(kindOf(sg.tip)!=="opsiv")return;const it=sg.items[+e.target.closest("tr[data-i]").dataset.i],v=num(e.target.value);
+  const t=v>0?mTxt(v):"";it.um="m";e.target.value=t;e.target.dispatchEvent(new Event("input",{bubbles:true}));
+});
 $("segs").addEventListener("input",async e=>{
   const seg=e.target.closest(".seg");if(!seg)return;const sg=cur.segments[+seg.dataset.s];
   if(e.target.dataset.gst!==undefined){sg.status=e.target.value;dirty=true;if(cur.status!=="isporucen"){cur.status=cur.segments.every(z=>z.status==="zavrsen")?"zavrsen":"u_radu";$("fSt").value=cur.status}renderSheet();return}
@@ -202,7 +211,7 @@ $("segs").addEventListener("click",async e=>{
 });
 
 function mkSegments(){return cur.segments.map(sg=>{
-    const items=sg.items.filter(it=>it.vrsta&&(num(it.kom)>0)&&(lenOf(it)?num(it.duzina)>0:true)&&(kindOf(sg.tip)!=="opsiv"||num(it.sirina)>0)).map(it=>({vrsta:it.vrsta,tip:sg.tip,duzina:num(it.duzina),sirina:num(it.sirina),boja:it.boja||"",kom:num(it.kom),jm:rowUnit(it),m2:r2(rowM2(it))}));
+    const items=sg.items.filter(it=>it.vrsta&&(num(it.kom)>0)&&(lenOf(it)?num(it.duzina)>0:true)&&(kindOf(sg.tip)!=="opsiv"||num(it.sirina)>0)).map(it=>({vrsta:it.vrsta,tip:sg.tip,duzina:kindOf(sg.tip)==="opsiv"?r2(opsLm(it)):num(it.duzina),...(kindOf(sg.tip)==="opsiv"?{um:"m"}:{}),sirina:num(it.sirina),boja:it.boja||"",kom:num(it.kom),jm:rowUnit(it),m2:r2(rowM2(it))}));
     return{tip:sg.tip,title:TIPOVI[sg.tip],sid:sg.sid||newSid(),status:sg.status||"u_radu",items,totalKom:cntK(items),totalM2:sumM(items)};
   }).filter(sg=>sg.items.length)}
 async function save(){
@@ -219,7 +228,7 @@ async function save(){
   const now=new Date().toISOString();
   const doc={no:cur.no,year:cur.year,customer:cur.customer.trim(),addr:(cur.addr||"").trim(),phone:(cur.phone||"").trim(),pib:(cur.pib||"").trim(),date:cur.date,status:cur.status,note:cur.note||"",segments,items:flat,
     totalKom:cntK(flat),totalM2:sumM(flat),updatedAt:now,createdAt:cur._new?now:((orders.find(o=>oid(o)===id)||{}).createdAt||now)};
-  try{await db.collection("orders").doc(id).set(doc);custSync(doc);cur._new=false;dirty=false;if(dropped>0){dirty=true}else cur.segments=segments.map(sg=>({tip:sg.tip,sid:sg.sid,status:sg.status,items:sg.items.map(i=>({vrsta:i.vrsta,tip:sg.tip,duzina:i.duzina||"",sirina:i.sirina||"",boja:i.boja,kom:i.kom,jm:i.jm}))}));renderItems();$("btnDel").classList.remove("hide");$("status").textContent=dropped>0?"Sačuvano, ali "+dropped+" nepotpunih redova NIJE sačuvano (nedostaje vrsta, dužina ili količina) – ostali su u formi, dopuni ih i sačuvaj ponovo.":"Sačuvano ✓";lastDoc=doc;try{const d=await syncProformas(doc);if(d.length)$("status").textContent="Sačuvano ✓ – ažuriran i predračun "+d.join(", ")}catch(e){}return true}
+  try{await db.collection("orders").doc(id).set(doc);custSync(doc);cur._new=false;dirty=false;if(dropped>0){dirty=true}else cur.segments=segments.map(sg=>({tip:sg.tip,sid:sg.sid,status:sg.status,items:sg.items.map(i=>({vrsta:i.vrsta,tip:sg.tip,duzina:i.duzina||"",um:i.um,sirina:i.sirina||"",boja:i.boja,kom:i.kom,jm:i.jm}))}));renderItems();$("btnDel").classList.remove("hide");$("status").textContent=dropped>0?"Sačuvano, ali "+dropped+" nepotpunih redova NIJE sačuvano (nedostaje vrsta, dužina ili količina) – ostali su u formi, dopuni ih i sačuvaj ponovo.":"Sačuvano ✓";lastDoc=doc;try{const d=await syncProformas(doc);if(d.length)$("status").textContent="Sačuvano ✓ – ažuriran i predračun "+d.join(", ")}catch(e){}return true}
   catch(e){$("status").textContent="Greška pri čuvanju: "+(e.message||e.code||"nepoznata");return false}
 }
 

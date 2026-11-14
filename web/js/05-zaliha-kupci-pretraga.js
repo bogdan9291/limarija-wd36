@@ -2,7 +2,7 @@
 function copyOrder(src){
   const n=newOrder(),c=JSON.parse(JSON.stringify(src));
   if(c.items&&!c.segments)c.segments=[{tip:"trapez",items:c.items}];
-  c.segments=(c.segments||[]).map(g=>({tip:g.tip||"trapez",items:g.items.map(i=>({vrsta:i.vrsta,tip:g.tip||"trapez",duzina:i.duzina||"",sirina:i.sirina||"",boja:i.boja||"",kom:i.kom,jm:i.jm}))}));
+  c.segments=(c.segments||[]).map(g=>({tip:g.tip||"trapez",items:g.items.map(i=>({vrsta:i.vrsta,tip:g.tip||"trapez",duzina:i.duzina||"",um:i.um,sirina:i.sirina||"",boja:i.boja||"",kom:i.kom,jm:i.jm}))}));
   const d={id:null,no:n.no,year:n.year,customer:c.customer,addr:c.addr||"",phone:c.phone||"",pib:c.pib||"",date:n.date,status:"u_radu",note:c.note||"",segments:c.segments.length?c.segments:n.segments};
   $("view").appendChild($("sheetbox"));openForm(d,true);show("o");dirty=true;$("status").textContent="Kopija naloga "+(src.no?src.no+"/"+src.year:"")+" – proveri podatke i sačuvaj.";
 }

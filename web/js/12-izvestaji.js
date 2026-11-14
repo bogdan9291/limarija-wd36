@@ -12,7 +12,7 @@ function repRows(){
       const r=g[key]=g[key]||{key,names:{},ords:new Set(),kom:0,m2:0,m:0,prodaja:0,last:""};
       r.names[lbl]=(r.names[lbl]||0)+1;r.ords.add(oid(o));r.kom+=num(i.kom);
       if((i.jm||"m²")==="m²"){const m2=num(i.m2);r.m2+=m2;if(kindOf(i.tip||"trapez")==="trapez"){const p=priceFor(i.vrsta);if(p!=null)r.prodaja+=m2*p}}
-      else if(i.jm==="metar")r.m+=num(i.duzina)*num(i.kom)/1000;
+      else if(i.jm==="metar")r.m+=num(i.duzina)*num(i.kom);
       if(d>r.last)r.last=d;
     });
   });
