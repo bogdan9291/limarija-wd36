@@ -44,7 +44,8 @@ $("tabH").onclick=()=>goTab("h");$("tabN").onclick=()=>goTab("n");$("tabP").oncl
 // Cena za konkretnog kupca: ako kupac ima poseban cenovnik (customers.cene = {idCene: cena}), važi on; inače standardni
 function priceForC(v,cust){
   const c=cust&&typeof custBy==="function"?custBy(cust):null;
-  if(c&&c.cene){const k=String(v).trim().toLowerCase(),p=prices.find(x=>String(x.naziv).trim().toLowerCase()===k),x=p?num(c.cene[p.id]):0;if(x>0)return x}
+  const src=c&&c.cenaOd?customers.find(x=>x.id===c.cenaOd):null,cc=c&&c.cene&&Object.keys(c.cene).length?c.cene:(src&&src.cene);
+  if(cc){const k=String(v).trim().toLowerCase(),p=prices.find(x=>String(x.naziv).trim().toLowerCase()===k),x=p?num(cc[p.id]):0;if(x>0)return x}
   return priceFor(v);
 }
 function priceFor(v){const k=String(v).trim().toLowerCase();const a=prices.find(p=>String(p.naziv).trim().toLowerCase()===k&&p.vele>0);return a?a.vele:null}
