@@ -39,7 +39,8 @@ function opts(arr,v){return arr.map(x=>`<option${x===v?" selected":""}>${esc(x)}
 const UNITS=["m²","komad","sat","km","metar","set"];
 function unitOf(v,d){const k=String(v).trim().toLowerCase();const p=prices.find(x=>String(x.naziv).trim().toLowerCase()===k);return p?p.jm:(d||"m²")}
 const usesLen=v=>{const u=unitOf(v);return u==="m²"||u==="metar"};
-const num=x=>parseFloat(String(x).replace(",","."))||0;
+// broj iz teksta: „1.234,50“ → 1234.5; „12,5“ → 12.5; „12.5“ → 12.5
+const num=x=>{x=String(x);if(x.includes(","))x=x.replace(/\./g,"").replace(",",".");return parseFloat(x)||0};
 // Opšiv: dužina se unosi u METRIMA (zaokružuje se na 2 decimale). Stari nalozi su čuvali milimetre (>= 50), pa se oni pretvaraju.
 const opsLm=it=>{const d=num(it.duzina);return it.um==="m"||d<50?d:d/1000};
 const mTxt=d=>(Math.round((+d||0)*100)/100).toFixed(2).replace(".",",");

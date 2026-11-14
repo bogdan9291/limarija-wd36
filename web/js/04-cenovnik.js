@@ -22,7 +22,7 @@ function applyProLock(){
 }
 let prices=[],proformas=[],otpr=[],nabavne=[],ocur=null,odirty=false,pdvRate=20,pcur=null,pdirty=false,lastDoc=null;
 const money=n=>(+n||0).toLocaleString("sr-RS",{minimumFractionDigits:2,maximumFractionDigits:2});
-const r2=n=>Math.round(n*100)/100,cn=l=>parseFloat(String(l.cena).replace(",","."))||0;
+const r2=n=>Math.round(n*100)/100,cn=l=>num(l.cena);
 const VIEWS={h:"home",n:"list",o:"view",pl:"plist",pv:"pview",c:"cen",ol:"olist",ov:"oview",r:"prod",s:"sett",k:"kup"};
 let curView="h";
 function show(t){
