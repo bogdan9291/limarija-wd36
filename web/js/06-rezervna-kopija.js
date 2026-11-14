@@ -153,7 +153,13 @@ $("bkRestore").onclick=()=>$("bkFile").click();
 $("bkFile").onchange=async()=>{
   const S=$("bkStatus"),f=$("bkFile").files[0];$("bkFile").value="";if(!f)return;
   try{
-    const j=JSON.parse(await f.text());if(j.app!=="limarija-wd36"||!j.data)throw new Error("Ovo nije fajl rezervne kopije aplikacije.");
+    const j=JSON.parse(await f.text());
+    if(!j.app&&j.schema!==undefined&&j.data&&typeof j.data==="object"&&!Array.isArray(j.data)){ // automatska kopija desktop programa (kopija_*.json): {schema,users,data:{kolekcija:{id:dokument}}}
+      const ok=[...BK_COLL.map(c=>c.n),"settings"],nd={};
+      for(const n of ok){const v=j.data[n];if(v&&typeof v==="object"&&!Array.isArray(v))nd[n]=Object.entries(v)}
+      j.data=nd;j.app="limarija-wd36";j.izDesktopa=true;
+    }
+    if(j.app!=="limarija-wd36"||!j.data)throw new Error("Ovo nije fajl rezervne kopije aplikacije.");
     const names=Object.keys(j.data).filter(n=>n!=="settings"),cnt=names.reduce((t,n)=>t+(j.data[n]||[]).length,0);
     const part=Array.isArray(j.delimicno)?j.delimicno:null,replacePrices=!!(part&&part.length===1&&part[0]==="prices");
     const msg=part?("Uvoz dela podataka ("+part.map(k=>(BK_PARTS.find(z=>z[0]===k)||[k,k])[1]).join(", ")+"): "+cnt+" dokumenata. "+(replacePrices?"Postojeći cenovnik biće ZAMENJEN cenovnikom iz fajla (stare cene se brišu). ":"Dokumenti sa istim brojem biće prepisani. ")+"Sve što nije u fajlu ostaje netaknuto."):("Vratiti "+cnt+" dokumenata iz kopije od "+fmtDate(String(j.napravljeno||"").slice(0,10))+"? Dokumenti sa istim brojem biće prepisani. Ostali ostaju nepromenjeni.");
