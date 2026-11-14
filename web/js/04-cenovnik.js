@@ -41,6 +41,12 @@ async function goTab(t){
 $("tabH").onclick=()=>goTab("h");$("tabN").onclick=()=>goTab("n");$("tabP").onclick=()=>goTab("pl");$("tabC").onclick=()=>goTab("c");$("tabO").onclick=()=>goTab("ol");$("tabR").onclick=()=>goTab("r");$("tabS").onclick=()=>goTab("s");$("tabK").onclick=()=>goTab("k");
 
 // cenovnik
+// Cena za konkretnog kupca: ako kupac ima poseban cenovnik (customers.cene = {idCene: cena}), važi on; inače standardni
+function priceForC(v,cust){
+  const c=cust&&typeof custBy==="function"?custBy(cust):null;
+  if(c&&c.cene){const k=String(v).trim().toLowerCase(),p=prices.find(x=>String(x.naziv).trim().toLowerCase()===k),x=p?num(c.cene[p.id]):0;if(x>0)return x}
+  return priceFor(v);
+}
 function priceFor(v){const k=String(v).trim().toLowerCase();const a=prices.find(p=>String(p.naziv).trim().toLowerCase()===k&&p.vele>0);return a?a.vele:null}
 function priceRow(p){return `<tr data-id="${esc(p.id)}"><td><input data-k="naziv" value="${esc(p.naziv)}" placeholder="Naziv" style="min-width:200px"></td><td><select data-k="jm">${opts(UNITS.includes(p.jm)?UNITS:[...UNITS,p.jm],p.jm)}</select></td><td><input data-k="vele" inputmode="decimal" value="${esc(r2(p.vele))}" style="width:140px"></td><td><input data-k="mp" inputmode="decimal" value="${esc(r2(p.vele*(1+pdvRate/100)))}" style="width:140px"></td><td style="white-space:nowrap"><button data-cp title="Kopiraj stavku">⧉</button> <button class="d" data-x title="Obriši">✕</button></td></tr>`}
 function renderPrices(){

@@ -15,6 +15,7 @@ web/js/*.js        kod po oblastima; redosled učitavanja je redosled brojeva u 
   10-proizvodnja            proizvodnja, prodaja, bruto zarada
   11-pocetna-baza           početna strana, inicijalizacija baze
   12-izvestaji              izveštaji po kupcu, boji i mesecu (CSV za Excel)
+  13-cene-kupaca            poseban cenovnik / rabat za pojedinačnog kupca
 
 Sve skripte dele isti globalni prostor (kao nekad jedan veliki <script>).
 Novi fajl: dodaj ga kao <script src="js/NN-ime.js"></script> u index.html na željeno mesto.

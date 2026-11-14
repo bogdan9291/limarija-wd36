@@ -115,7 +115,7 @@ function otpPrice(l){
   if(ocur.izvorTip==="predracun")qs.push(proformas.find(x=>x.year+"_"+x.no===ocur.izvorId));
   if(l.oid)qs.push(...proformas.filter(x=>x.orderId===l.oid));
   for(const q of qs.filter(Boolean)){const ls=q.lines||[],h=ls.find(z=>nrm(z.vrsta)===v&&nrm(z.boja)===bj&&cn(z))||ls.find(z=>nrm(z.vrsta)===v&&cn(z));if(h)return cn(h)}
-  return priceFor(l.vrsta);
+  return priceForC(l.vrsta,ocur.customer);
 }
 function otpFillPrices(){ocur.lines.forEach(l=>{if(l.cena==null&&String(l.vrsta).trim()){const c=otpPrice(l);l.cena=c==null?"":c}})}
 function renderOtp(){

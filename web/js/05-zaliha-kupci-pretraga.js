@@ -69,11 +69,7 @@ let customers=[],kcur=null;
 const nrm=v=>String(v||"").trim().toLowerCase();
 /* pretraga bez obzira na č/ć/š/ž/đ: „cacak“ nalazi „Čačak“, „djordje“ nalazi „Đorđe“ */
 const fold=v=>String(v||"").trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/đ/g,"d").replace(/dj/g,"d");
-// Baza u Artifact-u dozvoljava u ID-ju samo slova, cifre i _ - . ~ : @ + (bez š, đ, č, ć, ž…): ostali znaci se zamenjuju, a dodaje se kratak kod da dva imena ne dobiju isti ID
-const safeDocId=s=>{s=String(s);if(/^[A-Za-z0-9_.~:@+-]+$/.test(s))return s;
-  const t=s.replace(/đ/g,"dj").replace(/Đ/g,"Dj").normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^A-Za-z0-9_.~:@+-]+/g,"_");
-  let h=0;for(const ch of s)h=(h*31+ch.charCodeAt(0))>>>0;return t.slice(0,70)+"_"+h.toString(36)};
-const custId=n=>safeDocId(nrm(n).replace(/[\/\\#?%\s]+/g,"_").slice(0,80));
+const custId=n=>nrm(n).replace(/[\/\\#?%\s]+/g,"_").slice(0,80);
 const custBy=n=>customers.find(c=>nrm(c.name)===nrm(n));
 function fillCustList(){$("custl").innerHTML=customers.map(c=>`<option value="${esc(c.name)}">`).join("")}
 async function custSync(d){

@@ -13,7 +13,7 @@ async function saveProDraft(){
   const droppedP=cur.segments.reduce((n,sg)=>n+sg.items.length,0)-segments.reduce((n,sg)=>n+sg.items.length,0);
   const flat=segments.flatMap(sg=>sg.items),old=cur.lines||[],used=new Set();
   const take=(v,b)=>{let k=old.findIndex((l,i)=>!used.has(i)&&l.vrsta===v&&(l.boja||"")===(b||""));if(k<0)k=old.findIndex((l,i)=>!used.has(i)&&l.vrsta===v);if(k>=0)used.add(k);return k>=0?old[k]:null};
-  const lines=flat.map(i=>{const o=take(i.vrsta,i.boja),pr=o&&cn(o)>0?o.cena:priceFor(i.vrsta),cena=pr==null?"":pr;return{vrsta:i.vrsta,boja:i.boja||"",duzina:dLine(i),kom:i.kom,m2:i.m2,jm:i.jm||"m²",cena:cn({cena}),iznos:0}});
+  const lines=flat.map(i=>{const o=take(i.vrsta,i.boja),pr=o&&cn(o)>0?o.cena:priceForC(i.vrsta,cur.customer),cena=pr==null?"":pr;return{vrsta:i.vrsta,boja:i.boja||"",duzina:dLine(i),kom:i.kom,m2:i.m2,jm:i.jm||"m²",cena:cn({cena}),iznos:0}});
   const rate=cur.pdv==null||cur.pdv===""?pdvRate:(parseFloat(String(cur.pdv).replace(",","."))||0),kup=kupacOf({kupac:cur.kupac,pib:cur.pib});
   lines.forEach(l=>{l.iznos=lineAmt(l,rate,kup)});
   const kc=calcPro(lines,rate,kup),uplate=cur.uplate||[],paid=payTotal({uplate}),now=new Date().toISOString(),ex=proformas.find(p=>p.year===cur.year&&p.no===cur.no);
@@ -27,7 +27,7 @@ async function syncProformas(doc){
   for(const q of proformas.filter(x=>x.orderId===id&&!isProLocked(x))){
     const used=new Set(),old=q.lines||[];
     const take=(v,b)=>{let k=old.findIndex((l,i)=>!used.has(i)&&l.vrsta===v&&(l.boja||"")===(b||""));if(k<0)k=old.findIndex((l,i)=>!used.has(i)&&l.vrsta===v);if(k>=0)used.add(k);return k>=0?old[k]:null};
-    const lines=(doc.items||[]).map(i=>{const o=take(i.vrsta,i.boja);const pr=o&&cn(o)>0?o.cena:priceFor(i.vrsta);const cena=pr==null?"":pr;
+    const lines=(doc.items||[]).map(i=>{const o=take(i.vrsta,i.boja);const pr=o&&cn(o)>0?o.cena:priceForC(i.vrsta,doc.customer);const cena=pr==null?"":pr;
       return{vrsta:i.vrsta,boja:i.boja||"",duzina:dLine(i),kom:i.kom,m2:i.m2,jm:i.jm||"m²",cena:cn({cena}),iznos:0}});
     const rate=parseFloat(String(q.pdv).replace(",","."))||0,kup=kupacOf(q);lines.forEach(l=>{l.iznos=lineAmt(l,rate,kup)});
     const kc=calcPro(lines,rate,kup),b=kc.b,pv=kc.p,tot=kc.t,paid=r2(num(q.placeno));

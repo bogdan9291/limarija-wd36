@@ -28,8 +28,8 @@ function prodData(doneOpt){
     const ym=String(o.date||"").slice(0,7);if(!/^\d{4}-\d{2}$/.test(ym))return;
     (o.items||[]).forEach(i=>{
       if(kindOf(i.tip||"trapez")!=="trapez")return;
-      const m=data[ym]=data[ym]||{},r=m[i.vrsta]=m[i.vrsta]||{kom:0,m2:0};
-      r.kom+=num(i.kom);if((i.jm||"m²")==="m²")r.m2+=num(i.m2);
+      const m=data[ym]=data[ym]||{},r=m[i.vrsta]=m[i.vrsta]||{kom:0,m2:0,sales:0,np:false};
+      r.kom+=num(i.kom);if((i.jm||"m²")==="m²"){const q=num(i.m2);r.m2+=q;const p=priceForC(i.vrsta,o.customer);if(p==null)r.np=true;else r.sales+=q*p}
     });
   });
   return data;
@@ -40,9 +40,9 @@ const skPctF=()=>SET.skartPctF==null?0.05:Math.max(0,num(SET.skartPctF));
 function calcMonth(ym,m){
   const nb=nabFor(ym);
   const rows=Object.keys(m).sort((a,b)=>a.localeCompare(b,"sr-Latn")).map(v=>{
-    const r=m[v],sp=priceFor(v),filc=/filc/i.test(v),fl=filc?r2(r.m2*filcK(v)):0;
-    const prodaja=sp==null?0:r2(r.m2*sp),nabavka=nb?r2(r.m2*num(nb.lim)+fl*num(nb.filc)):0;
-    return{vrsta:v,kom:r.kom,m2:r.m2,lim:r.m2,filc:fl,prodaja,nabavka,bruto:r2(prodaja-nabavka),noPrice:sp==null,noNab:!nb};
+    const r=m[v],filc=/filc/i.test(v),fl=filc?r2(r.m2*filcK(v)):0;
+    const prodaja=r2(r.sales||0),nabavka=nb?r2(r.m2*num(nb.lim)+fl*num(nb.filc)):0;
+    return{vrsta:v,kom:r.kom,m2:r.m2,lim:r.m2,filc:fl,prodaja,nabavka,bruto:r2(prodaja-nabavka),noPrice:!!r.np,noNab:!nb};
   });
   const pc=skPct(),pf=skPctF(),fm=x=>String(x).replace(".",",");
   if((pc>0||pf>0)&&rows.length){const sl=r2(rows.reduce((t,r)=>t+r.lim,0)*pc/100),sf=r2(rows.reduce((t,r)=>t+r.filc,0)*pf/100),nbk=nb?r2(sl*num(nb.lim)+sf*num(nb.filc)):0;
